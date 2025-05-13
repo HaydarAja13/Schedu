@@ -13,7 +13,7 @@ class JadwalController extends Controller
      */
     public function index()
     {
-        return response()->json(Jadwal::with(['enrollmentAll', 'jamAwal', 'jamAkhir', 'ruang'])->get());
+        return response()->json(Jadwal::with(['enrollmentMkMhsDsnRng', 'jamAwal', 'jamAkhir', 'ruang'])->get());
     }
 
     /**
@@ -45,7 +45,7 @@ class JadwalController extends Controller
      */
     public function show(string $id)
     {
-        $data = Jadwal::with(['enrollmentAll', 'jamAwal', 'jamAkhir', 'ruang'])->findOrFail($id);
+        $data = Jadwal::with(['enrollmentMkMhsDsnRng', 'jamAwal', 'jamAkhir', 'ruang'])->findOrFail($id);
         return response()->json($data);
     }
 

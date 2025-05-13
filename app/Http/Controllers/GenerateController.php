@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\EnrollmentMkMhsDsnRng;
 use App\Models\JamAwal;
-use App\Models\JamAkhir;
 use App\Models\Jadwal;
 use App\Models\Ruang;
 
@@ -13,62 +12,83 @@ class GenerateController extends Controller
 {
     public function generateJadwal()
     {
-        // Step 1: Ambil data dari tabel terkait
-        $enrollments = EnrollmentMkMhsDsnRng::all();
-        $jamAwal = JamAwal::all()->sortBy('nama_jam');
-        $jamAkhir = JamAkhir::all()->sortBy('nama_jam');
-        $ruangs = Ruang::all();
 
-        // Variabel untuk menyimpan hasil jadwal
-        $jadwalResult = [];
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
 
-        // Step 2: Algoritma penjadwalan dengan tambahan ruang
+        $jamAwalList = JamAwal::orderBy('id')->get();
+        $ruangList = Ruang::all();
+        $enrollments = EnrollmentMkMhsDsnRng::with(['mataKuliah', 'dosen', 'enrollmentKelas'])->get();
+
+        Jadwal::truncate();
+
         foreach ($enrollments as $enrollment) {
-            foreach ($jamAwal as $start) {
-                foreach ($jamAkhir as $end) {
-                    if ($end->nama_jam > $start->nama_jam) {
-                        // Cek apakah waktu atau ruang bentrok
-                        $isConflicted = false;
-                        $selectedRuang = null;
+            $placed = false;
+            $max_attempts = 1000;
+            $attempts = 0;
 
-                        foreach ($ruangs as $ruang) {
-                            $isConflicted = false; // Reset konflik per ruang
-                            foreach ($jadwalResult as $jadwal) {
-                                if (
-                                    ($jadwal['id_jam_awal'] == $start->id || $jadwal['id_jam_akhir'] == $end->id) &&
-                                    $jadwal['id_ruang'] == $ruang->id
-                                ) {
-                                    $isConflicted = true;
-                                    break;
-                                }
-                            }
-                            if (!$isConflicted) {
-                                $selectedRuang = $ruang;
-                                break;
-                            }
-                        }
+            $durasi = $enrollment->mataKuliah->jam;
 
-                        if (!$isConflicted && $selectedRuang) {
-                            // Tambahkan ke hasil jadwal
-                            $jadwalResult[] = [
-                                'id_enrollment_mk_mhs_dsn_rng' => $enrollment->id,
-                                'hari' => 'Senin', // Ubah sesuai logika Anda
-                                'id_jam_awal' => $start->id,
-                                'id_jam_akhir' => $end->id,
-                                'id_ruang' => $selectedRuang->id,
-                            ];
-                            break;
-                        }
+            while (!$placed && $attempts < $max_attempts) {
+                $hari = $days[array_rand($days)];
+                $ruang = $ruangList->random();
+
+                for ($i = 0; $i <= count($jamAwalList) - $durasi; $i++) {
+                    $slotJam = $jamAwalList->slice($i, $durasi);
+                    $jamAwal = $slotJam->first();
+                    $jamAkhir = $slotJam->last();
+
+                    $id_enrollment_kelas = $enrollment->id_enrollment_kelas;
+
+                    $bentrok = Jadwal::where('hari', $hari)
+                        ->where(function ($q) use ($jamAwal, $jamAkhir) {
+                            $q->where(function ($q2) use ($jamAwal, $jamAkhir) {
+                                $q2->where('id_jam_awal', '<=', $jamAkhir->id)
+                                    ->where('id_jam_awal', '>=', $jamAwal->id);
+                            })
+                                ->orWhere(function ($q2) use ($jamAwal, $jamAkhir) {
+                                    $q2->where('id_jam_akhir', '<=', $jamAkhir->id)
+                                        ->where('id_jam_akhir', '>=', $jamAwal->id);
+                                });
+                        })
+                        ->where(function ($q) use ($ruang, $enrollment, $id_enrollment_kelas) {
+                            $q->where('id_ruang', $ruang->id)
+                                ->orWhereHas('enrollmentMkMhsDsnRng', function ($q2) use ($enrollment, $id_enrollment_kelas) {
+                                    $q2->where('id_dosen', $enrollment->id_dosen)
+                                        ->orWhere('id_enrollment_kelas', $id_enrollment_kelas);
+                                });
+                        })
+                        ->exists();
+
+                    if (!$bentrok) {
+                        Jadwal::create([
+                            'id_enrollment_mk_mhs_dsn_rng' => $enrollment->id,
+                            'hari' => $hari,
+                            'id_jam_awal' => $jamAwal->id,
+                            'id_jam_akhir' => $jamAkhir->id,
+                            'id_ruang' => $ruang->id,
+                        ]);
+                        $placed = true;
+                        break;
                     }
                 }
+                $attempts++;
             }
         }
 
-        // Step 3: Simpan hasil ke tabel `jadwal`
-        foreach ($jadwalResult as $jadwal) {
-            Jadwal::create($jadwal);
-        }
+        $jadwal = Jadwal::with([
+            'enrollmentMkMhsDsnRng.mataKuliah',
+            'enrollmentMkMhsDsnRng.dosen',
+            'enrollmentMkMhsDsnRng.enrollmentKelas',
+            'ruang',
+            'jamAwal',
+            'jamAkhir'
+        ])->get();
 
-        return response()->json(['message' => 'Jadwal berhasil digenerate!', 'data' => $jadwalResult]);
+        Storage::disk('local')->put('jadwal.json', $jadwal->toJson());
+
+        return response()->json([
+            'message' => 'Jadwal berhasil digenerate!',
+            'data' => $jadwal
+        ]);
     }
 }

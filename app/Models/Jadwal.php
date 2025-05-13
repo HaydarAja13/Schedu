@@ -15,7 +15,7 @@ class Jadwal extends Model
         'id_ruang',
     ];
 
-    public function enrollmentAll()
+    public function enrollmentMkMhsDsnRng()
     {
         return $this->belongsTo(EnrollmentMkMhsDsnRng::class, 'id_enrollment_mk_mhs_dsn_rng');
     }
