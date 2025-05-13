@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string("nip", 18)->unique();
             $table->string("nama_dosen");
             $table->string("email")->unique();
-            $table->string("password", 10);
+            $table->string("password");
             $table->string("no_hp", 15)->unique();
+            $table->rememberToken();
             $table->timestamps();
         });
     }

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('sks');
             $table->integer('jam');
             $table->string('semester', 10);
-            $table->foreignId('id_ruang')->constrained('ruang')->onDelete('cascade')->nullable();
+            $table->foreignId('id_ruang')->nullable()->constrained('ruang')->onDelete('cascade');
             $table->enum('jenis', ['P', 'T']);
             $table->timestamps();
         });

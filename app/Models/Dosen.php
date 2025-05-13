@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Dosen extends Model
+class Dosen extends Authenticatable
 {
+    use HasFactory, HasApiTokens;
     protected $table = 'dosen';
     protected $primaryKey = 'id';
 
@@ -16,4 +19,19 @@ class Dosen extends Model
         'password',
         'no_hp'
     ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
+    public function enrollmentAll()
+    {
+        return $this->hasMany(EnrollmentMkMhsDsnRng::class, 'id_dosen');
+    }
 }

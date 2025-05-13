@@ -16,9 +16,4 @@ class MataKuliah extends Model
         'id_ruang',
         'jenis'
     ];
-
-    public function ruang()
-    {
-        return $this->belongsTo(Ruang::class, 'id_ruang');
-    }
 }

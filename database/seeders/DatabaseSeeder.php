@@ -2,22 +2,853 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function run()
     {
-        // User::factory(10)->create();
+        $now = Carbon::now();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Dosen
+        DB::table('dosen')->insert([
+            [
+                'nip' => '1234567801',
+                'nama_dosen' => 'Sugeng Iriyanto',
+                'email' => 'sugeng.iriyanto@example.com',
+                'password' => Hash::make('sugeng_iriyanto'),
+                'no_hp' => '081234567001',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567802',
+                'nama_dosen' => 'Nur Hidayati',
+                'email' => 'nur.hidayati@example.com',
+                'password' => Hash::make('nur_hidayati'),
+                'no_hp' => '081234567002',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567803',
+                'nama_dosen' => 'WIKTASARI',
+                'email' => 'wiktasari@example.com',
+                'password' => Hash::make('wiktasari'),
+                'no_hp' => '081234567003',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567804',
+                'nama_dosen' => 'SIRLI FAHRIAH',
+                'email' => 'sirli.fahriah@example.com',
+                'password' => Hash::make('sirli_fahriah'),
+                'no_hp' => '081234567004',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567805',
+                'nama_dosen' => 'PRAYITNO',
+                'email' => 'prayitno@example.com',
+                'password' => Hash::make('prayitno'),
+                'no_hp' => '081234567005',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567806',
+                'nama_dosen' => 'PARSUMO RAHARDJO',
+                'email' => 'parsumo.rahardjo@example.com',
+                'password' => Hash::make('parsumo_rahardjo'),
+                'no_hp' => '081234567006',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567807',
+                'nama_dosen' => 'Iswanti',
+                'email' => 'iswanti@example.com',
+                'password' => Hash::make('iswanti'),
+                'no_hp' => '081234567007',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567808',
+                'nama_dosen' => 'DR. IR. KURNIANINGSIH',
+                'email' => 'dr.ir.kurnianingsih@example.com',
+                'password' => Hash::make('dr_ir_kurnianingsih'),
+                'no_hp' => '081234567008',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567809',
+                'nama_dosen' => 'Kuwat SANTOSO',
+                'email' => 'kuwat.santoso@example.com',
+                'password' => Hash::make('kuwat_santoso'),
+                'no_hp' => '081234567009',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567810',
+                'nama_dosen' => 'MUTTABIK FATHUL LATHIEF',
+                'email' => 'muttabik.fathul.lathief@example.com',
+                'password' => Hash::make('muttabik_fathul_lathief'),
+                'no_hp' => '081234567010',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567811',
+                'nama_dosen' => 'NURSENO BAYU AJI',
+                'email' => 'nurseno.bayu.aji@example.com',
+                'password' => Hash::make('nurseno_bayu_aji'),
+                'no_hp' => '081234567011',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567812',
+                'nama_dosen' => 'SUKO TYAS PERNANDA',
+                'email' => 'suko.tyas.pernanda@example.com',
+                'password' => Hash::make('suko_tyas_pernanda'),
+                'no_hp' => '081234567012',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567813',
+                'nama_dosen' => 'Sapto Budi Priyatno',
+                'email' => 'sapto.budi.priyatno@example.com',
+                'password' => Hash::make('sapto_budi_priyatno'),
+                'no_hp' => '081234567013',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567814',
+                'nama_dosen' => 'Ir. Beno Kunto P',
+                'email' => 'ir.beno.kunto.p@example.com',
+                'password' => Hash::make('ir_beno_kunto_p'),
+                'no_hp' => '081234567014',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567815',
+                'nama_dosen' => 'TRI RAHARJO YUDANTORO',
+                'email' => 'tri.raharjo.yudantoro@example.com',
+                'password' => Hash::make('tri_raharjo_yudantoro'),
+                'no_hp' => '081234567015',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567816',
+                'nama_dosen' => 'RIO DEVILITO',
+                'email' => 'rio.devilito@example.com',
+                'password' => Hash::make('rio_devilito'),
+                'no_hp' => '081234567016',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567817',
+                'nama_dosen' => 'Dosen Pembimbing',
+                'email' => 'dosen.pembimbing@example.com',
+                'password' => Hash::make('dosen_pembimbing'),
+                'no_hp' => '081234567017',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567818',
+                'nama_dosen' => 'LILIEK TRIYONO',
+                'email' => 'liliek.triyono@example.com',
+                'password' => Hash::make('liliek_triyono'),
+                'no_hp' => '081234567018',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567819',
+                'nama_dosen' => 'Ir. Hatmoko Tri Arianto',
+                'email' => 'ir.hatmoko.tri.arianto@example.com',
+                'password' => Hash::make('ir_hatmoko_tri_arianto'),
+                'no_hp' => '081234567019',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567820',
+                'nama_dosen' => 'Dr. I Ketut Agung Enriko',
+                'email' => 'dr.i.ketut.agung.enriko@example.com',
+                'password' => Hash::make('dr_i_ketut_agung_enriko'),
+                'no_hp' => '081234567020',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567821',
+                'nama_dosen' => 'AFANDI NUR AZIZ THOHARI',
+                'email' => 'afandi.nur.aziz.thohari@example.com',
+                'password' => Hash::make('afandi_nur_aziz_thohari'),
+                'no_hp' => '081234567021',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567822',
+                'nama_dosen' => 'Sendayu',
+                'email' => 'sendayu@example.com',
+                'password' => Hash::make('sendayu'),
+                'no_hp' => '081234567022',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nip' => '1234567823',
+                'nama_dosen' => 'Tri Febrianto',
+                'email' => 'tri.febrianto@example.com',
+                'password' => Hash::make('tri_febrianto'),
+                'no_hp' => '081234567023',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
         ]);
+
+        // Mahasiswa
+        DB::table('mahasiswa')->insert([
+            [
+                'nim' => '4.33.23.0.01',
+                'nama_mahasiswa' => 'ADRIANSYAH ALFARISYI',
+                'email' => 'adriansyah.alfarisyi@student.example.com',
+                'password' => Hash::make('adriansyah_alfarisyi'),
+                'no_hp' => '081234567891',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.02',
+                'nama_mahasiswa' => 'AGUNG HADI ASTANTO',
+                'email' => 'agung.hadi.astanto@student.example.com',
+                'password' => Hash::make('agung_hadi_astanto'),
+                'no_hp' => '081234567892',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.03',
+                'nama_mahasiswa' => 'AHMAD FARKHANI',
+                'email' => 'ahmad.farkhani@student.example.com',
+                'password' => Hash::make('ahmad_farkhani'),
+                'no_hp' => '081234567893',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.04',
+                'nama_mahasiswa' => 'ANINDHA CAHYA MULIA SALIM',
+                'email' => 'anindha.cahya.mulia.salim@student.example.com',
+                'password' => Hash::make('anindha_cahya_mulia_salim'),
+                'no_hp' => '081234567894',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.05',
+                'nama_mahasiswa' => 'ARIF KURNIA RAHMAN',
+                'email' => 'arif.kurnia.rahman@student.example.com',
+                'password' => Hash::make('arif_kurnia_rahman'),
+                'no_hp' => '081234567895',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.06',
+                'nama_mahasiswa' => 'ATHAYA PANDU MARENO',
+                'email' => 'athaya.pandu.mareno@student.example.com',
+                'password' => Hash::make('athaya_pandu_mareno'),
+                'no_hp' => '081234567896',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.07',
+                'nama_mahasiswa' => 'DANIEL ADI PRATAMA',
+                'email' => 'daniel.adi.pratama@student.example.com',
+                'password' => Hash::make('daniel_adi_pratama'),
+                'no_hp' => '081234567897',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.08',
+                'nama_mahasiswa' => 'DAVIN ALIFIANDA ADYTIA',
+                'email' => 'davin.alifianda.adytia@student.example.com',
+                'password' => Hash::make('davin_alifianda_adytia'),
+                'no_hp' => '081234567898',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.09',
+                'nama_mahasiswa' => 'FAJAR DWI FIRMANSYAH',
+                'email' => 'fajar.dwi.firmansyah@student.example.com',
+                'password' => Hash::make('fajar_dwi_firmansyah'),
+                'no_hp' => '081234567899',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.10',
+                'nama_mahasiswa' => 'FITRIANA NAYLA NOVIANTI',
+                'email' => 'fitriana.nayla.novianti@student.example.com',
+                'password' => Hash::make('fitriana_nayla_novianti'),
+                'no_hp' => '081234567900',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.11',
+                'nama_mahasiswa' => 'GILANG MAULANATA PRAMUDYA',
+                'email' => 'gilang.maulanata.pramudya@student.example.com',
+                'password' => Hash::make('gilang_maulanata_pramudya'),
+                'no_hp' => '081234567901',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.13',
+                'nama_mahasiswa' => 'ILHAM TARUPRASETYO',
+                'email' => 'ilham.taruprasetyo@student.example.com',
+                'password' => Hash::make('ilham_taruprasetyo'),
+                'no_hp' => '081234567902',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.14',
+                'nama_mahasiswa' => 'IRMA INNAYAH',
+                'email' => 'irma.innayah@student.example.com',
+                'password' => Hash::make('irma_innayah'),
+                'no_hp' => '081234567903',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.15',
+                'nama_mahasiswa' => 'KHILDA SALSABILA AZKA',
+                'email' => 'khilda.salsabila.azka@student.example.com',
+                'password' => Hash::make('khilda_salsabila_azka'),
+                'no_hp' => '081234567904',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.16',
+                'nama_mahasiswa' => 'MARVELLINA DEVI WURDHANING',
+                'email' => 'marvellina.devi.wurdhaning@student.example.com',
+                'password' => Hash::make('marvellina_devi_wurdhaning'),
+                'no_hp' => '081234567905',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.17',
+                'nama_mahasiswa' => 'MAULANA FAJAR ROHMANI',
+                'email' => 'maulana.fajar.rohmani@student.example.com',
+                'password' => Hash::make('maulana_fajar_rohmani'),
+                'no_hp' => '081234567906',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.18',
+                'nama_mahasiswa' => 'MILA ROSITA DEWI',
+                'email' => 'mila.rosita.dewi@student.example.com',
+                'password' => Hash::make('mila_rosita_dewi'),
+                'no_hp' => '081234567907',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.19',
+                'nama_mahasiswa' => 'MUHAMAD HAYDAR AYDIN ALHAMDANI',
+                'email' => 'muhamad.haydar.aydin.alhamdani@student.example.com',
+                'password' => Hash::make('muhamad_haydar_aydin_alhamdani'),
+                'no_hp' => '081234567908',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.20',
+                'nama_mahasiswa' => 'MUHAMMAD SYAUQI MAULANA ANANSYAH',
+                'email' => 'muhammad.syauqi.maulana.anansyah@student.example.com',
+                'password' => Hash::make('muhammad_syauqi_maulana_anansyah'),
+                'no_hp' => '081234567909',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.21',
+                'nama_mahasiswa' => 'MUHAMMAD ZAKIY FADHLULLAH AZHAR',
+                'email' => 'muhammad.zakiy.fadhlullah.azhar@student.example.com',
+                'password' => Hash::make('muhammad_zakiy_fadhlullah_azhar'),
+                'no_hp' => '081234567910',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.22',
+                'nama_mahasiswa' => 'RACHMAD YOGO DWIYANTO',
+                'email' => 'rachmad.yogo.dwiyanto@student.example.com',
+                'password' => Hash::make('rachmad_yogo_dwiyanto'),
+                'no_hp' => '081234567911',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.23',
+                'nama_mahasiswa' => 'RAFI ARTHAYANA PUTRA DERIZMA',
+                'email' => 'rafi.arthayana.putra.derizma@student.example.com',
+                'password' => Hash::make('rafi_arthayana_putra_derizma'),
+                'no_hp' => '081234567912',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nim' => '4.33.23.0.26',
+                'nama_mahasiswa' => 'TUBAGUS PRATAMA JULIANTO',
+                'email' => 'tubagus.pratama.julianto@student.example.com',
+                'password' => Hash::make('tubagus_pratama_julianto'),
+                'no_hp' => '081234567914',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ]);
+
+        // Admin
+        DB::table('admin')->insert([
+            'nip' => '9876543210',
+            'nama_admin' => 'Admin System',
+            'email' => 'system@example.com',
+            'password' => Hash::make('admin1'),
+            'no_hp' => '081234567892',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        // Ruang
+        DB::table('ruang')->insert([
+            [
+                'nama_ruang' => 'GKT 801',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 802',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 803',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 804',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 805',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 806',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 807',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 808',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 809',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 810',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'MST 201A',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'MST 201B',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'MST 201C',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'MST 303',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'MST 304',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'MST 305',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'MST 306',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'SA 204',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'SA 209',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab Multimedia',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab Pemrograman',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab Jaringan Komputer',
+                'keterangan' => '1',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ]);
+
+        // Kelas
+        DB::table('kelas')->insert([
+            [
+                'nama_kelas' => 'A',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_kelas' => 'B',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_kelas' => 'C',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ]);
+
+        // Angkatan
+        DB::table('angkatan')->insert([
+            [
+                'tahun_angkatan' => 1,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'tahun_angkatan' => 2,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'tahun_angkatan' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'tahun_angkatan' => 4,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ]);
+
+        // Tahun akademik
+        DB::table('tahun_akademik')->insert([
+            'tahun_ajaran' => 'Ganjil 2025/2026',
+            'status' => '1',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        // Jurusan
+        DB::table('jurusan')->insert([
+            'nama_jurusan' => 'Teknik Elektro',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        // Program studi
+        DB::table('program_studi')->insert([
+            'id_jurusan' => 1,
+            'nama_prodi' => 'D4 Teknologi Rekayasa Komputer',
+            'kode_prodi' => 'TI',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        // Jam awal
+        DB::table('jam_awal')->insert([
+            [
+                'nama_jam' => 1,
+                'keterangan' => '07:00-07:45',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 2,
+                'keterangan' => '07:45-08:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 3,
+                'keterangan' => '08:30-09:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 4,
+                'keterangan' => '09:35-10:20',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 5,
+                'keterangan' => '10:20-11:05',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 6,
+                'keterangan' => '11:05-11:50',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 7,
+                'keterangan' => '12:30-13:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 8,
+                'keterangan' => '13:15-14:00',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 9,
+                'keterangan' => '14:00-14:45',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 10,
+                'keterangan' => '14:45-15:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 11,
+                'keterangan' => '16:00-16:45',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 12,
+                'keterangan' => '16:45-17:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 13,
+                'keterangan' => '17:30-18:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 14,
+                'keterangan' => '18:45-19:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 15,
+                'keterangan' => '19:30-20:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 16,
+                'keterangan' => '20:15-21:00',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ]);
+
+        // Jam akhir
+        DB::table('jam_akhir')->insert([
+            [
+                'nama_jam' => 1,
+                'keterangan' => '07:00-07:45',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 2,
+                'keterangan' => '07:45-08:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 3,
+                'keterangan' => '08:30-09:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 4,
+                'keterangan' => '09:35-10:20',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 5,
+                'keterangan' => '10:20-11:05',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 6,
+                'keterangan' => '11:05-11:50',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 7,
+                'keterangan' => '12:30-13:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 8,
+                'keterangan' => '13:15-14:00',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 9,
+                'keterangan' => '14:00-14:45',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 10,
+                'keterangan' => '14:45-15:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 11,
+                'keterangan' => '16:00-16:45',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 12,
+                'keterangan' => '16:45-17:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 13,
+                'keterangan' => '17:30-18:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 14,
+                'keterangan' => '18:45-19:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 15,
+                'keterangan' => '19:30-20:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 16,
+                'keterangan' => '20:15-21:00',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ]);
+
+
     }
 }

@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\ProgramStudiController;
 use App\Http\Controllers\Api\RuangController;
 use App\Http\Controllers\Api\TahunAkademikController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 Route::apiResource('dosen', DosenController::class);
 Route::apiResource('mahasiswa', MahasiswaController::class);
@@ -34,3 +35,10 @@ Route::apiResource('enrollment-mahasiswa-kelas', EnrollmentMahasiswaKelasControl
 Route::apiResource('mata-kuliah', MataKuliahController::class);
 Route::apiResource('enrollment-all', EnrollmentMkMhsDsnRngController::class);
 Route::apiResource('jadwal', JadwalController::class);
+
+// login
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->group(function () {
+  Route::post('/logout', [AuthController::class, 'logout']);
+  Route::get('/user', [AuthController::class, 'user']);
+});
