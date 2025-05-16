@@ -7,7 +7,6 @@ use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -20,7 +19,6 @@ class AuthController extends Controller
         ]);
 
         $user = null;
-        $token = null;
 
         switch ($request->role) {
             case 'admin':
@@ -35,25 +33,32 @@ class AuthController extends Controller
         }
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'username' => ['The provided credentials are incorrect.'],
-            ]);
+            return back()->with('error', 'The provided credentials are incorrect.')->withInput();
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return back()->with('error', 'The provided credentials are incorrect.')->withInput();
+        }
 
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user,
-        ]);
+        $request->session()->regenerate();
+
+        $request->session()->put('user', $user);
+        $request->session()->put('role', $request->role);
+
+        if ($request->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($request->role === 'dosen') {
+            return redirect()->route('dosen.dashboard');
+        } else {
+            return redirect()->route('mahasiswa.dashboard');
+        }
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json(['message' => 'Logged out successfully']);
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('/');
     }
 
     public function user(Request $request)
