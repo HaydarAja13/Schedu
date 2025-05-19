@@ -1,8 +1,9 @@
 @props(['role'])
-
-<div class="h-screen p-4">
+<div class="h-screen md:p-4" x-show="open" x-transition>
+	<div class="fixed inset-0 z-10 bg-black/70 md:hidden"></div>
 	<div
-		class="relative flex flex-col h-full justify-between border-e rounded-xl border-gray-100 bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] w-64">
+		class="absolute md:relative z-20 flex flex-col h-full justify-between md:border-e md:rounded-xl md:border-gray-100 bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] w-64"
+		@click.away="window.innerWidth < 768 && (open = false)">
 		<img src="{{ asset('images/sidebar-background.svg') }}" alt=""
 			class="absolute inset-0 w-full h-full object-cover object-top z-10 rounded-xl ">
 		<img src="{{ asset('images/sidebar-background.svg') }}" alt=""
@@ -14,7 +15,7 @@
 
 			<p class="text-white text-xl mt-4 font-semibold">Menu</p>
 			<hr class="h-0.5 mt-3 bg-[#6317DA] border-none">
-			<div class="overflow-y-scroll h-84 [&::-webkit-scrollbar]:w-0 ">
+			<div class="overflow-y-scroll md:h-84 [&::-webkit-scrollbar]:w-0 ">
 				<ul class="mt-6 space-y-2">
 					<x-sidebar.single-nav-link :title="'Dashboard'" :href="'/' . $role . '/dashboard'"
 						:active="request()->is($role.'/dashboard')">
@@ -62,12 +63,12 @@
 						</x-slot:icon>
 					</x-sidebar.nested-nav-link>
 
-					<x-sidebar.single-nav-link :title="'Jadwal'" :href="'/' . $role . '/schedule'" :active="request()->is($role.'/schedule')">
-								')">
+					<x-sidebar.single-nav-link :title="'Jadwal'" :href="'/' . $role . '/schedule'"
+						:active="request()->is($role.'/schedule')">
 						<x-slot:icon>
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
 								<path fill-rule="evenodd"
-									d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
+									d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3 3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
 									clip-rule="evenodd" />
 							</svg>
 						</x-slot:icon>

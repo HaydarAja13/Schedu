@@ -11,7 +11,7 @@
   <title>Schedu</title>
 </head>
 
-<body class="h-full">
+<body class="h-full bg-[#F7F7FF]">
   {{ $slot }}
 </body>
 

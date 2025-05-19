@@ -1,6 +1,13 @@
 <div class="bg-white w-full h-fit mt-4 rounded-xl shadow-sm p-4">
-    <div class="flex w-full items-center justify-end">
-        <div class="flex items-center justify-centern gap-x-6">
+    <div class="flex w-full items-center justify-between md:justify-end">
+        <button type="button" @click="open = ! open"
+            class="size-10 border-1 border-gray-200 flex md:hidden items-center justify-center rounded-xl focus:ring  focus:ring-gray-400 ">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+            </svg>
+        </button>
+        <div class="flex items-center justify-center gap-x-6">
             <div class="bg-gray-200 text-gray-500 rounded-full p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-6">

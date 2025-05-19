@@ -14,7 +14,7 @@
                 </div>
             </div>
             {{-- right --}}
-            <x-banner></x-banner>
+            <x-login.banner></x-login.banner>
         </div>
     </div>
 </x-layout>
