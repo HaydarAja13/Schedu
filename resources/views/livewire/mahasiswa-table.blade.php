@@ -1,10 +1,12 @@
 <div x-data="{ selectedRow: null }">
+    {{-- <x-alert></x-alert> --}}
     <x-table-properties :subtitle="'Data Mahasiswa'"></x-table-properties>
     <div class="grid grid-cols-4 items-center justify-start gap-x-6 size-full">
-        <div :class="selectedRow ? 'overflow-x-auto overflow-y-auto bg-white rounded-xl col-span-3' : 'overflow-x-auto overflow-y-auto bg-white rounded-xl col-span-4'"
+        <div :class="selectedRow ? 'overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-3' : 'overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-4'"
             class="transition-all duration-500" style="max-height: calc(100vh - 220px);">
             <table class="min-w-full divide-y-2 divide-gray-200" @click.away="selectedRow = null">
-                <thead class="ltr:text-left rtl:text-right sticky top-0 bg-gray-100 text-gray-700 text-xs uppercase z-10">
+                <thead
+                    class="ltr:text-left rtl:text-right sticky top-0 bg-gray-100 border-0 text-gray-700 text-xs uppercase z-10">
                     <tr class="*:font-medium *:text-gray-900">
                         <th class="px-3 py-2 whitespace-nowrap">No</th>
                         <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer"
@@ -31,11 +33,17 @@
                             'cursor-pointer transition-all duration-200 hover:bg-gray-100',
                             selectedRow === '{{ $data->id }}' ? 'border-l-8 border-l-indigo-600 scale-105 z-10 shadow-xl shadow-indigo-200' : ''
                         ]" @click="selectedRow = '{{ $data->id }}'; $wire.selectMahasiswa({{ $data->id }})">
-                        <td class="px-3 py-2 whitespace-nowrap">{{ $no++ }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap font-medium">{{ $data->nama_mahasiswa }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap">{{ $data->nim }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-[#8C4AF2] underline">{{ $data->email }}</td>
-                        <td :class="{ 'hidden': selectedRow }" class="px-3 py-2 whitespace-nowrap">{{ $data->no_hp }}
+                        <td class="py-3 whitespace-nowrap text-sm" :class="selectedRow === '{{ $data->id }}' ? 'pl-10' : 'px-3'">{{ $no++ }}</td>
+                        <td class="px-3 py-3 whitespace-nowrap text-sm font-medium ">
+                            <div class="flex items-center gap-x-4">
+                                <img src="https://avatar.iran.liara.run/public?seed={{ $data->id }}" alt="" class="size-10">
+                                {{ $data->nama_mahasiswa }}
+                            </div>
+                        </td>
+                        <td class="px-3 py-3 whitespace-nowrap text-sm">{{ $data->nim }}</td>
+                        <td class="px-3 py-3 whitespace-nowrap text-sm text-[#8C4AF2] underline">{{ $data->email }}</td>
+                        <td :class="{ 'hidden': selectedRow }" class="px-3 py-3 whitespace-nowrap text-sm">{{
+                            $data->no_hp }}
                         </td>
                     </tr>
                     @endforeach
@@ -43,7 +51,7 @@
             </table>
 
             <div class="flex items-center justify-between w-full sticky bottom-0 p-4 bg-white">
-                <div class="">
+                <div class="flex gap-x-4 items-center">
                     <label for="country" class="block text-sm/6 font-medium text-gray-900">Per Page</label>
                     <div class="mt-2 grid grid-cols-1">
                         <select wire:model.live='perPage' id="country" name="country" autocomplete="country-name"
@@ -62,7 +70,7 @@
                         </svg>
                     </div>
                 </div>
-                <div class="text-sm text-gray-800 font-semibold mt-2">
+                <div class="text-sm text-gray-800 font-light mt-2">
                     Show
                     {{ $mahasiswa->firstItem() ?? 0 }}
                     to
@@ -152,36 +160,35 @@
             </div>
 
         </div>
-        <div class="bg-white size-full rounded-xl transition-all duration-500 border-2 border-[#6B56F6]"
+        <div class="bg-white size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
             :class="{ 'hidden': !selectedRow }">
-            <div class="size-full flex flex-col justify-start p-4">
+            <div class="size-full flex flex-col justify-start p-4 h-full">
                 <img src="https://placehold.co/50" alt="" class="rounded-full mb-2 size-32 mx-auto">
                 <p class="text-center mb-2 font-semibold text-sm">
                     {{ $selectedMahasiswa?->nama_mahasiswa ?? '-' }}
                 </p>
                 <span
                     class="bg-[#6B56F6]/25 w-fit mx-auto text-[#6B56F6] text-xs font-medium px-2.5 py-0.5 rounded-full border border-[#6B56F6]">Mahasiswa</span>
-                <div class="grid gap-y-2 mt-2">
+                <div class="grid gap-y-2 mt-2 flex-grow">
                     <div>
                         <p class="font-semibold text-sm">NIM</p>
                         <p class="text-sm">{{ \Illuminate\Support\Str::limit($selectedMahasiswa?->nim ?? '-', 30) }}</p>
                     </div>
                     <div>
                         <p class="font-semibold text-sm">Email</p>
-                        <p class="text-sm">{{ \Illuminate\Support\Str::limit($selectedMahasiswa?->email ?? '-', 30) }}
-                        </p>
+                        <p class="text-sm">{{ \Illuminate\Support\Str::limit($selectedMahasiswa?->email ?? '-', 30) }}</p>
                     </div>
                     <div>
                         <p class="font-semibold text-sm">No Hp</p>
-                        <p class="text-sm">{{ \Illuminate\Support\Str::limit($selectedMahasiswa?->no_hp ?? '-', 30) }}
-                        </p>
+                        <p class="text-sm">{{ \Illuminate\Support\Str::limit($selectedMahasiswa?->no_hp ?? '-', 30) }}</p>
                     </div>
-                    <div class="my-2"></div>
-                    <a class="inline-block rounded-xl  bg-gradient-to-tr from-[#8C4AF2] to-[#6B56F6] px-12 py-2 text-sm text-center font-medium text-white "
+                </div>
+                <div class="mt-auto flex flex-col gap-2">
+                    <a class="inline-block rounded-xl bg-gradient-to-tr from-[#8C4AF2] to-[#6B56F6] px-12 py-2 text-sm text-center font-medium text-white"
                         href="#">
                         Ubah Data
                     </a>
-                    <a class="inline-block rounded-xl border border-red-600 px-12 py-2 text-sm text-center font-medium text-white bg-red-600 "
+                    <a class="inline-block rounded-xl border border-red-600 px-12 py-2 text-sm text-center font-medium text-white bg-red-600"
                         href="#">
                         Hapus Data
                     </a>
