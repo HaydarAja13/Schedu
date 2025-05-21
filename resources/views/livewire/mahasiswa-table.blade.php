@@ -4,7 +4,7 @@
         <div :class="selectedRow ? 'overflow-x-auto overflow-y-auto bg-white rounded-xl col-span-3' : 'overflow-x-auto overflow-y-auto bg-white rounded-xl col-span-4'"
             class="transition-all duration-500" style="max-height: calc(100vh - 220px);">
             <table class="min-w-full divide-y-2 divide-gray-200" @click.away="selectedRow = null">
-                <thead class="ltr:text-left rtl:text-right sticky top-0 bg-white z-10 shadow-sm">
+                <thead class="ltr:text-left rtl:text-right sticky top-0 bg-gray-100 text-gray-700 text-xs uppercase z-10">
                     <tr class="*:font-medium *:text-gray-900">
                         <th class="px-3 py-2 whitespace-nowrap">No</th>
                         <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer"
@@ -22,19 +22,19 @@
                     </tr>
                 </thead>
 
-                <tbody class="divide-y divide-gray-200">
+                <tbody class="divide-y divide-gray-100">
                     @php
                     $no = 1;
                     @endphp
                     @foreach ($mahasiswa as $data)
                     <tr :class="[
-                            'cursor-pointer  *:first:font-medium transition-all duration-200 hover:bg-gray-200',
-                            selectedRow === '{{ $data->id }}' ? 'border-l-4 border-l-indigo-600 scale-105 z-10 shadow-xl shadow-indigo-200' : ''
+                            'cursor-pointer transition-all duration-200 hover:bg-gray-100',
+                            selectedRow === '{{ $data->id }}' ? 'border-l-8 border-l-indigo-600 scale-105 z-10 shadow-xl shadow-indigo-200' : ''
                         ]" @click="selectedRow = '{{ $data->id }}'; $wire.selectMahasiswa({{ $data->id }})">
                         <td class="px-3 py-2 whitespace-nowrap">{{ $no++ }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap">{{ $data->nama_mahasiswa }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap font-medium">{{ $data->nama_mahasiswa }}</td>
                         <td class="px-3 py-2 whitespace-nowrap">{{ $data->nim }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-[#8C4AF2]">{{ $data->email }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-[#8C4AF2] underline">{{ $data->email }}</td>
                         <td :class="{ 'hidden': selectedRow }" class="px-3 py-2 whitespace-nowrap">{{ $data->no_hp }}
                         </td>
                     </tr>
