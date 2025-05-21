@@ -3,11 +3,11 @@
     'description' => 'Deskripsi',
     'icon' => null,
     'class' => '',
-    'highlightNumber' => false
+    'highlightNumber' => false,
 ])
 
 <a 
-    href="#" 
+    {{ $attributes }}
     class="block p-4 bg-white border border-[#E0E7FF] rounded-lg shadow-sm hover:bg-[#F5F7FF] {{ $class }}"
 >
     @if($icon)

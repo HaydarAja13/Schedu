@@ -13,7 +13,7 @@
                         clip-rule="evenodd" />
                 </svg>
             </span>
-        </summary>
+        </summary>  
         <ul class="mt-2  px-4">
             @foreach($children as $child)
             <li>

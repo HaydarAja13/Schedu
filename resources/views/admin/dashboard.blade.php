@@ -13,6 +13,7 @@
             description="{{ $jumlahMahasiswa }} mahasiswa aktif"
             icon="fas fa-book"
             highlightNumber="true"
+            href="{{ route('admin.mahasiswa') }}"
           />
           
           <!-- Card 2: Dosen -->
@@ -21,6 +22,7 @@
             description="{{$jumlahDosen}} dosen aktif"
             icon="fas fa-user-tie"
             highlightNumber="true"
+            href="{{ route('admin.dosen') }}"
           />
           
           <!-- Card 3: Ruang -->
@@ -29,6 +31,7 @@
             description="{{$jumlahRuang}} ruang tersedia"
             icon="fas fa-door-open"
             highlightNumber="true"
+            href="{{ route('admin.ruang') }}"
           />
           
           <!-- Card 4: Kelas -->
@@ -37,6 +40,7 @@
             description="{{$jumlahMataKuliah}} mata kuliah tersedia"
             icon="fas fa-chalkboard"
             highlightNumber="true"
+            href="{{ route('admin.mata-kuliah') }}"
           />
         </div>
 

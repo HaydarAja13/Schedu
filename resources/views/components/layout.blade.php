@@ -8,13 +8,12 @@
   @vite('resources/css/app.css', 'resources/js/app.js')
   {{-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
   <link rel="shortcut icon" href="{{ asset('images/schedu-icon.svg') }}" type="image/x-icon">
-  @livewireStyles
+
   <title>Schedu</title>
 </head>
 
 <body class="h-full bg-[#F7F7FF]">
   {{ $slot }}
-  @livewireScripts
 </body>
 
 </html>

@@ -1,4 +1,4 @@
-<x-template :role="'admin'" :title="'Jadwal'">
+<x-template :role="'admin'" :title="'Ruang'">
   <x-slot:content>
     
   </x-slot:content>

@@ -37,6 +37,18 @@ Route::get('/admin/schedule', function () {
     return view('admin.schedule');
 })->middleware('role:admin')->name('admin.schedule');
 
+Route::get('/admin/dosen', function () {
+    return view('admin.dosen');
+})->middleware('role:admin')->name('admin.dosen');
+
+Route::get('/admin/ruang', function () {
+    return view('admin.ruang');
+})->middleware('role:admin')->name('admin.ruang');
+
+Route::get('/admin/mata-kuliah', function () {
+    return view('admin.mata-kuliah');
+})->middleware('role:admin')->name('admin.mata-kuliah');
+
 Route::get('/admin/profile', function () {
     return view('admin.profile');
 })->middleware('role:admin')->name('admin.profile');
