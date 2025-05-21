@@ -1,6 +1,10 @@
 <?php
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
+use App\Models\Dosen;
+use App\Models\Mahasiswa;
+use App\Models\MataKuliah;
+use App\Models\Ruang;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -13,7 +17,16 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // admin
 Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
+    $jumlahMahasiswa = Mahasiswa::count();
+    $jumlahDosen = Dosen::count();
+    $jumlahRuang = Ruang::count();
+    $jumlahMataKuliah = MataKuliah::count();
+    return view('admin.dashboard', compact(
+        'jumlahMahasiswa',
+        'jumlahDosen',
+        'jumlahRuang',
+        'jumlahMataKuliah'
+    ));
 })->middleware('role:admin')->name('admin.dashboard');
 
 Route::get('/admin/schedule', function () {

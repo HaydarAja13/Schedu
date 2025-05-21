@@ -1,9 +1,9 @@
-{{-- resources/views/components/dashboard/simple-card.blade.php --}}
 @props([
     'title' => 'Judul',
     'description' => 'Deskripsi',
     'icon' => null,
     'class' => '',
+    'highlightNumber' => false
 ])
 
 <a 
@@ -18,5 +18,14 @@
     @else
         <h3 class="text-lg font-semibold text-[#6B56F6] mb-2">{{ $title }}</h3>
     @endif
-    <p class="text-gray-600 ml-3">{{ $description }}</p>
+    
+    @if($highlightNumber)
+        <p class="text-gray-600 ml-3">
+            @php
+                echo preg_replace('/(\d+)/', '<strong>$1</strong>', $description);
+            @endphp
+        </p>
+    @else
+        <p class="text-gray-600 ml-3">{{ $description }}</p>
+    @endif
 </a>
