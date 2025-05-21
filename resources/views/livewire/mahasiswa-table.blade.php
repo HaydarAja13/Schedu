@@ -2,7 +2,7 @@
     <x-table-properties :subtitle="'Data Mahasiswa'"></x-table-properties>
     <div class="grid grid-cols-4 items-center justify-start gap-x-6 size-full">
         <div :class="selectedRow ? 'overflow-x-auto overflow-y-auto bg-white rounded-xl col-span-3' : 'overflow-x-auto overflow-y-auto bg-white rounded-xl col-span-4'"
-            class="transition-all duration-500" style="max-height: calc(100vh - 250px);">
+            class="transition-all duration-500" style="max-height: calc(100vh - 220px);">
             <table class="min-w-full divide-y-2 divide-gray-200" @click.away="selectedRow = null">
                 <thead class="ltr:text-left rtl:text-right sticky top-0 bg-white z-10 shadow-sm">
                     <tr class="*:font-medium *:text-gray-900">
@@ -28,13 +28,13 @@
                     @endphp
                     @foreach ($mahasiswa as $data)
                     <tr :class="[
-                            'cursor-pointer *:text-gray-900 *:first:font-medium transition-all duration-200 hover:bg-gray-200',
+                            'cursor-pointer  *:first:font-medium transition-all duration-200 hover:bg-gray-200',
                             selectedRow === '{{ $data->id }}' ? 'border-l-4 border-l-indigo-600 scale-105 z-10 shadow-xl shadow-indigo-200' : ''
                         ]" @click="selectedRow = '{{ $data->id }}'; $wire.selectMahasiswa({{ $data->id }})">
                         <td class="px-3 py-2 whitespace-nowrap">{{ $no++ }}</td>
                         <td class="px-3 py-2 whitespace-nowrap">{{ $data->nama_mahasiswa }}</td>
                         <td class="px-3 py-2 whitespace-nowrap">{{ $data->nim }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap">{{ $data->email }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-[#8C4AF2]">{{ $data->email }}</td>
                         <td :class="{ 'hidden': selectedRow }" class="px-3 py-2 whitespace-nowrap">{{ $data->no_hp }}
                         </td>
                     </tr>
@@ -73,11 +73,11 @@
                 <ul class="flex justify-end gap-1 text-gray-900">
                     <li>
                         <button type="button"
-                            class="grid size-8 place-content-center rounded transition-colors hover:bg-gray-50 rtl:rotate-180"
+                            class="grid size-8 place-content-center rounded text-gray-600 hover:text-purple-600 hover:scale-125 transition-all duration-300 rtl:rotate-180"
                             aria-label="Previous page" wire:click="previousPage" @if ($mahasiswa->onFirstPage())
                             disabled
                             @endif>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                 stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                             </svg>
@@ -110,7 +110,7 @@
                         @endif
 
                         @for ($page = $start; $page <= $end; $page++) @if ($page==$currentPage) <li
-                            class="block size-8 rounded-full border border-indigo-600 bg-indigo-600 text-center text-sm/8 font-medium text-white">
+                            class="block size-8 rounded-full bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] text-center text-sm/8 font-medium text-white">
                             {{ $page }}
                             </li>
                             @else
@@ -138,11 +138,11 @@
 
                                 <li>
                                     <button type="button"
-                                        class="grid size-8 place-content-center rounded transition-colors hover:bg-gray-50 rtl:rotate-180"
+                                        class="grid size-8 place-content-center rounded text-gray-600 hover:text-purple-600 hover:scale-125 transition-all duration-300 rtl:rotate-180"
                                         aria-label="Next page" wire:click="nextPage" @if ($mahasiswa->currentPage() ==
                                         $mahasiswa->lastPage()) disabled @endif>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            stroke-width="2" stroke="currentColor" class="size-6">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                                         </svg>
