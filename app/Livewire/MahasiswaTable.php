@@ -41,6 +41,11 @@ class MahasiswaTable extends Component
             : null;
     }
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         return view('livewire.mahasiswa-table', [

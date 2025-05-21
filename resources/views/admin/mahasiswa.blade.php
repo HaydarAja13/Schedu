@@ -1,6 +1,6 @@
 <x-template :role="'admin'" :title="'Data Mahasiswa'">
     <x-slot:content>
-        <div class="my-2">
+        <div class="">
             <livewire:mahasiswa-table></livewire:mahasiswa-table>
         </div>
     </x-slot:content>
