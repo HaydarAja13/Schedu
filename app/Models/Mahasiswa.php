@@ -26,6 +26,10 @@ class Mahasiswa extends Model
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function scopeSearch($query, $value){
+        return $query->where('nama_mahasiswa', 'like', '%' . $value . '%')->orWhere('nim', 'like', '%'. $value. '%')->orWhere('email', 'like', '%'. $value. '%');
+    }
     public function enrollmentMahasiswaKelas()
     {
         return $this->hasMany(EnrollmentMahasiswaKelas::class, 'id_mahasiswa');

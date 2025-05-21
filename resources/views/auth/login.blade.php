@@ -7,7 +7,7 @@
             {{-- left --}}
             <div class="h-full rounded-lg bg-white w-full lg:w-1/2 z-10">
                 <div class="flex flex-col justify-between items-start h-full">
-                    <div class="m-4 w-full">
+                    <div class="m-4 size-full grid items-center">
                         <x-form.login></x-form.login>
                     </div>
                     <p class="text-sm md:text-md absolute bottom-8 left-10"><b>2024</b> © all right reserved. Teknologi Rekayasa Komputer.</p>

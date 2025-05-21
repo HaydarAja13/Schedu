@@ -29,6 +29,10 @@ Route::get('/admin/dashboard', function () {
     ));
 })->middleware('role:admin')->name('admin.dashboard');
 
+Route::get('/admin/mahasiswa', function () {
+    return view('admin.mahasiswa');
+})->middleware('role:admin')->name('admin.mahasiswa');
+
 Route::get('/admin/schedule', function () {
     return view('admin.schedule');
 })->middleware('role:admin')->name('admin.schedule');
