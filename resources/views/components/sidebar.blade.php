@@ -1,8 +1,8 @@
 @props(['role'])
 <div class="h-screen md:p-4" x-show="open" x-transition>
-	<div class="fixed inset-0 z-10 bg-black/70 md:hidden"></div>
+	<div class="fixed inset-0 z-20 bg-black/70 md:hidden"></div>
 	<div
-		class="absolute md:relative z-20 flex flex-col h-full justify-between md:border-e md:rounded-xl md:border-gray-100 bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] w-64"
+		class="absolute md:relative z-30 flex flex-col h-full justify-between md:border-e md:rounded-xl md:border-gray-100 bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] w-64"
 		@click.away="window.innerWidth < 768 && (open = false)">
 		<img src="{{ asset('images/sidebar-background.svg') }}" alt=""
 			class="absolute inset-0 w-full h-full object-cover object-top z-10 rounded-xl ">
@@ -29,12 +29,12 @@
 					</x-sidebar.single-nav-link>
 
 					<x-sidebar.nested-nav-link :title="'Data'" :children="[
-										['label' => 'Dosen', 'href' => '#'], 
-										['label' => 'Mahasiswa', 'href' => '#'],
-										['label' => 'Prodi', 'href' => '#'],
-										['label' => 'Mata kuliah', 'href' => '#'],
-										['label' => 'Ruang', 'href' => '#'],
-										['label' => 'Kelas', 'href' => '#'],
+										['label' => 'Dosen', 'href' => 'dosen'], 
+										['label' => 'Mahasiswa', 'href' => 'mahasiswa'],
+										['label' => 'Prodi', 'href' => 'program-studi'],
+										['label' => 'Mata kuliah', 'href' => 'mata-kuliah'],
+										['label' => 'Ruang', 'href' => 'ruang'],
+										['label' => 'Kelas', 'href' => 'kelas'],
 										]">
 						<x-slot:icon>
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
