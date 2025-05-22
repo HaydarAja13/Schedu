@@ -19,7 +19,8 @@ class MahasiswaTable extends Component
     #[Url(history: true)]
     public $sortDirection = 'desc';
 
-    public function setSortBy($field){
+    public function setSortBy($field)
+    {
         if ($this->sortBy === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
             return;
