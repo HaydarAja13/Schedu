@@ -2,6 +2,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DosenController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -19,6 +20,22 @@ Route::get('/admin/dashboard', function () {
 Route::get('/admin/mahasiswa', function () {
     return view('admin.mahasiswa');
 })->middleware('role:admin')->name('admin.mahasiswa');
+
+//admin ke halaman dosen
+Route::get('/admin/dosen', function () {
+    return view('admin.dosen');
+})->middleware('role:admin')->name('admin.dosen');
+Route::get('/admin/dosenCreate', [DosenController::class, 'create'])->middleware('role:admin')->name('admin.dosenCreate');
+Route::post('/admin/dosenCreate', [DosenController::class, 'store'])->middleware('role:admin')->name('admin.dosen.store');
+Route::get('/admin/dosen/{id}/edit', [DosenController::class, 'edit'])->middleware('role:admin')->name('admin.dosenEdit');
+Route::put('/admin/dosen/{id}', [DosenController::class, 'update'])->middleware('role:admin')->name('admin.dosen.update');
+Route::delete('/admin/dosen/{id}', [DosenController::class, 'destroy'])->middleware('role:admin')->name('admin.dosen.destroy');
+
+//end admin ke halaman dosen 
+
+Route::get('/admin/mata-kuliah', function () {
+    return view('admin.mata-kuliah');
+})->middleware('role:admin')->name('admin.mata-kuliah');
 
 Route::get('/admin/schedule', function () {
     return view('admin.schedule');

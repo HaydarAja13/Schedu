@@ -1,7 +1,7 @@
-<x-template :role="'admin'" :title="'Data Mahasiswa'">
+<x-template :role="'admin'" :title="'Data   Mata Kuliah'">
     <x-slot:content>
         <div class="">
-            <livewire:mahasiswa-table></livewire:mahasiswa-table>
+            <livewire:matkul-table></livewire:matkul-table>
         </div>
     </x-slot:content>
 </x-template>

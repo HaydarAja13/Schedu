@@ -16,4 +16,9 @@ class MataKuliah extends Model
         'id_ruang',
         'jenis'
     ];
+
+    public function scopeSearch($query, $value)
+    {
+        return $query->where('nama_dosen', 'like', '%' . $value . '%')->orWhere('nip', 'like', '%'. $value. '%')->orWhere('email', 'like', '%'. $value. '%');
+    }
 }

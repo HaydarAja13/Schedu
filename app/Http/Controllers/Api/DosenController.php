@@ -54,7 +54,7 @@ class DosenController extends Controller
         ]);
 
         $data->update([
-            'nip' => $request->nip->nip ?? $data->nip,
+            'nip' => $request->nip ?? $data->nip,
             'nama_dosen' => $request->nama_dosen ?? $data->nama_dosen,
             'email' => $request->email ?? $data->email,
             'password' => $request->password ? bcrypt($request->password) : $data->password,
