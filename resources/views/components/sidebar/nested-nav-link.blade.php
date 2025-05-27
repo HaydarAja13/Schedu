@@ -1,3 +1,5 @@
+
+@props(['active' => false, 'title', 'children', 'role' => null])
 <li>
     <details class="group [&_summary::-webkit-details-marker]:hidden">
         <summary
@@ -13,12 +15,13 @@
                         clip-rule="evenodd" />
                 </svg>
             </span>
-        </summary>  
+        </summary>
         <ul class="mt-2  px-4">
             @foreach($children as $child)
             <li>
-                <a href="{{ $child['href'] ?? '#' }}"
-                    class="block rounded-lg px-4 py-2 text-base font-normal- text-white hover:bg-gray-100 hover:text-[#6B56F6]">
+                <a href="{{ url(($role ? $role . '/' : '') . ($child['href'] ?? '#')) }}"
+                    class="block rounded-lg px-4 py-2 my-2 text-base
+                        {{ request()->is(($role ? $role . '/' : '') . $child['href']) ? 'text-[#6B56F6] font-bold bg-white' : 'text-white hover:bg-gray-100 hover:text-[#6B56F6]' }}">
                     {{ $child['label'] }}
                 </a>
             </li>

@@ -28,7 +28,7 @@
 						</x-slot:icon>
 					</x-sidebar.single-nav-link>
 
-					<x-sidebar.nested-nav-link :title="'Data'" :children="[
+					<x-sidebar.nested-nav-link :title="'Data'" :role="$role" :children="[
 										['label' => 'Dosen', 'href' => 'dosen'], 
 										['label' => 'Mahasiswa', 'href' => 'mahasiswa'],
 										['label' => 'Prodi', 'href' => 'program-studi'],
