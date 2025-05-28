@@ -13,4 +13,8 @@ class Ruang extends Model
         'nama_ruang',
         'keterangan',
     ];
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('nama_ruang', 'li ke', '%' . $search . '%');
+    }   
 }

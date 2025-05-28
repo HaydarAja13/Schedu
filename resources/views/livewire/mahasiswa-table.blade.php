@@ -1,5 +1,5 @@
 <div x-data="{ selectedRow: null }">
-    <x-table-properties :subtitle="'Data Mahasiswa'"></x-table-properties>
+    <x-table-properties :subtitle="'Data Mahasiswa'" link="'/mahasiswa"></x-table-properties>
     <div class="grid grid-cols-4 items-center justify-start gap-x-6 size-full">
         <div :class="selectedRow ? 'overflow-x-auto overflow-y-auto bg-white rounded-xl col-span-3' : 'overflow-x-auto overflow-y-auto bg-white rounded-xl col-span-4'"
             class="transition-all duration-500" style="max-height: calc(100vh - 250px);">

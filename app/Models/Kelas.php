@@ -16,4 +16,9 @@ class Kelas extends Model
     {
         return $this->hasMany(TahunAkademik::class, 'id_kelas');
     }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('nama_kelas', 'like', "%{$search}%");
+    }
 }

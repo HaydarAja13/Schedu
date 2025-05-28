@@ -1,3 +1,4 @@
+
 <div class="flex items-center justify-between mb-4">
     <p class="text-sm text-gray-500">{{ $subtitle }}</p>
     <div class="flex items-center justify-center gap-x-8">
@@ -13,7 +14,7 @@
                 placeholder="Cari...">
         </div>
         <a class="inline-block rounded-lg bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] px-4 py-2.5 text-sm font-medium text-white hover:bg-gradient-to-bl hover:from-[#7c3bdd] hover:to-[#6955e8]"
-            href="#">
+            href="{{ $link }}">
             <div class="flex items-center justify-center gap-x-2">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                     stroke="currentColor" class="size-4">

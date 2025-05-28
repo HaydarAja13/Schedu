@@ -14,6 +14,8 @@ class RuangController extends Controller
     public function index()
     {
         return response()->json(Ruang::all());
+        // $ruang = Ruang::all();
+        // return view('admin.ruang.index', compact('ruang'));
     }
 
     /**
@@ -31,7 +33,12 @@ class RuangController extends Controller
             'keterangan' => $request->keterangan,
         ]);
 
-        return response()->json($data, 201);
+        // return response()->json($data, 201);
+        return redirect()->route('admin.ruang.index')->with('success', 'Ruang created successfully.');
+    }
+    function create()
+    {
+        return view('admin.ruang.create');
     }
 
     /**
@@ -60,7 +67,13 @@ class RuangController extends Controller
             'keterangan' => $request->keterangan ?? $data->keterangan,
         ]);
 
-        return response()->json($data);
+        // return response()->json($data);
+        return redirect()->route('admin.ruang.index')->with('success', 'Ruang updated successfully.');
+    }
+    function edit(string $id)
+    {
+        $data = Ruang::findOrFail($id);
+        return view('admin.ruang.edit', compact('data'));
     }
 
     /**
@@ -70,6 +83,7 @@ class RuangController extends Controller
     {
         $data = Ruang::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Ruang deleted successfully']);
+        // return response()->json(['message' => 'Ruang deleted successfully']);
+        return redirect()->route('admin.ruang.index')->with('success', 'Ruang deleted successfully.');
     }
 }
