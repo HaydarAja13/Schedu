@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string("password");
             $table->string("no_hp", 15)->unique();
             $table->string('foto_profil')->nullable();
-
             $table->rememberToken();
             $table->timestamps();
         });
