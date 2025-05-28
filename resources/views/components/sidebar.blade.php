@@ -1,51 +1,32 @@
 @props(['role'])
+<div class="h-screen md:p-4" x-show="open" x-transition>
+	<div class="fixed inset-0 z-20 bg-black/70 md:hidden"></div>
+	<div
+		class="absolute md:relative z-30 flex flex-col h-full justify-between md:border-e md:rounded-xl md:border-gray-100 bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] w-64"
+		@click.away="window.innerWidth < 768 && (open = false)">
+		<img src="{{ asset('images/sidebar-background.svg') }}" alt=""
+			class="absolute inset-0 w-full h-full object-cover object-top z-10 rounded-xl ">
+		<img src="{{ asset('images/sidebar-background.svg') }}" alt=""
+			class="absolute inset-0 w-full h-full object-cover object-bottom z-10 rounded-xl ">
+		<div class="relative px-4 py-6 z-10">
+			<span class="grid place-content-center ">
+				<img src="{{ asset('images/schedu-logo-white.svg') }}" alt="" class="h-12">
+			</span>
 
-{{-- Container utama sidebar --}}
-{{-- Class `fixed` dan `top-0 left-0` untuk membuat sidebar tetap di tempat saat halaman di-scroll. --}}
-{{-- `h-screen` dan `z-30` sudah benar. `md:p-4` akan memberikan padding di desktop. --}}
-<div class="fixed top-0 left-0 h-screen z-30 w-64 md:p-4" x-show="open" x-transition>
-    {{-- Overlay untuk mobile (sudah benar) --}}
-    <div class="fixed inset-0 z-20 bg-black/70 md:hidden" @click="open = false"></div>
-
-    {{-- Konten Sidebar yang sebenarnya --}}
-    {{-- Ini adalah flex container utama yang mengisi tinggi penuh parent fixed. --}}
-    {{-- `justify-between` akan mendorong header dan footer ke ujung, dan menu di tengah. --}}
-    <div class="relative flex flex-col h-full md:border-e md:rounded-xl md:border-gray-100 bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] w-full"> {{-- w-full karena parent-nya sudah 64 --}}
-
-        {{-- Background Images --}}
-        {{-- Posisi absolute dan z-0 sudah benar, akan di belakang konten. --}}
-        <img src="{{ asset('images/sidebar-background.svg') }}" alt="Background Top"
-            class="absolute top-0 left-0 w-full h-1/2 object-cover object-top rounded-xl z-0">
-        <img src="{{ asset('images/sidebar-background.svg') }}" alt="Background Bottom"
-            class="absolute bottom-0 left-0 w-full h-1/2 object-cover object-bottom rounded-xl z-0">
-
-        {{-- HEADER SIDEBAR (Logo dan Menu Title) --}}
-        {{-- `flex-shrink-0` memastikan bagian ini tidak menyusut. --}}
-        {{-- `z-40` memastikan di atas background. --}}
-        <div class="relative px-4 py-6 z-40 flex-shrink-0">
-            <span class="grid place-content-center ">
-                <img src="{{ asset('images/schedu-logo-white.svg') }}" alt="Schedu Logo" class="h-12">
-            </span>
-            <p class="text-white text-xl mt-4 font-semibold">Menu</p>
-            <hr class="h-0.5 mt-3 bg-[#6317DA] border-none">
-        </div>
-
-        {{-- NAVIGASI MENU (Bagian yang bisa di-scroll) --}}
-        {{-- `flex-grow` akan membuat ini mengambil sisa ruang yang tersedia. --}}
-        {{-- `overflow-y-auto` akan menambahkan scrollbar jika kontennya melebihi tinggi. --}}
-        {{-- `relative z-40` untuk memastikan di atas gambar background dan punya konteks z-index. --}}
-        <div class="relative flex-grow overflow-y-auto [&::-webkit-scrollbar]:w-0 pr-2 px-4 pb-4 z-40"> {{-- pr-2 untuk scrollbar, px-4 untuk padding, pb-4 untuk jaga jarak dari footer --}}
-            <ul class="mt-2 space-y-2">
-                <x-sidebar.single-nav-link :title="'Dashboard'" :href="'/' . $role . '/dashboard'"
-                    :active="request()->is($role.'/dashboard')">
-                    <x-slot:icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                            <path fill-rule="evenodd"
-                                d="M3 6a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3V6ZM3 15.75a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.25Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3v-2.25Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </x-slot:icon>
-                </x-sidebar.single-nav-link>
+			<p class="text-white text-xl mt-4 font-semibold">Menu</p>
+			<hr class="h-0.5 mt-3 bg-[#6317DA] border-none">
+			<div class="overflow-y-scroll md:h-84 [&::-webkit-scrollbar]:w-0 ">
+				<ul class="mt-6 space-y-2">
+					<x-sidebar.single-nav-link :title="'Dashboard'" :href="'/' . $role . '/dashboard'"
+						:active="request()->is($role.'/dashboard')">
+						<x-slot:icon>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+								<path fill-rule="evenodd"
+									d="M3 6a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3V6ZM3 15.75a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.25Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3v-2.25Z"
+									clip-rule="evenodd" />
+							</svg>
+						</x-slot:icon>
+					</x-sidebar.single-nav-link>
 
                 <x-sidebar.nested-nav-link :title="'Data'" :role="$role" :children="[
                                         ['label' => 'Dosen', 'href' => 'dosen'],
@@ -68,19 +49,19 @@
                     </x-slot:icon>
                 </x-sidebar.nested-nav-link>
 
-                <x-sidebar.nested-nav-link :title="'Enrollment'" :children="[
-                                        ['label' => 'Enrollment Kelas', 'href' => 'enrollment/kelas'],
-                                        ['label' => 'Enrollment Mahasiswa', 'href' => 'enrollment/mahasiswa'],
-                                        ['label' => 'Enrollment Jadwal', 'href' => 'enrollment/jadwal'],
-                                        ]">
-                    <x-slot:icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                            <path fill-rule="evenodd"
-                                d="M1.5 5.625c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v12.75c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 18.375V5.625ZM21 9.375A.375.375 0 0 0 20.625 9h-7.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 0 0 .375-.375v-1.5Zm0 3.75a.375.375 0 0 0-.375-.375h-7.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 0 0 .375-.375v-1.5Zm0 3.75a.375.375 0 0 0-.375-.375h-7.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 0 0 .375-.375v-1.5ZM10.875 18.75a.375.375 0 0 0 .375-.375v-1.5a.375.375 0 0 0-.375-.375h-7.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h7.5ZM3.375 15h7.5a.375.375 0 0 0 .375-.375v-1.5a.375.375 0 0 0-.375-.375h-7.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375Zm0-3.75h7.5a.375.375 0 0 0 .375-.375v-1.5A.375.375 0 0 0 10.875 9h-7.5A.375.375 0 0 0 3 9.375v1.5c0 .207.168.375.375.375Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </x-slot:icon>
-                </x-sidebar.nested-nav-link>
+					<x-sidebar.nested-nav-link :title="'Enrollment'" :children="[
+															['label' => 'Enrollment Kelas', 'href' => '#'], 
+															['label' => 'Enrollment Mahasiswa', 'href' => '#'],
+															['label' => 'Enrollment Jadwal', 'href' => '#'],
+															]">
+						<x-slot:icon>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+								<path fill-rule="evenodd"
+									d="M1.5 5.625c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v12.75c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 18.375V5.625ZM21 9.375A.375.375 0 0 0 20.625 9h-7.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 0 0 .375-.375v-1.5Zm0 3.75a.375.375 0 0 0-.375-.375h-7.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 0 0 .375-.375v-1.5Zm0 3.75a.375.375 0 0 0-.375-.375h-7.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 0 0 .375-.375v-1.5ZM10.875 18.75a.375.375 0 0 0 .375-.375v-1.5a.375.375 0 0 0-.375-.375h-7.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h7.5ZM3.375 15h7.5a.375.375 0 0 0 .375-.375v-1.5a.375.375 0 0 0-.375-.375h-7.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375Zm0-3.75h7.5a.375.375 0 0 0 .375-.375v-1.5A.375.375 0 0 0 10.875 9h-7.5A.375.375 0 0 0 3 9.375v1.5c0 .207.168.375.375.375Z"
+									clip-rule="evenodd" />
+							</svg>
+						</x-slot:icon>
+					</x-sidebar.nested-nav-link>
 
                 <x-sidebar.single-nav-link :title="'Jadwal'" :href="'/' . $role . '/schedule'"
                     :active="request()->is($role.'/schedule')">
@@ -93,16 +74,16 @@
                     </x-slot:icon>
                 </x-sidebar.single-nav-link>
 
-                <x-sidebar.single-nav-link :title="'Profile'" :href="'/' . $role . '/profile'"
-                    :active="request()->is($role.'/profile')">
-                    <x-slot:icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                            <path fill-rule="evenodd"
-                                d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </x-slot:icon>
-                </x-sidebar.single-nav-link>
+					<x-sidebar.single-nav-link :title="'Profile'" :href="'/' . $role . '/profile'"
+						:active="request()->is($role.'/profile')">
+						<x-slot:icon>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+								<path fill-rule="evenodd"
+									d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+									clip-rule="evenodd" />
+							</svg>
+						</x-slot:icon>
+					</x-sidebar.single-nav-link>
 
                 <x-sidebar.single-nav-link :title="'Notifikasi'" :href="'/' . $role . '/notification'"
                     :active="request()->is($role.'/notification')">

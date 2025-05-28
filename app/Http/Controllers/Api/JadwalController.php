@@ -23,7 +23,7 @@ class JadwalController extends Controller
     {
         $request->validate([
             'id_enrollment_mk_mhs_dsn_rng' => 'required|exists:enrollment_mk_mhs_dsn_rng,id',
-            'hari' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
+            'hari' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat',
             'id_jam_awal' => 'required|exists:jam_awal,id',
             'id_jam_akhir' => 'required|exists:jam_akhir,id',
             'id_ruang' => 'required|exists:ruang,id',
