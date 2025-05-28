@@ -975,17 +975,5 @@ class PopulationSeeder extends Seeder
                 'updated_at' => $now,
             ],
         ]);
-        DB::table('requirement_dosen')->insert([
-            [
-                'id_dosen' => 1,
-                'jam_awal' => '08:00:00',
-                'jam_akhir' => '12:00:00',
-                'hari' => 'Senin',
-                'keterangan' => 'Saya belum bangun',
-                'status' => 'Belum Divalidasi',
-                'created_at' => $now,
-                'updated_at'=> $now,
-            ]
-        ]);
     }
 }

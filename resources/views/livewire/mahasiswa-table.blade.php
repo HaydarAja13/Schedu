@@ -1,19 +1,31 @@
 <div x-data="{ selectedRow: null }">
-    <x-table-properties :subtitle="'Menampilkan Data Mahasiswa'" :judulFilter="'Program Studi'"></x-table-properties>
+    <x-table-properties :subtitle="'Data Mahasiswa'"></x-table-properties>
     <div class="relative grid grid-cols-1 md:grid-cols-4 items-center justify-start gap-x-6 size-full">
         <div :class="selectedRow ? 'overflow-x-hidden overflow-y-auto bg-white rounded-xl md:col-span-3' : 'overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-4'"
-            class="transition-all duration-500 max-h-[calc(100vh-300px)] md:max-h-[calc(100vh-220px)]">
-            <div class="w-full overflow-x-scroll md:overflow-x-hidden">
+            class="transition-all duration-500" style="max-height: calc(100vh - 220px);">
+            <div class="w-full overflow-x-scroll">
                 <table class="table-auto w-full divide-y-2 divide-gray-200" @click.away="selectedRow = null">
-                    <thead class="ltr:text-left rtl:text-right sticky top-0 bg-gray-100 border-0 text-gray-700 text-xs uppercase z-10">
+                    <thead
+                        class="ltr:text-left rtl:text-right sticky top-0 bg-gray-100 border-0 text-gray-700 text-xs uppercase z-10">
                         <tr class="*:font-medium *:text-gray-900">
                             <th class="px-3 py-2 whitespace-nowrap">No</th>
-                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('nama_mahasiswa')">Nama</th>
-                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('nim')">NIM</th>
-                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('email')">Email</th>
-                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('no_hp')" :class="{ 'hidden': selectedRow }">Telp</th>
+                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer"
+                                wire:click="setSortBy('nama_mahasiswa')">
+                                Nama</th>
+                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('nim')">
+                                NIM
+                            </th>
+                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer"
+                                wire:click="setSortBy('email')">
+                                Email
+                            </th>
+                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('no_hp')"
+                                :class="{ 'hidden': selectedRow }">
+                                Telp
+                            </th>
                         </tr>
                     </thead>
+
                     <tbody class="divide-y divide-gray-100">
                         @php
                         $no = 1;
@@ -28,7 +40,7 @@
                                 $no++ }}</td>
                             <td class="px-3 py-3 whitespace-nowrap text-sm font-medium">
                                 <div class="flex w-max items-center gap-x-4">
-                                    <img src="https://placehold.co/400" alt=""
+                                    <img src="https://avatar.iran.liara.run/public?seed={{ $data->id }}" alt=""
                                         class="size-10">
                                     {{ $data->nama_mahasiswa }}
                                 </div>
@@ -48,7 +60,7 @@
             <div
                 class="flex flex-col md:flex-row gap-y-2 items-center justify-between w-full sticky bottom-0 p-4 bg-white">
                 <div class="flex gap-x-4 items-center">
-                    <label for="country" class="block text-sm/6 font-medium text-gray-900">Halaman</label>
+                    <label for="country" class="block text-sm/6 font-medium text-gray-900">Per Page</label>
                     <div class="grid grid-cols-1">
                         <select wire:model.live='perPage' id="country" name="country" autocomplete="country-name"
                             class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-sm md:text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
@@ -67,11 +79,11 @@
                     </div>
                 </div>
                 <div class="text-sm text-gray-800 font-light mt-2">
-                    Menampilkan
+                    Show
                     {{ $mahasiswa->firstItem() ?? 0 }}
-                    hingga
+                    to
                     {{ $mahasiswa->lastItem() ?? 0 }}
-                    dari
+                    from
                     {{ $mahasiswa->total() }}
                 </div>
                 <ul class="flex justify-end items-center gap-2 text-gray-900">
