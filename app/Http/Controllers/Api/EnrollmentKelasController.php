@@ -36,8 +36,10 @@ class EnrollmentKelasController extends Controller
             'id_kelas' => $request->id_kelas,
             'id_angkatan' => $request->id_angkatan,
         ]);
-
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('admin.enrollment-kelas')->with('error', 'Enrollment Kelas gagal dibuat');
+        }
+        return redirect()->route('admin.enrollment-kelas')->with('create', 'Enrollment Kelas berhasil dibuat');
     }
 
     /**
@@ -70,7 +72,10 @@ class EnrollmentKelasController extends Controller
             'id_angkatan' => $request->id_angkatan ?? $data->id_angkatan,
         ]);
 
-        return response()->json($data);
+        if (!$data) {
+            return redirect()->route('admin.enrollment-kelas')->with('error', 'Enrollment Kelas gagal diperbarui');
+        }
+        return redirect()->route('admin.enrollment-kelas')->with('update', 'Enrollment Kelas berhasil diperbarui');
     }
 
     /**
@@ -80,6 +85,9 @@ class EnrollmentKelasController extends Controller
     {
         $data = EnrollmentKelas::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Enrollment Kelas deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.enrollment-kelas')->with('error', 'Enrollment Kelas gagal dihapus');
+        }
+        return redirect()->route('admin.enrollment-kelas')->with('delete', 'Enrollment Kelas berhasil dihapus');
     }
 }

@@ -35,4 +35,3 @@ Route::apiResource('enrollment-mahasiswa-kelas', EnrollmentMahasiswaKelasControl
 Route::apiResource('mata-kuliah', MataKuliahController::class);
 Route::apiResource('enrollment-all', EnrollmentMkMhsDsnRngController::class);
 Route::apiResource('jadwal', JadwalController::class);
-

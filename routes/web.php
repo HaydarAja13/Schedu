@@ -1,9 +1,16 @@
 <?php
 
 use App\Http\Controllers\Api\DosenController;
+use App\Http\Controllers\Api\EnrollmentKelasController;
+use App\Http\Controllers\Api\MahasiswaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
+use App\Models\Angkatan;
+use App\Models\Kelas;
+use App\Models\Mahasiswa;
 use App\Models\ProgramStudi;
+use App\Models\EnrollmentKelas;
+use App\Models\TahunAkademik;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,6 +47,27 @@ Route::get('/admin/notification', function () {
 Route::get('/admin/enrollment-kelas', function () {
     return view('admin.enrollment-kelas');
 })->middleware('role:admin')->name('admin.enrollment-kelas');
+
+Route::post('/enrollment-kelas', [EnrollmentKelasController::class, 'store'])->name('enrollment-kelas.store');
+Route::put('/enrollment-kelas/{id}', [EnrollmentKelasController::class, 'update'])->name('enrollment-kelas.update');
+Route::delete('/enrollment-kelas/{id}', [EnrollmentKelasController::class, 'destroy'])->name('enrollment-kelas.destroy');
+
+Route::get('/admin/enrollment-kelas-create', function () {
+    $tahunAkademik = TahunAkademik::all();
+    $programStudi = ProgramStudi::all();
+    $kelas = Kelas::all();
+    $angkatan = Angkatan::all();
+    return view('admin.enrollment-kelas-create', compact('tahunAkademik', 'programStudi', 'kelas', 'angkatan'));
+})->middleware('role:admin')->name('admin.enrollment-kelas-create');
+
+Route::get('/admin/enrollment-kelas-update/{id}', function ($id) {
+    $tahunAkademik = TahunAkademik::all();
+    $programStudi = ProgramStudi::all();
+    $kelas = Kelas::all();
+    $angkatan = Angkatan::all();
+    $enrollment = EnrollmentKelas::findOrFail($id);
+    return view('admin.enrollment-kelas-update', compact('id', 'tahunAkademik', 'programStudi', 'kelas', 'angkatan', 'enrollment'));
+})->middleware('role:admin')->name('admin.enrollment-kelas-update');
 // dosen
 
 Route::get('/dosen/dashboard', function () {
@@ -51,8 +79,4 @@ Route::get('/mahasiswa/dashboard', function () {
 })->middleware('role:mahasiswa')->name('mahasiswa.dashboard');
 
 
-
-
 Route::get('/generate', [GenerateController::class, 'generateJadwal']);
-
-

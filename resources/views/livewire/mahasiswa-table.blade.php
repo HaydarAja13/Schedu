@@ -1,17 +1,23 @@
-<div x-data="{ selectedRow: null }">
-    <x-table-properties :subtitle="'Menampilkan Data Mahasiswa'" :judulFilter="'Program Studi'"></x-table-properties>
+<div x-data="{ selectedRow: null, showAlert: false }">
+    <x-table-properties :subtitle="'Menampilkan Data Mahasiswa'" :judulFilter="'Program Studi'" link="mahasiswa-create">
+    </x-table-properties>
     <div class="relative grid grid-cols-1 md:grid-cols-4 items-center justify-start gap-x-6 size-full">
         <div :class="selectedRow ? 'overflow-x-hidden overflow-y-auto bg-white rounded-xl md:col-span-3' : 'overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-4'"
             class="transition-all duration-500 max-h-[calc(100vh-300px)] md:max-h-[calc(100vh-220px)]">
             <div class="w-full overflow-x-scroll md:overflow-x-hidden">
                 <table class="table-auto w-full divide-y-2 divide-gray-200" @click.away="selectedRow = null">
-                    <thead class="ltr:text-left rtl:text-right sticky top-0 bg-gray-100 border-0 text-gray-700 text-xs uppercase z-10">
+                    <thead
+                        class="ltr:text-left rtl:text-right sticky top-0 bg-gray-100 border-0 text-gray-700 text-xs uppercase z-10">
                         <tr class="*:font-medium *:text-gray-900">
                             <th class="px-3 py-2 whitespace-nowrap">No</th>
-                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('nama_mahasiswa')">Nama</th>
-                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('nim')">NIM</th>
-                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('email')">Email</th>
-                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('no_hp')" :class="{ 'hidden': selectedRow }">Telp</th>
+                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer"
+                                wire:click="setSortBy('nama_mahasiswa')">Nama</th>
+                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('nim')">
+                                NIM</th>
+                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer"
+                                wire:click="setSortBy('email')">Email</th>
+                            <th class="px-3 py-2 whitespace-nowrap hover:cursor-pointer" wire:click="setSortBy('no_hp')"
+                                :class="{ 'hidden': selectedRow }">Telp</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -24,12 +30,10 @@
                             selectedRow === '{{ $data->id }}' ? 'border-l-8 border-l-indigo-600 scale-105 z-10 shadow-xl shadow-indigo-200' : ''
                         ]" @click="selectedRow = '{{ $data->id }}'; $wire.selectMahasiswa({{ $data->id }})">
                             <td class="py-3 whitespace-nowrap text-sm"
-                                :class="selectedRow === '{{ $data->id }}' ? 'pl-10' : 'px-3'">{{
-                                $no++ }}</td>
+                                :class="selectedRow === '{{ $data->id }}' ? 'pl-10' : 'px-3'">{{ $no++ }}</td>
                             <td class="px-3 py-3 whitespace-nowrap text-sm font-medium">
                                 <div class="flex w-max items-center gap-x-4">
-                                    <img src="https://placehold.co/400" alt=""
-                                        class="size-10">
+                                    <img src="https://placehold.co/400" alt="" class="size-10">
                                     {{ $data->nama_mahasiswa }}
                                 </div>
                             </td>
@@ -37,8 +41,7 @@
                             <td class="px-3 py-3 whitespace-nowrap text-sm text-[#8C4AF2] underline">{{ $data->email }}
                             </td>
                             <td :class="{ 'hidden': selectedRow }" class="px-3 py-3 whitespace-nowrap text-sm">{{
-                                $data->no_hp }}
-                            </td>
+                                $data->no_hp }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -173,17 +176,15 @@
                 <div class="grid gap-y-2 mt-2 flex-grow">
                     <div>
                         <p class="font-semibold text-sm">NIM</p>
-                        <p class="text-sm">{{ \Illuminate\Support\Str::limit($selectedMahasiswa?->nim ?? '-', 30) }}</p>
+                        <p class="text-sm">{{ $selectedMahasiswa?->nim ?? '-' }}</p>
                     </div>
                     <div>
                         <p class="font-semibold text-sm">Email</p>
-                        <p class="text-sm">{{ \Illuminate\Support\Str::limit($selectedMahasiswa?->email ?? '-', 30) }}
-                        </p>
+                        <p class="text-sm">{{ $selectedMahasiswa?->email ?? '-' }}</p>
                     </div>
                     <div>
                         <p class="font-semibold text-sm">No Hp</p>
-                        <p class="text-sm">{{ \Illuminate\Support\Str::limit($selectedMahasiswa?->no_hp ?? '-', 30) }}
-                        </p>
+                        <p class="text-sm">{{ $selectedMahasiswa?->no_hp ?? '-' }}</p>
                     </div>
                 </div>
                 <div class="mt-8 md:mt-auto flex flex-col gap-2">
@@ -191,12 +192,17 @@
                         href="#">
                         Ubah Data
                     </a>
-                    <a class="inline-block rounded-xl border border-red-600 px-12 py-2 text-sm text-center font-medium text-white bg-red-600"
-                        href="#">
-                        Hapus Data
-                    </a>
+                    <button
+                        class="hover:cursor-pointer inline-block rounded-xl border border-red-600 px-12 py-2 text-sm text-center font-medium text-white bg-red-600"
+                        type="button" @click="showAlert = true">
+                        Hapus Data {{ $selectedMahasiswa?->id ?? '-' }}
+                    </button>
                 </div>
             </div>
         </div>
+    </div>
+    <div x-show="showAlert" class="mb-4">
+        <x-alert titleModal="Peringatan"
+            contentModal="Apakah anda yakin ingin menghapus {{ $selectedMahasiswa?->id ?? '-' }}" type="warning" :route="route('enrollment-kelas.destroy', $selectedEnrollmentKelas?->id ?? '')"/>
     </div>
 </div>
