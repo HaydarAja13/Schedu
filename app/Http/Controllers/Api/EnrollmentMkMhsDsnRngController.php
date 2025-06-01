@@ -33,7 +33,10 @@ class EnrollmentMkMhsDsnRngController extends Controller
             'id_dosen' => $request->id_dosen,
         ]);
 
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('admin.enrollment-jadwal')->with('error', 'Enrollment Jadwal gagal dibuat');
+        }
+        return redirect()->route('admin.enrollment-jadwal')->with('create', 'Enrollment Jadwal berhasil dibuat');
     }
 
     /**
@@ -64,7 +67,10 @@ class EnrollmentMkMhsDsnRngController extends Controller
             'id_dosen' => $request->id_dosen ?? $data->id_dosen,
         ]);
 
-        return response()->json($data);
+        if (!$data) {
+            return redirect()->route('admin.enrollment-jadwal')->with('error', 'Enrollment Jadwal gagal diperbarui');
+        }
+        return redirect()->route('admin.enrollment-jadwal')->with('update', 'Enrollment Jadwal berhasil diperbarui');
     }
 
     /**
@@ -74,6 +80,9 @@ class EnrollmentMkMhsDsnRngController extends Controller
     {
         $data = EnrollmentMkMhsDsnRng::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Enrollment deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.enrollment-jadwal')->with('error', 'Enrollment Jadwal gagal dihapus');
+        }
+        return redirect()->route('admin.enrollment-jadwal')->with('delete', 'Enrollment Jadwal berhasil dihapus');
     }
 }

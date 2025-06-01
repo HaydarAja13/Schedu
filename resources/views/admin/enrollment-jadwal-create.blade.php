@@ -1,25 +1,21 @@
-<x-template :role="'admin'" :title="'Edit Enrollment Baru'">
+<x-template :role="'admin'" :title="'Tambah Enrollment Jadwal Baru'">
     <x-slot:content>
-        <p class="my-2">Edit enrollmemt kelas</p>
+        <p class="my-2">Tambah enrollment jadwal baru</p>
         <div class="bg-white rounded-xl h-auto mb-4 p-8">
-            <form action="{{ route('enrollment-kelas.update', $id) }}" method="POST">
+            <form action="{{ route('enrollment-jadwal.store') }}" method="POST">
                 @csrf
-                @method('PUT')
-                <x-form.select :label="'Tahun Akademik'" :description="'Pilih tahun akademik'" :placeholder="'Pilih'"
-                    :options="$tahunAkademik" valueField="id" displayField="tahun_ajaran" id="id_tahun_akademik"
-                    name="id_tahun_akademik" :selected="$enrollment->id_tahun_akademik" />
-                <x-form.select :label="'Program Studi'" :description="'Pilih program studi'" :placeholder="'Pilih'"
-                    :options="$programStudi" valueField="id" displayField="nama_prodi" id="id_program_studi"
-                    name="id_program_studi" :selected="$enrollment->id_program_studi" />
-                <x-form.select :label="'Kelas'" :description="'Pilih kelas'" :placeholder="'Pilih'" :options="$kelas"
-                    valueField="id" displayField="nama_kelas" id="id_kelas" name="id_kelas"
-                    :selected="$enrollment->id_kelas" />
-                <x-form.select :label="'Angkatan'" :description="'Pilih angkatan'" :placeholder="'Pilih'"
-                    :options="$angkatan" valueField="id" displayField="tahun_angkatan" id="id_angkatan"
-                    name="id_angkatan" :selected="$enrollment->id_angkatan" />
+                <x-form.select :label="'Mata Kuliah'" :description="'Pilih mata kuliah'" :placeholder="'Pilih'"
+                    :options="$mataKuliah" valueField="id" displayField="nama_matkul" id="id_mata_kuliah"
+                    name="id_mata_kuliah" />
+                <x-form.select :label="'Enrollment Kelas'" :description="'Pilih kelas'" :placeholder="'Pilih'"
+                    :options="$enrollmentKelas" valueField="id"
+                    displayField="nama_kelas_display"
+                    id="id_enrollment_kelas" name="id_enrollment_kelas" />
+                <x-form.select :label="'Dosen'" :description="'Pilih dosen'" :placeholder="'Pilih'" :options="$dosen"
+                    valueField="id" displayField="nama_dosen" id="id_dosen" name="id_dosen" />
                 <div class="flex justify-end items-center gap-x-4">
                     <a class="inline-block rounded-lg px-6 py-2 text-sm font-medium bg-[#F7F7FF] text-gray-500 shadow-sm"
-                        href="/admin/enrollment-kelas">
+                        href="/admin/enrollment-jadwal">
                         <div class="flex items-center justify-center gap-x-2">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-6">

@@ -16,4 +16,9 @@ class MataKuliah extends Model
         'id_ruang',
         'jenis'
     ];
+
+    public function scopeSearch($query, $value)
+    {
+        return $query->where('kode_matkul', 'like', '%' . $value . '%')->orWhere('nama_matkul', 'like', '%' . $value . '%')->orWhere('semester', 'like', '%' . $value . '%')->orWhere('jenis', 'like', '%' . $value . '%')->orWhere('ruang_prioritas', 'like', '%' . $value . '%');
+    }
 }

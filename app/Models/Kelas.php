@@ -12,8 +12,13 @@ class Kelas extends Model
     protected $fillable = [
         'nama_kelas'
     ];
+
+    public function scopeSearch($query, $value)
+    {
+        return $query->where('id_kelas', 'like', '%' . $value . '%')->orWhere('nama_kelas', 'like', '%' . $value . '%');
+    }
     public function enrollmentKelas()
     {
-        return $this->hasMany(TahunAkademik::class, 'id_kelas');
+        return $this->hasMany(EnrollmentKelas::class, 'id_kelas');
     }
 }

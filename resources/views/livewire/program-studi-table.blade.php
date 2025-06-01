@@ -1,9 +1,9 @@
 <div x-data="{ selectedRow: null, showAlert: false }">
-    <x-table-properties :subtitle="'Menampilkan Data Enrollment Kelas'" link="enrollment-kelas-create"></x-table-properties>
+    <x-table-properties :subtitle="'Menampilkan Data Program Studi'" link="program-studi-create"></x-table-properties>
     <div class="relative grid size-full grid-cols-1 items-start justify-start gap-x-6 md:grid-cols-4">
         <div :class="selectedRow ? 'overflow-x-hidden overflow-y-auto bg-white rounded-xl md:col-span-3' :
             'overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-4'"
-            class="max-h-[calc(100vh-300px)] transition-all duration-500 md:max-h-[calc(100vh-220px)]">
+            class="max-h-[calc(100vh-300px)] min-h-[calc(100vh-300px)] transition-all duration-500  md:min-h-[calc(100vh-220px)] md:max-h-[calc(100vh-220px)]">
             <div class="w-full overflow-x-scroll md:overflow-x-hidden">
                 <table class="w-full table-auto divide-y-2 divide-gray-200" @click.away="selectedRow = null">
                     <thead
@@ -11,19 +11,15 @@
                         <tr class="*:font-medium *:text-gray-900">
                             <th class="whitespace-nowrap px-3 py-2">No</th>
                             <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
-                                wire:click="setSortBy('id_tahun_akademik')">
-                                Tahun Akademik</th>
+                                wire:click="setSortBy('id_jurusan')">
+                                Jurusan</th>
                             <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
-                                wire:click="setSortBy('id_program_studi')">
-                                Program Studi
+                                wire:click="setSortBy('nama_prodi')">
+                                Nama Prodi
                             </th>
                             <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
-                                wire:click="setSortBy('id_kelas')">
-                                Kelas
-                            </th>
-                            <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
-                                wire:click="setSortBy('id_angkatan')" :class="{ 'hidden': selectedRow }">
-                                Angkatan
+                                wire:click="setSortBy('kode_prodi')">
+                                Kode Prodi
                             </th>
                         </tr>
                     </thead>
@@ -32,27 +28,24 @@
                         @php
                             $no = 1;
                         @endphp
-                        @foreach ($enrollmentKelas as $data)
+                        @foreach ($programStudi as $data)
                             <tr :class="[
                                 'cursor-pointer transition-all duration-200 hover:bg-gray-100',
                                 selectedRow === '{{ $data->id }}' ?
                                 'border-l-8 border-l-indigo-600 scale-105 z-10 shadow-xl shadow-indigo-200' : ''
                             ]"
-                                @click="selectedRow = '{{ $data->id }}'; $wire.selectEnrollmentKelas({{ $data->id }})">
+                                @click="selectedRow = '{{ $data->id }}'; $wire.selectProgramStudi({{ $data->id }})">
                                 <td class="whitespace-nowrap py-3 text-sm"
                                     :class="selectedRow === '{{ $data->id }}' ? 'pl-10' : 'px-3'">
                                     {{ $no++ }}</td>
                                 <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
-                                    {{ $data->tahunAkademik->tahun_ajaran ?? '-' }}
+                                    {{ $data->jurusan->nama_jurusan ?? '-' }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-3 text-sm">
-                                    {{ $data->programStudi->nama_prodi ?? '-' }}
+                                    {{ $data->nama_prodi ?? '-' }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-3 text-sm">
-                                    {{ $data->kelas->nama_kelas ?? '-' }}
-                                </td>
-                                <td :class="{ 'hidden': selectedRow }" class="whitespace-nowrap px-3 py-3 text-sm">
-                                    {{ $data->angkatan->tahun_angkatan ?? '-' }}
+                                    {{ $data->kode_prodi ?? '-' }}
                                 </td>
                             </tr>
                         @endforeach
@@ -83,18 +76,18 @@
                 </div>
                 <div class="mt-2 text-sm font-light text-gray-800">
                     Menampilkan
-                    {{ $enrollmentKelas->firstItem() ?? 0 }}
+                    {{ $programStudi->firstItem() ?? 0 }}
                     hingga
-                    {{ $enrollmentKelas->lastItem() ?? 0 }}
+                    {{ $programStudi->lastItem() ?? 0 }}
                     dari
-                    {{ $enrollmentKelas->total() }}
+                    {{ $programStudi->total() }}
                 </div>
                 <ul class="flex items-center justify-end gap-2 text-gray-900">
                     <li>
                         <button type="button"
                             class="grid size-6 place-content-center rounded text-gray-600 transition-all duration-300 hover:scale-125 hover:text-purple-600 md:size-8 rtl:rotate-180"
                             aria-label="Previous page" wire:click="previousPage"
-                            @if ($enrollmentKelas->onFirstPage()) disabled @endif>
+                            @if ($programStudi->onFirstPage()) disabled @endif>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                 stroke="currentColor" class="size-4 md:size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -103,8 +96,8 @@
                     </li>
 
                     @php
-                        $currentPage = $enrollmentKelas->currentPage();
-                        $lastPage = $enrollmentKelas->lastPage();
+                        $currentPage = $programStudi->currentPage();
+                        $lastPage = $programStudi->lastPage();
                         $start = max(1, $currentPage - 1);
                         $end = min($lastPage, $currentPage + 1);
 
@@ -165,7 +158,7 @@
                         <button type="button"
                             class="grid size-6 place-content-center rounded text-gray-600 transition-all duration-300 hover:scale-125 hover:text-purple-600 md:size-8 rtl:rotate-180"
                             aria-label="Next page" wire:click="nextPage"
-                            @if ($enrollmentKelas->currentPage() == $enrollmentKelas->lastPage()) disabled @endif>
+                            @if ($programStudi->currentPage() == $programStudi->lastPage()) disabled @endif>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                 stroke="currentColor" class="size-4 md:size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -183,28 +176,23 @@
             :class="{ 'hidden': !selectedRow }">
             <div class="size-full flex flex-col justify-start p-4">
                 <p class="mb-2 text-center text-sm font-semibold">
-                    {{ $selectedEnrollmentKelas?->kelas->nama_kelas ?? '-' }}
+                    {{ $selectedProgramStudi?->nama_prodi ?? '-' }}
                 </p>
                 <span
-                    class="mx-auto w-fit rounded-full border border-[#6B56F6] bg-[#6B56F6]/25 px-2.5 py-0.5 text-xs font-medium text-[#6B56F6]">Enrollment
-                    Kelas</span>
+                    class="mx-auto w-fit rounded-full border border-[#6B56F6] bg-[#6B56F6]/25 px-2.5 py-0.5 text-xs font-medium text-[#6B56F6]">Program Studi</span>
                 <div class="mt-2 grid gap-y-2">
                     <div>
-                        <p class="text-sm font-semibold">Tahun Akademik</p>
-                        <p class="text-sm">{{ $selectedEnrollmentKelas?->tahunAkademik->tahun_ajaran ?? '-' }}</p>
+                        <p class="text-sm font-semibold">Kode Prodi</p>
+                        <p class="text-sm">{{ $selectedProgramStudi?->kode_prodi ?? '-' }}</p>
                     </div>
                     <div>
-                        <p class="text-sm font-semibold">Program Studi</p>
-                        <p class="text-sm">{{ $selectedEnrollmentKelas?->programStudi->nama_prodi ?? '-' }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm font-semibold">Angkatan</p>
-                        <p class="text-sm">{{ $selectedEnrollmentKelas?->angkatan->tahun_angkatan ?? '-' }}</p>
+                        <p class="text-sm font-semibold">Jurusan</p>
+                        <p class="text-sm">{{ $selectedProgramStudi?->jurusan->nama_jurusan ?? '-' }}</p>
                     </div>
                 </div>
-                <div class="mt-8 flex flex-col gap-2 md:mt-auto">
+                <div class="mt-8 md:mt-auto flex flex-col gap-2">
                     <a class="inline-block rounded-xl bg-gradient-to-tr from-[#8C4AF2] to-[#6B56F6] px-12 py-2 text-center text-sm font-medium text-white"
-                        href="{{ route('admin.enrollment-kelas-update', $selectedEnrollmentKelas?->id ?? '') }}">
+                        href="{{ route('admin.program-studi-update', $selectedProgramStudi?->id ?? '') }}">
                         Ubah Data
                     </a>
                     <button
@@ -219,6 +207,6 @@
     <div x-show="showAlert" class="mb-4">
         <x-alert titleModal="Peringatan"
             contentModal="Apakah anda yakin ingin menghapus data ini?"
-            type="warning" :route="route('enrollment-kelas.destroy', $selectedEnrollmentKelas?->id ?? '')" />
+            type="warning" :route="route('enrollment-kelas.destroy', $selectedProgramStudi?->id ?? '')" />
     </div>
 </div>

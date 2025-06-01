@@ -21,7 +21,7 @@
             <li>
                 <a href="{{ url(($role ? $role . '/' : '') . ($child['href'] ?? '#')) }}"
                     class="block rounded-lg px-4 py-2 my-2 text-base
-                        {{ request()->is(($role ? $role . '/' : '') . $child['href']) ? 'text-[#6B56F6] font-bold bg-white' : 'text-white hover:bg-gray-100 hover:text-[#6B56F6]' }}">
+                        {{ request()->is(($role ? $role . '/' : '') . $child['href']) ? 'text-[#6B56F6] bg-white' : 'text-white hover:bg-gray-100 hover:text-[#6B56F6]' }}">
                     {{ $child['label'] }}
                 </a>
             </li>

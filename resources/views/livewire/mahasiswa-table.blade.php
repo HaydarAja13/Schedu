@@ -1,7 +1,7 @@
 <div x-data="{ selectedRow: null, showAlert: false }">
     <x-table-properties :subtitle="'Menampilkan Data Mahasiswa'" :judulFilter="'Program Studi'" link="mahasiswa-create">
     </x-table-properties>
-    <div class="relative grid grid-cols-1 md:grid-cols-4 items-center justify-start gap-x-6 size-full">
+    <div class="relative grid grid-cols-1 md:grid-cols-4 items-start justify-start gap-x-6 size-full">
         <div :class="selectedRow ? 'overflow-x-hidden overflow-y-auto bg-white rounded-xl md:col-span-3' : 'overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-4'"
             class="transition-all duration-500 max-h-[calc(100vh-300px)] md:max-h-[calc(100vh-220px)]">
             <div class="w-full overflow-x-scroll md:overflow-x-hidden">
@@ -166,14 +166,14 @@
         {{-- detail --}}
         <div class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
             :class="{ 'hidden': !selectedRow }">
-            <div class="size-full flex flex-col justify-start p-4 h-full">
+            <div class="size-full flex flex-col justify-start p-4">
                 <img src="https://placehold.co/50" alt="" class="rounded-full mb-2 size-32 mx-auto">
                 <p class="text-center mb-2 font-semibold text-sm">
                     {{ $selectedMahasiswa?->nama_mahasiswa ?? '-' }}
                 </p>
                 <span
                     class="bg-[#6B56F6]/25 w-fit mx-auto text-[#6B56F6] text-xs font-medium px-2.5 py-0.5 rounded-full border border-[#6B56F6]">Mahasiswa</span>
-                <div class="grid gap-y-2 mt-2 flex-grow">
+                <div class="grid gap-y-2 mt-2 ">
                     <div>
                         <p class="font-semibold text-sm">NIM</p>
                         <p class="text-sm">{{ $selectedMahasiswa?->nim ?? '-' }}</p>
@@ -203,6 +203,7 @@
     </div>
     <div x-show="showAlert" class="mb-4">
         <x-alert titleModal="Peringatan"
-            contentModal="Apakah anda yakin ingin menghapus {{ $selectedMahasiswa?->id ?? '-' }}" type="warning" :route="route('enrollment-kelas.destroy', $selectedEnrollmentKelas?->id ?? '')"/>
+            contentModal="Apakah anda yakin ingin menghapus {{ $selectedMahasiswa?->id ?? '-' }}" type="warning"
+            :route="route('enrollment-kelas.destroy', $selectedEnrollmentKelas?->id ?? '')" />
     </div>
 </div>

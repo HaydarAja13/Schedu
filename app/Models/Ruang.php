@@ -13,4 +13,8 @@ class Ruang extends Model
         'nama_ruang',
         'keterangan',
     ];
+    public function scopeSearch($query, $value)
+    {
+        return $query->where('id_ruang', 'like', '%' . $value . '%')->orWhere('nama_ruang', 'like', '%' . $value . '%')->orWhere('keterangan', 'like', '%' . $value . '%')->orWhere('jenis', 'like', '%' . $value . '%')->orWhere('ruang_prioritas', 'like', '%' . $value . '%');
+    }
 }

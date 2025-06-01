@@ -29,7 +29,7 @@
 					</x-sidebar.single-nav-link>
 
 					<x-sidebar.nested-nav-link :title="'Data'" :role="$role" :children="[
-										['label' => 'Dosen', 'href' => 'dosen'], 
+										['label' => 'Dosen', 'href' => 'dosen'],
 										['label' => 'Mahasiswa', 'href' => 'mahasiswa'],
 										['label' => 'Prodi', 'href' => 'program-studi'],
 										['label' => 'Mata kuliah', 'href' => 'mata-kuliah'],
@@ -50,8 +50,8 @@
 					</x-sidebar.nested-nav-link>
 
 					<x-sidebar.nested-nav-link :title="'Enrollment'" :role="$role" :children="[
-															['label' => 'Enrollment Kelas', 'href' => 'enrollment-kelas'], 
-															['label' => 'Enrollment Mahasiswa', 'href' => 'enrollment-mahasiswa'],
+															['label' => 'Enrollment Kelas', 'href' => 'enrollment-kelas'],
+															['label' => 'Enrollment Mahasiswa', 'href' => 'enrollment-mahasiswa-kelas'],
 															['label' => 'Enrollment Jadwal', 'href' => 'enrollment-jadwal'],
 															]">
 						<x-slot:icon>
