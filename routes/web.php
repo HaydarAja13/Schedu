@@ -39,6 +39,10 @@ Route::get('/admin/mahasiswa', function () {
     return view('admin.mahasiswa');
 })->middleware('role:admin')->name('admin.mahasiswa');
 
+Route::get('/admin/dosen', function () {
+    return view('admin.dosen');
+})->middleware('role:admin')->name('admin.dosen');
+
 Route::get('/admin/schedule', function () {
     $programStudis = ProgramStudi::limit(3)->get();
     return view('admin.schedule', compact('programStudis'));

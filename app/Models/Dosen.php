@@ -32,6 +32,10 @@ class Dosen extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function scopeSearch($query, $value)
+    {
+        return $query->where('nama_dosen', 'like', '%' . $value . '%')->orWhere('nip', 'like', '%' . $value . '%')->orWhere('email', 'like', '%' . $value . '%');
+    }
     public function enrollmentAll()
     {
         return $this->hasMany(EnrollmentMkMhsDsnRng::class, 'id_dosen');
