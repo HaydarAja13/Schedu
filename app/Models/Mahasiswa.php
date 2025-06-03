@@ -14,7 +14,8 @@ class Mahasiswa extends Model
         'nama_mahasiswa',
         'email',
         'password',
-        'no_hp'
+        'no_hp',
+        'foto'
     ];
 
     protected $hidden = [

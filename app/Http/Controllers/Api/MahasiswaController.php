@@ -27,7 +27,13 @@ class MahasiswaController extends Controller
             'email' => 'required|email|unique:mahasiswa',
             'password' => 'required|string|max:10',
             'no_hp' => 'required|string|max:15|unique:mahasiswa',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $fotoPath = null;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('foto_mahasiswa', 'public');
+        }
 
         $data = Mahasiswa::create([
             'nim' => $request->nim,
@@ -35,9 +41,13 @@ class MahasiswaController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'no_hp' => $request->no_hp,
+            'foto' => $fotoPath,
         ]);
-
-        return response()->json($data, 201);
+        
+        if (!$data) {
+            return redirect()->route('admin.mahasiswa')->with('error', 'Data Mahasiswa gagal diperbarui');
+        }
+        return redirect()->route('admin.mahasiswa')->with('create', 'Data Mahasiswa berhasil diperbarui');
     }
 
     /**
@@ -52,9 +62,14 @@ class MahasiswaController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    public function edit($id)
+    {
+        $mahasiswa = Mahasiswa::findOrFail($id);
+        return view('admin.mahasiswaUpdate', compact('mahasiswa'));
+    }
     public function update(Request $request, string $id)
     {
-        $data = Mahasiswa::findOrFail($id);
+        $mahasiswa = Mahasiswa::findOrFail($id);
 
         $request->validate([
             'nim' => 'sometimes|required|string|max:18|unique:mahasiswa,nim,' . $id,
@@ -62,17 +77,27 @@ class MahasiswaController extends Controller
             'email' => 'sometimes|required|email|unique:mahasiswa,email,' . $id,
             'password' => 'sometimes|nullable|string|max:10',
             'no_hp' => 'sometimes|required|string|max:15|unique:mahasiswa,no_hp,' . $id,
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $data->update([
-            'nim' => $request->nim->nim ?? $data->nim,
-            'nama_mahasiswa' => $request->nama_mahasiswa ?? $data->nama_mahasiswa,
-            'email' => $request->email ?? $data->email,
-            'password' => $request->password ? bcrypt($request->password) : $data->password,
-            'no_hp' => $request->no_hp ?? $data->no_hp,
+        $fotoPath = $mahasiswa->foto;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('foto_mahasiswa', 'public');
+        }
+
+        $mahasiswa->update([
+            'nim' => $request->nim ?? $mahasiswa->nim,
+            'nama_mahasiswa' => $request->nama_mahasiswa ?? $mahasiswa->nama_mahasiswa,
+            'email' => $request->email ?? $mahasiswa->email,
+            'password' => $request->filled('password') ? bcrypt($request->password) : $mahasiswa->password,
+            'no_hp' => $request->no_hp ?? $mahasiswa->no_hp,
+            'foto' => $fotoPath,
         ]);
 
-        return response()->json($data);
+        if (!$mahasiswa) {
+            return redirect()->route('admin.mahasiswa')->with('error', 'Data Mahasiswa gagal diperbarui');
+        }
+        return redirect()->route('admin.mahasiswa')->with('update', 'Data Mahasiswa berhasil diperbarui');
     }
 
     /**
@@ -82,6 +107,9 @@ class MahasiswaController extends Controller
     {
         $data = Mahasiswa::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Mahasiswa deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.mahasiswa')->with('error', 'Data Mahasiswa gagal dihapus');
+        }
+        return redirect()->route('admin.mahasiswa')->with('delete', 'Data Mahasiswa berhasil dihapus');
     }
 }

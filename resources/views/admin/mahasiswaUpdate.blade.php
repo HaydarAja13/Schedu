@@ -9,14 +9,15 @@
                         </svg>
                     </div>
                 </a>
-                <h1 class="text-2xl font-bold text-gray-800 font-righteous">Buat Data Mahasiswa</h1>
+                <h1 class="text-2xl font-bold text-gray-800 font-righteous">Edit Data Mahasiswa</h1>
             </div>
         </div>
 
         <!-- Form -->
         <div class="bg-white px-8 pt-8 pb-6 rounded-xl shadow-lg">
-            <form action="{{ route('admin.mahasiswa.create.submit') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.mahasiswa.update.submit', $mahasiswa->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
                 <div class="flex">
                     <div class=" flex gap-14 w-full space-y-10">
                     <!-- Kolom I -->
@@ -24,9 +25,20 @@
                             <div class="flex-col gap-5">
                                 <div class="flex gap-6">
                                     <div class="relative w-32 h-32 border-2 border-indigo-300 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm10 3a2 2 0 11-4 0 2 2 0 014 0zM4 15h12v-1.586l-3.293-3.293a1 1 0 00-1.414 0L8 13l-2.293-2.293a1 1 0 00-1.414 0L4 11.586V15z" clip-rule="evenodd" />
-                                        </svg>
+                                        @if($mahasiswa->foto)
+                                            <img src="{{ asset('storage/' . $mahasiswa->foto) }}" alt="Foto Profil" class="object-cover w-full h-full">
+                                        @else
+                                            @php
+                                                $initials = collect(explode(' ', $mahasiswa->nama_mahasiswa ?? ''))
+                                                    ->filter(fn($n) => !empty($n))
+                                                    ->map(fn($n) => strtoupper($n[0]))
+                                                    ->take(2)
+                                                    ->implode('');
+                                            @endphp
+                                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-r from-[#6B56F6] to-[#8C4AF2] text-white font-bold text-4xl">
+                                                {{ $initials }}
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="flex items-center w-36">
                                         <ul class="text-xs italic text-gray-500 mt-2 space-y-1 mb-4">
@@ -61,12 +73,11 @@
                             <div class="space-y-6 w-full">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap<span class="text-red-500">*</span></label>
-                                    <input type="text" name="nama_mahasiswa" placeholder="Nama lengkap" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
+                                    <input type="text" name="nama_mahasiswa" placeholder="Nama lengkap" value="{{ old('nama_mahasiswa', $mahasiswa->nama_mahasiswa) }}" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">NIM<span class="text-red-500">*</span></label>
-                                    <input type="text" name="nim" placeholder="43323019" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
-                                </div>
+                                    <input type="text" name="nim" placeholder="43323019" value="{{ old('nim', $mahasiswa->nim) }}" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required>                                </div>
                             </div>
                         </div>
                      </div>
@@ -75,16 +86,16 @@
                     <div class="space-y-4 mt-10 md:mt-0">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Email<span class="text-red-500">*</span></label>
-                            <input type="email" name="email" placeholder="contoh@gmail.com" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
+                            <input type="email" name="email" placeholder="contoh@gmail.com" value="{{ old('email', $mahasiswa->email) }}" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Password<span class="text-red-500">*</span></label>
-                            <input type="password" name="password" placeholder="password" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
-                            <p class="text-xs text-gray-500 mt-1">Minimal 8 karakter, berisi angka, huruf & simbol</p>
+                            <input type="password" name="password" placeholder="password" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                            <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah password. Minimal 8 karakter, berisi angka, huruf & simbol</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon<span class="text-red-500">*</span></label>
-                            <input type="text" name="no_hp" placeholder="081234567809" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
+                            <input type="text" name="no_hp" placeholder="081234567809" value="{{ old('no_hp', $mahasiswa->no_hp) }}" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
                         </div>
                     </div>
                 

@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\Api\MahasiswaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +22,33 @@ Route::get('/admin/mahasiswa', function () {
     return view('admin.mahasiswa');
 })->middleware('role:admin')->name('admin.mahasiswa');
 
+Route::get('/admin/dosen', function () {
+    return view('admin.dosen');
+})->middleware('role:admin')->name('admin.dosen');
+
+Route::get('/admin/mahasiswa/create', function () {
+    return view('admin.mahasiswaCreate');
+})->middleware('role:admin')->name('admin.mahasiswa.create');
+
+Route::post('/admin/mahasiswa/create', [MahasiswaController::class, 'store'])
+    ->middleware('role:admin')
+    ->name('admin.mahasiswa.create.submit');
+
+Route::get('/admin/mahasiswaUpdate/{id}', [MahasiswaController::class, 'edit'])
+    ->middleware('role:admin')
+    ->name('admin.mahasiswa.update');
+
+Route::put('/admin/mahasiswaUpdate/{id}', [MahasiswaController::class, 'update'])
+    ->middleware('role:admin')
+    ->name('admin.mahasiswa.update.submit');
+    
+Route::delete('/admin/mahasiswa/{id}', [MahasiswaController::class, 'destroy'])
+    ->middleware('role:admin')
+    ->name('admin.mahasiswa.destroy');
+
+Route::delete('/mahasiswa/{id}', [MahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
+
+    
 Route::get('/admin/schedule', function () {
     return view('admin.schedule');
 })->middleware('role:admin')->name('admin.schedule');
