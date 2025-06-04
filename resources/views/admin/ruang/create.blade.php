@@ -53,5 +53,10 @@
     </x-slot>
 
     <x-slot name="content">
+        {{-- Alert Modal jika ada --}}
+        @if (session('alert'))
+            <x-alert :type="session('alert.type')" :titleModal="session('alert.titleModal')" :contentModal="session('alert.contentModal')" />
+        @endif
+
     </x-slot>
 </x-template>

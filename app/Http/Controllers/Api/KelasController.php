@@ -13,9 +13,15 @@ class KelasController extends Controller
      */
     public function index()
     {
-        return response()->json(Kelas::all()); // API JSON response (commented out)
-        // $kelas = Kelas::all();
-        // return view('admin.kelas.index', compact('kelas')); // Web view response
+        return response()->json(Kelas::all());
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('admin.kelas.create');
     }
 
     /**
@@ -31,13 +37,11 @@ class KelasController extends Controller
             'nama_kelas' => $request->nama_kelas,
         ]);
 
-        // return response()->json($data, 201); // API JSON response (commented out)
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas created successfully');
-    }
+        if (!$data) {
+            return redirect()->route('admin.kelas.index')->with('error', 'Data kelas gagal ditambahkan');
+        }
 
-    public function create()
-    {
-        return view('admin.kelas.create'); // Web view response
+        return redirect()->route('admin.kelas.index')->with('create', 'Data kelas berhasil ditambahkan');
     }
 
     /**
@@ -46,8 +50,16 @@ class KelasController extends Controller
     public function show(string $id)
     {
         $data = Kelas::findOrFail($id);
-        return response()->json($data); // API JSON response (commented out)
-        // return view('admin.kelas.show', compact('data'));
+        return response()->json($data);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        $data = Kelas::findOrFail($id);
+        return view('admin.kelas.edit', compact('data'));
     }
 
     /**
@@ -61,18 +73,15 @@ class KelasController extends Controller
             'nama_kelas' => 'sometimes|required|string|max:20',
         ]);
 
-        $data->update([
+        $updated = $data->update([
             'nama_kelas' => $request->nama_kelas ?? $data->nama_kelas,
         ]);
 
-        // return response()->json($data); // API JSON response (commented out)
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas updated successfully');
-    }
-    public function edit(string $id)
-    {
-        $data = Kelas::findOrFail($id);
-        // return response()->json($kelas); // API JSON response (commented out)
-        return view('admin.kelas.edit', compact('data'));
+        if (!$updated) {
+            return redirect()->route('admin.kelas.index')->with('error', 'Data kelas gagal diperbarui');
+        }
+
+        return redirect()->route('admin.kelas.index')->with('update', 'Data kelas berhasil diperbarui');
     }
 
     /**
@@ -81,8 +90,12 @@ class KelasController extends Controller
     public function destroy(string $id)
     {
         $data = Kelas::findOrFail($id);
-        $data->delete();
-        // return response()->json(['message' => 'Kelas deleted successfully']); // API JSON response (commented out)
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas deleted successfully');
+        $deleted = $data->delete();
+
+        if (!$deleted) {
+            return redirect()->route('admin.kelas.index')->with('error', 'Data kelas gagal dihapus');
+        }
+
+        return redirect()->route('admin.kelas.index')->with('delete', 'Data kelas berhasil dihapus');
     }
 }

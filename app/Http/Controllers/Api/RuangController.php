@@ -33,9 +33,13 @@ class RuangController extends Controller
             'keterangan' => $request->keterangan,
         ]);
 
-        // return response()->json($data, 201);
-        return redirect()->route('admin.ruang.index')->with('success', 'Ruang created successfully.');
+        if (!$data) {
+            return redirect()->route('admin.ruang.index')->with('error', 'Data ruang gagal ditambahkan');
+        }
+
+        return redirect()->route('admin.ruang.index')->with('create', 'Data ruang berhasil ditambahkan');
     }
+    
     function create()
     {
         return view('admin.ruang.create');
@@ -62,13 +66,16 @@ class RuangController extends Controller
             'keterangan' => 'sometimes|required|in:0,1',
         ]);
 
-        $data->update([
+        $updated = $data->update([
             'nama_ruang' => $request->nama_ruang ?? $data->nama_ruang,
             'keterangan' => $request->keterangan ?? $data->keterangan,
         ]);
 
-        // return response()->json($data);
-        return redirect()->route('admin.ruang.index')->with('success', 'Ruang updated successfully.');
+        if (!$updated) {
+            return redirect()->route('admin.ruang.index')->with('error', 'Data ruang gagal diperbarui');
+        }
+
+        return redirect()->route('admin.ruang.index')->with('update', 'Data ruang berhasil diperbarui');
     }
     function edit(string $id)
     {
@@ -82,8 +89,12 @@ class RuangController extends Controller
     public function destroy(string $id)
     {
         $data = Ruang::findOrFail($id);
-        $data->delete();
-        // return response()->json(['message' => 'Ruang deleted successfully']);
-        return redirect()->route('admin.ruang.index')->with('success', 'Ruang deleted successfully.');
+        $deleted = $data->delete();
+
+        if (!$deleted) {
+            return redirect()->route('admin.ruang.index')->with('error', 'Data ruang gagal dihapus');
+        }
+
+        return redirect()->route('admin.ruang.index')->with('delete', 'Data ruang berhasil dihapus');
     }
 }

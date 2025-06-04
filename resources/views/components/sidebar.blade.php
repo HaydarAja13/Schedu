@@ -17,7 +17,7 @@
 			<hr class="h-0.5 mt-3 bg-[#6317DA] border-none">
 			<div class="overflow-y-scroll md:h-84 [&::-webkit-scrollbar]:w-0 ">
 				<ul class="mt-6 space-y-2">
-					<x-sidebar.single-nav-link :title="'Dashboard'" :href="'/' . $role . '/dashboard'"
+					<x-sidebar.single-nav-link :title="'Beranda'" :href="'/' . $role . '/dashboard'"
 						:active="request()->is($role.'/dashboard')">
 						<x-slot:icon>
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
@@ -28,7 +28,7 @@
 						</x-slot:icon>
 					</x-sidebar.single-nav-link>
 
-					<x-sidebar.nested-nav-link :title="'Data'" :children="[
+					<x-sidebar.nested-nav-link :title="'Data'" :role="$role" :children="[
 										['label' => 'Dosen', 'href' => 'dosen'], 
 										['label' => 'Mahasiswa', 'href' => 'mahasiswa'],
 										['label' => 'Prodi', 'href' => 'program-studi'],
@@ -49,10 +49,10 @@
 						</x-slot:icon>
 					</x-sidebar.nested-nav-link>
 
-					<x-sidebar.nested-nav-link :title="'Enrollment'" :children="[
-															['label' => 'Enrollment Kelas', 'href' => '#'], 
-															['label' => 'Enrollment Mahasiswa', 'href' => '#'],
-															['label' => 'Enrollment Jadwal', 'href' => '#'],
+					<x-sidebar.nested-nav-link :title="'Enrollment'" :role="$role" :children="[
+															['label' => 'Enrollment Kelas', 'href' => 'enrollment-kelas'], 
+															['label' => 'Enrollment Mahasiswa', 'href' => 'enrollment-mahasiswa'],
+															['label' => 'Enrollment Jadwal', 'href' => 'enrollment-jadwal'],
 															]">
 						<x-slot:icon>
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
@@ -74,7 +74,7 @@
 						</x-slot:icon>
 					</x-sidebar.single-nav-link>
 
-					<x-sidebar.single-nav-link :title="'Profile'" :href="'/' . $role . '/profile'"
+					<x-sidebar.single-nav-link :title="'Profil'" :href="'/' . $role . '/profile'"
 						:active="request()->is($role.'/profile')">
 						<x-slot:icon>
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
