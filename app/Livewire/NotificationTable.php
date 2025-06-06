@@ -2,14 +2,15 @@
 
 namespace App\Livewire;
 
-use App\Models\Dosen;
+use App\Models\Notification;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 
-class DosenTable extends Component
+class NotificationTable extends Component
 {
     use WithPagination;
+
     #[Url(history: true)]
     public $search = '';
     #[Url(history: true)]
@@ -28,17 +29,18 @@ class DosenTable extends Component
         $this->sortBy = $field;
         $this->sortDirection = 'desc';
     }
-    public $selectedDosenId = null;
 
-    public function selectDosen($id)
+    public $selectedNotifikasiId = null;
+
+    public function selectNotifikasi($id)
     {
-        $this->selectedDosenId = $id;
+        $this->selectedNotifikasiId = $id;
     }
 
-    public function getSelectedDosenProperty()
+    public function getSelectedNotifikasiProperty()
     {
-        return $this->selectedDosenId
-            ? Dosen::find($this->selectedDosenId)
+        return $this->selectedNotifikasiId
+            ? Notification::find($this->selectedNotifikasiId)
             : null;
     }
 
@@ -49,11 +51,12 @@ class DosenTable extends Component
 
     public function render()
     {
-        return view('livewire.dosen-table', [
-            'dosen' => Dosen::search($this->search)
+        return view('livewire.notification-table', [
+            'notifikasi' => Notification::with(['dosen', 'jamMulai', 'jamSelesai'])
+                ->search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),
-            'selectedDosen' => $this->selectedDosen,
+            'selectedNotifikasi' => $this->selectedNotifikasi,
         ]);
     }
 }

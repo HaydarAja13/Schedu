@@ -1,5 +1,5 @@
 <div x-data="{ selectedRow: null, showAlert: false }">
-    <x-table-properties :subtitle="'Menampilkan Data Mahasiswa'" :judulFilter="'Program Studi'" link="mahasiswa-create">
+    <x-table-properties :subtitle="'Menampilkan Data Mahasiswa'" link="mahasiswa-create">
     </x-table-properties>
     <div class="relative grid grid-cols-1 md:grid-cols-4 items-start justify-start gap-x-6 size-full">
         <div :class="selectedRow ? 'overflow-x-hidden overflow-y-auto bg-white rounded-xl md:col-span-3' : 'overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-4'"
@@ -189,13 +189,13 @@
                 </div>
                 <div class="mt-8 md:mt-auto flex flex-col gap-2">
                     <a class="inline-block rounded-xl bg-gradient-to-tr from-[#8C4AF2] to-[#6B56F6] px-12 py-2 text-sm text-center font-medium text-white"
-                        href="#">
+                        href="{{ route('admin.mahasiswa-update', $selectedMahasiswa?->id ?? '') }}">
                         Ubah Data
                     </a>
                     <button
                         class="hover:cursor-pointer inline-block rounded-xl border border-red-600 px-12 py-2 text-sm text-center font-medium text-white bg-red-600"
                         type="button" @click="showAlert = true">
-                        Hapus Data {{ $selectedMahasiswa?->id ?? '-' }}
+                        Hapus Data
                     </button>
                 </div>
             </div>
@@ -203,7 +203,7 @@
     </div>
     <div x-show="showAlert" class="mb-4">
         <x-alert titleModal="Peringatan"
-            contentModal="Apakah anda yakin ingin menghapus {{ $selectedMahasiswa?->id ?? '-' }}" type="warning"
-            :route="route('enrollment-kelas.destroy', $selectedEnrollmentKelas?->id ?? '')" />
+            contentModal="Apakah anda yakin ingin menghapus data ini?" type="warning"
+            :route="route('mahasiswa.destroy', $selectedMahasiswa?->id ?? '')" />
     </div>
 </div>

@@ -6,7 +6,7 @@
             <div class="w-full mx-4 md:mr-4 overflow-y-scroll">
                 <div class="sticky top-4">
                     <x-navbar></x-navbar>
-                    <p class="mt-4 text-3xl font-bold">{{ $title }}</p>
+                    <p class="mt-4 text-xl md:text-3xl font-bold">{{ $title }}</p>
                 </div>
                 {{ $content }}
             </div>

@@ -52,19 +52,19 @@ class EnrollmentMahasiswaKelasTable extends Component
     {
         $query = EnrollmentMahasiswaKelas::with(['mahasiswa', 'enrollmentKelas.tahunAkademik', 'enrollmentKelas.programStudi', 'enrollmentKelas.kelas']);
         if ($this->search) {
-            $query->whereHas('mahasiswa', function($q) {
-                $q->where('nama', 'like', '%'.$this->search.'%')
-                  ->orWhere('nim', 'like', '%'.$this->search.'%');
+            $query->whereHas('mahasiswa', function ($q) {
+                $q->where('nama_mahasiswa', 'like', '%' . $this->search . '%')
+                    ->orWhere('nim', 'like', '%' . $this->search . '%');
             })
-            ->orWhereHas('enrollmentKelas.tahunAkademik', function($q) {
-                $q->where('tahun_ajaran', 'like', '%'.$this->search.'%');
-            })
-            ->orWhereHas('enrollmentKelas.programStudi', function($q) {
-                $q->where('nama_prodi', 'like', '%'.$this->search.'%');
-            })
-            ->orWhereHas('enrollmentKelas.kelas',   function($q) {
-                $q->where('nama_kelas', 'like', '%'.$this->search.'%');
-            });
+                ->orWhereHas('enrollmentKelas.tahunAkademik', function ($q) {
+                    $q->where('tahun_ajaran', 'like', '%' . $this->search . '%')->orWhere('status', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('enrollmentKelas.programStudi', function ($q) {
+                    $q->where('nama_prodi', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('enrollmentKelas.kelas', function ($q) {
+                    $q->where('nama_kelas', 'like', '%' . $this->search . '%');
+                });
         }
         return view('livewire.enrollment-mahasiswa-kelas-table', [
             'enrollmentMahasiswaKelas' => $query->orderBy($this->sortBy, $this->sortDirection)->paginate($this->perPage),

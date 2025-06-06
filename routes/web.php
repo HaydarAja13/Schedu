@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\DosenController;
 use App\Http\Controllers\Api\EnrollmentKelasController;
 use App\Http\Controllers\Api\EnrollmentMahasiswaKelasController;
 use App\Http\Controllers\Api\EnrollmentMkMhsDsnRngController;
 use App\Http\Controllers\Api\KelasController;
+use App\Http\Controllers\Api\MahasiswaController;
 use App\Http\Controllers\Api\MataKuliahController;
 use App\Http\Controllers\Api\ProgramStudiController;
 use App\Http\Controllers\Api\RuangController;
@@ -17,7 +19,9 @@ use App\Models\ProgramStudi;
 use App\Models\EnrollmentKelas;
 use App\Models\EnrollmentMahasiswaKelas;
 use App\Models\EnrollmentMkMhsDsnRng;
+use App\Models\Jadwal;
 use App\Models\MataKuliah;
+use App\Models\Notification;
 use App\Models\Ruang;
 use App\Models\TahunAkademik;
 use Illuminate\Support\Facades\Route;
@@ -32,25 +36,86 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // admin
 Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
+    $mahasiswaCount = Mahasiswa::count();
+    $dosenCount = Dosen::count();
+    $matakuliahCount = MataKuliah::count();
+    $ruangCount = Ruang::count();
+
+    $enrollmentIds = Jadwal::pluck('id_enrollment_mk_mhs_dsn_rng')->unique();
+    $prodiIdsInJadwal = EnrollmentMkMhsDsnRng::whereIn('id', $enrollmentIds)
+        ->pluck('id_enrollment_kelas');
+    $prodiIds = EnrollmentKelas::whereIn('id', $prodiIdsInJadwal)
+        ->pluck('id_program_studi')
+        ->unique();
+
+    $prodiSudah = ProgramStudi::whereIn('id', $prodiIds)->get()->take(3);
+    $prodiBelum = ProgramStudi::whereNotIn('id', $prodiIds)->get()->take(5);
+
+    $prodiSudahCount = $prodiSudah->count();
+    $prodiBelumCount = $prodiBelum->count();
+
+    $notification = Notification::with(['dosen', 'jamMulai', 'jamSelesai'])
+        ->orderBy('created_at', 'desc')
+        ->take(4)
+        ->get();
+
+    return view('admin.dashboard', compact(
+        'mahasiswaCount',
+        'dosenCount',
+        'matakuliahCount',
+        'ruangCount',
+        'notification',
+        'prodiSudah',
+        'prodiBelum',
+        'prodiSudahCount',
+        'prodiBelumCount'
+    ));
 })->middleware('role:admin')->name('admin.dashboard');
 
 Route::get('/admin/mahasiswa', function () {
     return view('admin.mahasiswa');
 })->middleware('role:admin')->name('admin.mahasiswa');
+Route::post('/mahasiswa', [MahasiswaController::class, 'store'])->name('mahasiswa.store');
+Route::put('/mahasiswa/{id}', [MahasiswaController::class, 'update'])->name('mahasiswa.update');
+Route::delete('/mahasiswa/{id}', [MahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
+Route::get('/admin/mahasiswa-create', function () {
+    return view('admin.mahasiswa-create');
+})->middleware('role:admin')->name('admin.mahasiswa-create');
+Route::get('/admin/mahasiswa-update/{id}', function ($id) {
+    $mahasiswa = Mahasiswa::findOrFail($id);
+    return view('admin.mahasiswa-update', compact('id', 'mahasiswa'));
+})->middleware('role:admin')->name('admin.mahasiswa-update');
 
+// dosen admin
 Route::get('/admin/dosen', function () {
     return view('admin.dosen');
 })->middleware('role:admin')->name('admin.dosen');
+Route::post('/dosen', [DosenController::class, 'store'])->name('dosen.store');
+Route::put('/dosen/{id}', [DosenController::class, 'update'])->name('dosen.update');
+Route::delete('/dosen/{id}', [DosenController::class, 'destroy'])->name('dosen.destroy');
+Route::get('/admin/dosen-create', function () {
+    return view('admin.dosen-create');
+})->middleware('role:admin')->name('admin.dosen-create');
+Route::get('/admin/dosen-update/{id}', function ($id) {
+    $dosen = Dosen::findOrFail($id);
+    return view('admin.dosen-update', compact('id', 'dosen'));
+})->middleware('role:admin')->name('admin.dosen-update');
+
 
 Route::get('/admin/schedule', function () {
+    $notification = Notification::with(['dosen', 'jamMulai', 'jamSelesai'])
+        ->orderBy('created_at', 'desc')
+        ->take(4)
+        ->get();
     $programStudis = ProgramStudi::limit(3)->get();
-    return view('admin.schedule', compact('programStudis'));
+    return view('admin.schedule', compact('programStudis', 'notification'));
 })->middleware('role:admin')->name('admin.schedule');
 
 Route::get('/admin/profile', function () {
     return view('admin.profile');
 })->middleware('role:admin')->name('admin.profile');
+
+// notifikasi
 
 Route::get('/admin/notification', function () {
     return view('admin.notification');
@@ -67,7 +132,7 @@ Route::put('/enrollment-kelas/{id}', [EnrollmentKelasController::class, 'update'
 Route::delete('/enrollment-kelas/{id}', [EnrollmentKelasController::class, 'destroy'])->name('enrollment-kelas.destroy');
 
 Route::get('/admin/enrollment-kelas-create', function () {
-    $tahunAkademik = TahunAkademik::all();
+    $tahunAkademik = TahunAkademik::where('status', 1)->get();
     $programStudi = ProgramStudi::all();
     $kelas = Kelas::all();
     $angkatan = Angkatan::all();
@@ -75,7 +140,7 @@ Route::get('/admin/enrollment-kelas-create', function () {
 })->middleware('role:admin')->name('admin.enrollment-kelas-create');
 
 Route::get('/admin/enrollment-kelas-update/{id}', function ($id) {
-    $tahunAkademik = TahunAkademik::all();
+    $tahunAkademik = TahunAkademik::where('status', 1)->get();
     $programStudi = ProgramStudi::all();
     $kelas = Kelas::all();
     $angkatan = Angkatan::all();
@@ -130,9 +195,19 @@ Route::post('/enrollment-mahasiswa-kelas', [EnrollmentMahasiswaKelasController::
 Route::put('/enrollment-mahasiswa-kelas/{id}', [EnrollmentMahasiswaKelasController::class, 'update'])->name('enrollment-mahasiswa-kelas.update');
 Route::delete('/enrollment-mahasiswa-kelas/{id}', [EnrollmentMahasiswaKelasController::class, 'destroy'])->name('enrollment-mahasiswa-kelas.destroy');
 
+
 Route::get('/admin/enrollment-mahasiswa-kelas-create', function () {
-    $mahasiswa = Mahasiswa::all();
-    $enrollmentKelas = EnrollmentKelas::with(['tahunAkademik', 'programStudi', 'kelas', 'angkatan'])->get()
+    $tahunAkademikAktifIds = TahunAkademik::where('status', 1)->pluck('id');
+    $enrollmentKelasAktifIds = EnrollmentKelas::whereIn('id_tahun_akademik', $tahunAkademikAktifIds)->pluck('id');
+
+    $nimTerdaftar = EnrollmentMahasiswaKelas::whereIn('id_enrollment_kelas', $enrollmentKelasAktifIds)
+        ->pluck('id_mahasiswa');
+
+    $mahasiswa = Mahasiswa::whereNotIn('id', $nimTerdaftar)->get();
+
+    $enrollmentKelas = EnrollmentKelas::with(['tahunAkademik', 'programStudi', 'kelas', 'angkatan'])
+        ->whereIn('id_tahun_akademik', $tahunAkademikAktifIds)
+        ->get()
         ->map(function ($item) {
             $kelas = $item->kelas ? $item->kelas->nama_kelas : 'Tanpa Nama Kelas';
             $prodi = $item->programStudi ? $item->programStudi->kode_prodi : 'Tanpa Prodi';
@@ -140,8 +215,10 @@ Route::get('/admin/enrollment-mahasiswa-kelas-create', function () {
             $item->nama_kelas_display = "{$prodi}-{$angkatan}{$kelas}";
             return $item;
         });
+
     return view('admin.enrollment-mahasiswa-kelas-create', compact('mahasiswa', 'enrollmentKelas'));
 })->middleware('role:admin')->name('admin.enrollment-mahasiswa-kelas-create');
+
 
 Route::get('/admin/enrollment-mahasiswa-kelas-update/{id}', function ($id) {
     $mahasiswa = Mahasiswa::all();
@@ -228,4 +305,8 @@ Route::get('/admin/kelas-update/{id}', function ($id) {
 })->middleware('role:admin')->name('admin.kelas-update');
 
 
+
 Route::get('/generate', [GenerateController::class, 'generateJadwal']);
+Route::get('/admin/profile', [AuthController::class, 'profile'])->name('profile');
+Route::get('/dosen/profile', [AuthController::class, 'profile'])->name('profile');
+Route::get('/mahasiswa/profile', [AuthController::class, 'profile'])->name('profile');

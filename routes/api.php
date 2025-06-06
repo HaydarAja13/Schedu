@@ -13,11 +13,11 @@ use App\Http\Controllers\Api\JurusanController;
 use App\Http\Controllers\Api\KelasController;
 use App\Http\Controllers\Api\MahasiswaController;
 use App\Http\Controllers\Api\MataKuliahController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProgramStudiController;
 use App\Http\Controllers\Api\RuangController;
 use App\Http\Controllers\Api\TahunAkademikController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 
 Route::apiResource('dosen', DosenController::class);
 Route::apiResource('mahasiswa', MahasiswaController::class);
@@ -35,3 +35,4 @@ Route::apiResource('enrollment-mahasiswa-kelas', EnrollmentMahasiswaKelasControl
 Route::apiResource('mata-kuliah', MataKuliahController::class);
 Route::apiResource('enrollment-all', EnrollmentMkMhsDsnRngController::class);
 Route::apiResource('jadwal', JadwalController::class);
+Route::apiResource('notification', NotificationController::class);

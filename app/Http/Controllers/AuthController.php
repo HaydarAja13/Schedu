@@ -65,4 +65,21 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
+
+    public function profile(Request $request)
+    {
+        $user = $request->session()->get('user');
+        $role = $request->session()->get('role');
+
+        // Pilih view sesuai role
+        if ($role === 'admin') {
+            return view('admin.profile', compact('user', 'role'));
+        } elseif ($role === 'dosen') {
+            return view('dosen.profile', compact('user', 'role'));
+        } elseif ($role === 'mahasiswa') {
+            return view('mahasiswa.profile', compact('user', 'role'));
+        } else {
+            abort(404);
+        }
+    }
 }

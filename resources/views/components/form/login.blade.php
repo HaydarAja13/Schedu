@@ -17,7 +17,7 @@
                 </svg>
                 <input id="username" name="username" type="text" autocomplete="username"
                     class="block w-full bg-transparent text-base outline-none placeholder:text-gray-400 sm:text-sm/6"
-                    placeholder="laravela laravino" value="{{ old('username') }}">
+                    placeholder="NIP/NIM" value="{{ old('username') }}">
             </div>
             @error('username')
                 <div class="text-red-500 text-xs mt-1">{{ $message }}</div>

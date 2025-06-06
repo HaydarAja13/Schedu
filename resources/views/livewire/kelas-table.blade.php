@@ -165,7 +165,7 @@
                     {{ $selectedKelas?->nama_kelas ?? '-' }}
                 </p>
                 <span
-                    class="mx-auto w-fit rounded-full border border-[#6B56F6] bg-[#6B56F6]/25 px-2.5 py-0.5 text-xs font-medium text-[#6B56F6]">Ruang</span>
+                    class="mx-auto w-fit rounded-full border border-[#6B56F6] bg-[#6B56F6]/25 px-2.5 py-0.5 text-xs font-medium text-[#6B56F6]">Kelas</span>
                 <div class="mt-2 grid gap-y-2">
                     <div>
                         <p class="text-sm font-semibold">Nama Kelas</p>
@@ -180,7 +180,7 @@
                 </div>
                 <div class="mt-8 md:mt-auto flex flex-col gap-2">
                     <a class="inline-block rounded-xl bg-gradient-to-tr from-[#8C4AF2] to-[#6B56F6] px-12 py-2 text-center text-sm font-medium text-white"
-                        href="{{ route('admin.ruang-update', $selectedKelas?->id ?? '') }}">
+                        href="{{ route('admin.kelas-update', $selectedKelas?->id ?? '') }}">
                         Ubah Data
                     </a>
                     <button
@@ -194,6 +194,6 @@
     </div>
     <div x-show="showAlert" class="mb-4">
         <x-alert titleModal="Peringatan" contentModal="Apakah anda yakin ingin menghapus data ini?" type="warning"
-            :route="route('ruang.destroy', $selectedKelas?->id ?? '')" />
+            :route="route('kelas.destroy', $selectedKelas?->id ?? '')" />
     </div>
 </div>

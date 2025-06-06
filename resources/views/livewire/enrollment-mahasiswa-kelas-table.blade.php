@@ -18,11 +18,14 @@
                                 wire:click="setSortBy('id_enrollment_kelas')">
                                 Kelas
                             </th>
-                            <th :class="{ 'hidden': selectedRow }" class="whitespace-nowrap px-3 py-2">
+                            <th class="whitespace-nowrap px-3 py-2">
                                 Program Studi
                             </th>
                             <th :class="{ 'hidden': selectedRow }" class="whitespace-nowrap px-3 py-2">
                                 Tahun Akademik
+                            </th>
+                            <th :class="{ 'hidden': selectedRow }" class="whitespace-nowrap px-3 py-2">
+                                Status
                             </th>
                         </tr>
                     </thead>
@@ -50,11 +53,18 @@
                                 ($data->enrollmentKelas->angkatan->tahun_angkatan ?? '-') .
                                 ($data->enrollmentKelas->kelas->nama_kelas ?? '-') }}
                             </td>
-                            <td :class="{ 'hidden': selectedRow }" class="whitespace-nowrap px-3 py-3 text-sm">
+                            <td class="whitespace-nowrap px-3 py-3 text-sm">
                                 {{ $data->enrollmentKelas->programStudi->nama_prodi ?? '-' }}
                             </td>
                             <td :class="{ 'hidden': selectedRow }" class="whitespace-nowrap px-3 py-3 text-sm">
                                 {{ $data->enrollmentKelas->tahunAkademik->tahun_ajaran ?? '-' }}
+                            </td>
+                            <td :class="{ 'hidden': selectedRow }" class="whitespace-nowrap px-3 py-3 text-sm">
+                                @if ($data->enrollmentKelas->tahunAkademik->status == 1)
+                                <p class="text-green-600 font-semibold">Aktif</p>
+                                @elseif ($data->enrollmentKelas->tahunAkademik->status == 0)
+                                <p class="text-red-600 font-semibold">Tidak Aktif</p>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
