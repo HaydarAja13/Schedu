@@ -9,36 +9,39 @@ use Livewire\WithPagination;
 
 class MatkulTable extends Component
 {
-     use WithPagination;
+    use WithPagination;
+
     #[Url(history: true)]
     public $search = '';
     #[Url(history: true)]
     public $perPage = 10;
     #[Url(history: true)]
-    public $sortBy = 'created_at';
+    public $sortBy = 'kode_matkul';
     #[Url(history: true)]
-    public $sortDirection = 'desc';
+    public $sortDirection = 'asc';
+    public $selectedMataKuliahId = null;
 
-    public function setSortBy($field){
+    public function setSortBy($field)
+    {
         if ($this->sortBy === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-            return;
+        } else {
+            $this->sortBy = $field;
+            $this->sortDirection = 'asc';
         }
-        $this->sortBy = $field;
-        $this->sortDirection = 'desc';
     }
-    public $selectedMataKuliahId = null;
 
     public function selectMataKuliah($id)
     {
         $this->selectedMataKuliahId = $id;
     }
 
-    public function getSelectedMataKuliahProperty()
+    public function deleteMataKuliah($id)
     {
-        return $this->selectedMataKuliahId
-            ? Dosen::find($this->selectedMataKuliahId)
-            : null;
+        $matkul = MataKuliah::findOrFail($id);
+        $matkul->delete();
+        session()->flash('message', 'Mata kuliah berhasil dihapus.');
+        $this->selectedMataKuliahId = null;
     }
 
     public function updatingSearch()
@@ -48,12 +51,18 @@ class MatkulTable extends Component
 
     public function render()
     {
+        $query = MataKuliah::with('ruang');
+
+        if ($this->search) {
+            $query->where('kode_matkul', 'like', '%' . $this->search . '%')
+                  ->orWhere('nama_matkul', 'like', '%' . $this->search . '%');
+        }
+
+        $mata_kuliah = $query->orderBy($this->sortBy, $this->sortDirection)
+                             ->paginate($this->perPage);
+
         return view('livewire.matkul-table', [
-            'matkul' => MataKuliah::search($this->search)
-                ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage),
-            'selectedMataKuliah' => $this->selectedMataKuliah,
+            'mata_kuliah' => $mata_kuliah,
         ]);
     }
-
 }

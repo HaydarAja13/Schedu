@@ -16,4 +16,10 @@ class ProgramStudi extends Model
     {
         return $this->hasMany(EnrollmentKelas::class, 'id_program_studi ');
     }
+    public function scopeSearch($query, $term)
+    {
+        return $query->where('nama_prodi', 'like', "%$term%")
+                    ->orWhere('kode_prodi', 'like', "%$term%")
+                    ->orWhere('id_jurusan', 'like', "%$term%");
+    }
 }

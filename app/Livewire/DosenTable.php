@@ -2,32 +2,39 @@
 
 namespace App\Livewire;
 
-use App\Models\Dosen;
-use Livewire\Attributes\Url;
+use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class DosenTable extends Component
 {
-     use WithPagination;
-    #[Url(history: true)]
-    public $search = '';
-    #[Url(history: true)]
-    public $perPage = 10;
-    #[Url(history: true)]
-    public $sortBy = 'created_at';
-    #[Url(history: true)]
-    public $sortDirection = 'desc';
+    use WithPagination;
 
-    public function setSortBy($field){
+    protected $paginationTheme = 'tailwind';
+
+    public $search = '';
+    public $page = 1; 
+    public $perPage = 10;
+    public $sortBy = 'created_at';
+    public $sortDirection = 'desc';
+    public $selectedDosenId = null;
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function setSortBy($field)
+    {
         if ($this->sortBy === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-            return;
+        } else {
+            $this->sortBy = $field;
+            $this->sortDirection = 'asc';
         }
-        $this->sortBy = $field;
-        $this->sortDirection = 'desc';
     }
-    public $selectedDosenId = null;
 
     public function selectDosen($id)
     {
@@ -36,24 +43,53 @@ class DosenTable extends Component
 
     public function getSelectedDosenProperty()
     {
-        return $this->selectedDosenId
-            ? Dosen::find($this->selectedDosenId)
-            : null;
+        if (!$this->selectedDosenId) {
+            return null;
+        }
+
+        $response = Http::get(url('/api/dosen/' . $this->selectedDosenId));
+        return $response->successful() ? (object) $response->json() : null;
     }
 
-    public function updatingSearch()
-    {
-        $this->resetPage();
+    public function fetchAndFilterData(): Collection
+{
+    try {
+        $response = Http::get('http://127.0.0.1:8000/api/dosen');
+        $data = collect($response->json());
+
+        // Filter
+        if ($this->search) {
+            $data = $data->filter(function ($item) {
+                return str_contains(strtolower($item['nama_dosen']), strtolower($this->search));
+            });
+        }
+
+        // Sort
+        $data = $data->sortBy($this->sortBy, SORT_REGULAR, $this->sortDirection === 'desc');
+
+        return $data->values(); // reset key agar bisa di-paginate
+    } catch (\Exception $e) {
+        \Log::error('API fetch error: ' . $e->getMessage());
+        return collect();
     }
+}
 
     public function render()
-    {
-        return view('livewire.dosen-table', [
-            'dosen' => Dosen::search($this->search)
-                ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage),
-            'selectedDosen' => $this->selectedDosen,
-        ]);
-    }
+{
+    $filteredData = $this->fetchAndFilterData();
+
+    $currentPage = $this->page;
+    $paginated = new LengthAwarePaginator(
+        $filteredData->forPage($currentPage, $this->perPage)->values(),
+        $filteredData->count(),
+        $this->perPage,
+        $currentPage,
+        ['path' => request()->url(), 'query' => request()->query()]
+    );
+
+    return view('livewire.dosen-table', [
+        'dosenList' => $paginated,
+    ]);
+}
 
 }

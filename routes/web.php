@@ -2,7 +2,13 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DosenController;
+use App\Livewire\ProgramStudiTable;
+use App\Livewire\ProgramStudiForm;
+use App\Livewire\DosenTable;
+use App\Livewire\DosenForm;
+use App\Livewire\MatkulTable;
+use App\Livewire\MatkulForm;
+
 
 Route::get('/', function () {
     return view('auth.login');
@@ -21,22 +27,6 @@ Route::get('/admin/mahasiswa', function () {
     return view('admin.mahasiswa');
 })->middleware('role:admin')->name('admin.mahasiswa');
 
-//admin ke halaman dosen
-Route::get('/admin/dosen', function () {
-    return view('admin.dosen');
-})->middleware('role:admin')->name('admin.dosen');
-Route::get('/admin/dosenCreate', [DosenController::class, 'create'])->middleware('role:admin')->name('admin.dosenCreate');
-Route::post('/admin/dosenCreate', [DosenController::class, 'store'])->middleware('role:admin')->name('admin.dosen.store');
-Route::get('/admin/dosen/{id}/edit', [DosenController::class, 'edit'])->middleware('role:admin')->name('admin.dosenEdit');
-Route::put('/admin/dosen/{id}', [DosenController::class, 'update'])->middleware('role:admin')->name('admin.dosen.update');
-Route::delete('/admin/dosen/{id}', [DosenController::class, 'destroy'])->middleware('role:admin')->name('admin.dosen.destroy');
-
-//end admin ke halaman dosen 
-
-Route::get('/admin/mata-kuliah', function () {
-    return view('admin.mata-kuliah');
-})->middleware('role:admin')->name('admin.mata-kuliah');
-
 Route::get('/admin/schedule', function () {
     return view('admin.schedule');
 })->middleware('role:admin')->name('admin.schedule');
@@ -49,6 +39,11 @@ Route::get('/admin/notification', function () {
     return view('admin.notification');
 })->middleware('role:admin')->name('admin.notification');
 
+Route::get('/admin/program-studi', function () {
+    return view('admin.program-studi');
+})->middleware('role:admin')->name('admin.program-studi');
+
+
 // dosen
 
 Route::get('/dosen/dashboard', function () {
@@ -58,5 +53,43 @@ Route::get('/dosen/dashboard', function () {
 Route::get('/mahasiswa/dashboard', function () {
     return view('mahasiswa.dashboard');
 })->middleware('role:mahasiswa')->name('mahasiswa.dashboard');
+
+//Program Studi
+// Tambahkan route untuk form
+Route::get('/admin/program-studi/tambah', \App\Livewire\ProgramStudiForm::class)
+    ->middleware('role:admin')
+    ->name('admin.program-studi.create');
+
+Route::get('/admin/program-studi/edit/{id}', \App\Livewire\ProgramStudiForm::class)
+    ->middleware('role:admin')
+    ->name('admin.program-studi.edit');
+
+//Livewire Matkul
+Route::get('/admin/mata-kuliah/tambah', \App\Livewire\ProgramStudiForm::class)
+    ->middleware('role:admin')
+    ->name('admin.mata-kuliah.create');
+
+Route::get('/admin/mata-kuliah/edit/{id}', \App\Livewire\ProgramStudiForm::class)
+    ->middleware('role:admin')
+    ->name('admin.mata-kuliah.edit');
+//
+//Livewire Dosen
+Route::get('/admin/dosen/tambah', \App\Livewire\DosenForm::class)
+    ->middleware('role:admin')
+    ->name('admin.dosen.create');
+
+Route::get('/admin/dosen/edit/{id}', \App\Livewire\DosenForm::class)
+    ->middleware('role:admin')
+    ->name('admin.dosen.edit');
+
+// Program Studi
+Route::get('/admin/program-studi', \App\Livewire\ProgramStudiTable::class)
+    ->middleware('role:admin')
+    ->name('admin.program-studi');
+
+// Dosen
+Route::get('/admin/dosen', \App\Livewire\DosenTable::class)
+    ->middleware('role:admin')
+    ->name('admin.dosen');
 
 Route::get('/generate', [GenerateController::class, 'generateJadwal']);
