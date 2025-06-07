@@ -1,14 +1,16 @@
-<x-template :role="'admin'" title="Tambah Mahsiswa">
+<x-template :role="'admin'" title="Edit Mahsiswa">
     <x-slot:content>
         <div class="overflow-scroll h-[calc(100vh-200px)]">
-            <form action="{{ route('mahasiswa.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('mahasiswa.update' , $id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
                 <div class="mt-4 bg-white rounded-lg p-8">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-2">
                         <div class="grid grid-cols-1 items-center gap-y-4">
                             <p class="text-base font-medium">Atur Foto Profil</p>
                             <div x-data="{ 
                                                             imagePreview: null,
+                                                            originalImage: '{{ $mahasiswa->foto_profil ? asset('storage/' . $mahasiswa->foto_profil) : 'https://placehold.co/400' }}',
                                                             handleFileSelect(event) {
                                                                 const file = event.target.files[0];
                                                                 if (file) {
@@ -18,22 +20,17 @@
                                                                     };
                                                                     reader.readAsDataURL(file);
                                                                 }
+                                                            },
+                                                            getCurrentImage() {
+                                                                return this.imagePreview || this.originalImage;
                                                             }
                                                         }">
                                 <label for="File"
-                                    class="rounded-full size-28 hover:cursor-pointer flex justify-center items-center overflow-hidden"
-                                    :class="imagePreview ? '' : 'bg-gray-200'"
-                                    :style="imagePreview ? `background-image: url(${imagePreview}); background-size: cover; background-position: center;` : ''">
-
-                                    <!-- Icon hanya muncul jika belum ada gambar -->
-                                    <svg x-show="!imagePreview" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                    </svg>
+                                    class="rounded-full size-28 hover:cursor-pointer flex justify-center items-center bg-no-repeat bg-center bg-cover overflow-hidden"
+                                    :style="`background-image: url('${getCurrentImage()}');`">
 
                                     <input multiple type="file" id="File" class="sr-only" name="foto_profil"
-                                        accept="image/*" required @change="handleFileSelect($event)" />
+                                        accept="image/*" @change="handleFileSelect($event)" value="{{ $mahasiswa->foto_profil }}" />
                                 </label>
                             </div>
                             <ul class="text-xs text-gray-400 list-disc pl-4">
@@ -49,7 +46,8 @@
                                             class="text-red-500">*</span></label>
                                     <p class="text-xs text-gray-400">Masukan Nama Lengkap Mahasiswa</p>
                                 </div>
-                                <input type="text" name="nama_mahasiswa" required placeholder="cth: Pradodo Wibowo"
+                                <input type="text" name="nama_mahasiswa" required
+                                    value="{{ $mahasiswa->nama_mahasiswa }}"
                                     class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500" />
                             </div>
                             <div class="flex flex-col md:flex-row md:items-center gap-4">
@@ -57,7 +55,7 @@
                                     <label class="whitespace-nowrap">NIM <span class="text-red-500">*</span></label>
                                     <p class="text-xs text-gray-400">Masukan Nomor Induk Mahasiswa</p>
                                 </div>
-                                <input type="text" name="nim" required placeholder="cth: 4.33.23.0.12"
+                                <input type="text" name="nim" required value="{{ $mahasiswa->nim }}"
                                     class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500" />
                             </div>
                         </div>
@@ -68,17 +66,17 @@
                                 <label class="whitespace-nowrap">Email <span class="text-red-500">*</span></label>
                                 <p class="text-xs text-gray-400">Masukan Email</p>
                             </div>
-                            <input type="email" name="email" required placeholder="cth: mahasiswa@gmail.com"
+                            <input type="email" name="email" required value="{{ $mahasiswa->email }}"
                                 class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500" />
                         </div>
 
                         <div class="flex flex-col md:flex-row md:items-center gap-4">
                             <div class="w-72">
-                                <label class="whitespace-nowrap">Password <span class="text-red-500">*</span></label>
+                                <label class="whitespace-nowrap">Password Baru</label>
                                 <p class="text-xs text-gray-400">Kata sandi terdiri dari minimal 8 karakter, berisi
                                     angka, huruf & simbol</p>
                             </div>
-                            <input type="password" name="password" required
+                            <input type="password" name="password" placeholder="Password baru (opsional)"
                                 class="w-full rounded-md px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500"
                                 placeholder="••••••••" />
                         </div>
@@ -88,7 +86,7 @@
                                         class="text-red-500">*</span></label>
                                 <p class="text-xs text-gray-400">Masukan Nomor Telepon</p>
                             </div>
-                            <input type="number" name="no_hp" required placeholder="cth: 08123456789"
+                            <input type="number" name="no_hp" required value="{{ $mahasiswa->no_hp }}"
                                 class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500" />
                         </div>
                         <div class="flex justify-end items-center gap-x-4">

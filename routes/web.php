@@ -24,6 +24,7 @@ use App\Models\MataKuliah;
 use App\Models\Notification;
 use App\Models\Ruang;
 use App\Models\TahunAkademik;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -75,7 +76,8 @@ Route::get('/admin/dashboard', function () {
 Route::get('/admin/mahasiswa', function () {
     return view('admin.mahasiswa');
 })->middleware('role:admin')->name('admin.mahasiswa');
-Route::post('/mahasiswa', [MahasiswaController::class, 'store'])->name('mahasiswa.store');
+
+
 Route::put('/mahasiswa/{id}', [MahasiswaController::class, 'update'])->name('mahasiswa.update');
 Route::delete('/mahasiswa/{id}', [MahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
 Route::get('/admin/mahasiswa-create', function () {
@@ -115,6 +117,10 @@ Route::get('/admin/profile', function () {
     return view('admin.profile');
 })->middleware('role:admin')->name('admin.profile');
 
+Route::get('/admin/profile-update', function (Request $request) {
+    $user = $request->session()->get('user');
+    return view('admin.profile-update', compact('user'));
+})->middleware('role:admin');
 // notifikasi
 
 Route::get('/admin/notification', function () {

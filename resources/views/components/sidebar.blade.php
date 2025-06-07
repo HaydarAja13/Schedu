@@ -1,6 +1,6 @@
 @props(['role'])
 <div class="h-screen md:p-4" x-show="open" x-transition>
-	<div class="fixed inset-0 z-50 bg-black/70 md:hidden"></div>
+	<div class="fixed inset-0 z-50 bg-transparent backdrop-blur-sm md:hidden"></div>
 	<div
 		class="absolute md:relative z-50 flex flex-col h-full justify-between md:border-e md:rounded-xl md:border-gray-100 bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] w-64"
 		@click.away="window.innerWidth < 768 && (open = false)">

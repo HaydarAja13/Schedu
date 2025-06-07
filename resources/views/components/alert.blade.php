@@ -8,7 +8,7 @@
         x-transition:leave-start="opacity-100 transform scale-100"
         x-transition:leave-end="opacity-0 transform scale-90"
         @keydown.escape.window="showAlert = false"
-        class="fixed grid inset-0 z-50 place-content-center bg-black/60 p-4" role="dialog" aria-modal="true"
+        class="fixed grid inset-0 z-50 place-content-center bg-transparent backdrop-blur-sm p-4" role="dialog" aria-modal="true"
         aria-labelledby="modalTitle">
         <div
             x-transition:enter="transition ease-out duration-200 delay-150"

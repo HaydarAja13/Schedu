@@ -12,14 +12,12 @@
         </div>
       </div>
       <div class="bg-white px-10 grid gap-y-2 py-4 rounded-b-lg shadow-lg">
-        <div
-          class="relative flex items-center justify-center bg-white size-fit p-1.5 -mt-16 z-30 rounded-full">
+        <div class="relative flex items-center justify-center bg-white size-fit p-1.5 -mt-16 z-30 rounded-full">
           <img src="https://placehold.co/100" alt="" class="size-22 md:size-28 rounded-full">
         </div>
         <p class="text-lg md:text-xl font-semibold">{{ $user->nama_admin }}</p>
-        <span
-          class="rounded-full font-semibold bg-purple-100 px-2.5 uppercase py-0.5 text-sm whitespace-nowrap text-purple-700 w-fit">
-          {{ $role }}</span>
+        <p class="rounded-full font-semibold  uppercase text-sm whitespace-nowrap text-purple-700 w-fit">
+          {{ $role }}</p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-y-2 items-center">
           <p class="font-medium text-sm md:text-base">NIP</p>
           <div class="mt-2 col-span-2">
@@ -38,8 +36,8 @@
           </div>
         </div>
         <div class="flex justify-end items-center">
-          <a class="inline-block w-fit rounded-lg  bg-gradient-to-r from-[#6B56F6] to-[#8C4AF2] px-6 py-2 text-sm font-medium text-white focus:ring-3 focus:outline-hidden mt-4"
-            href="#">
+          <a type="button" href="profile-update "
+            class="inline-block w-fit rounded-lg  bg-gradient-to-r from-[#6B56F6] to-[#8C4AF2] px-6 py-2 text-sm font-medium text-white focus:ring-3 focus:outline-hidden mt-4">
             <div class="flex items-center justify-center gap-x-2">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-5">
