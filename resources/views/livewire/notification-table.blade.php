@@ -1,31 +1,43 @@
-<div class="mt-4 grid grid-cols-1 md:grid-cols-3">
-    <table class="w-full">
+<div x-data="{ selectedRow: null }" class="mt-4 grid grid-cols-1 md:grid-cols-3" @click.away="selectedRow = null">
+    <table class="w-full h-fit">
         @foreach ($notifikasi as $data)
-        <tr>
+        <tr class="cursor-pointer transition-all duration-200"
+            @click="selectedRow = '{{ $data->id }}'; $wire.selectNotifikasi({{ $data->id }})">
             <td>
-                <div class="grid gap-y-2 hover:bg-[#E5E1FF] p-2 rounded-l-lg hover:cursor-pointer">
+                <div class="grid gap-y-2 hover:bg-[#E5E1FF] px-2 py-4 rounded-l-lg hover:cursor-pointer"
+                    :class="{ 'bg-[#E5E1FF]': selectedRow === '{{ $data->id }}' }">
                     <p class="text-sm"><span class="font-semibold">Permintaan Ubah Jadwal</span> {{
                         $data->dosen->nama_dosen
                         }} tidak dapat mengajar pada {{ $data->hari }}, pukul...</p>
                     @if ($data->status == 'Belum Divalidasi')
-                    <span
-                        class="inline-flex items-center w-fit justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="-ms-1 me-1.5 size-4">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                        </svg>
-
-                        <p class="text-sm whitespace-nowrap">Belum Divalidasi</p>
-                    </span>
+                    <p class="text-sm font-semibold">Verifikasi Dibutuhkan</p>
                     @endif
                     <p class="text-xs text-gray-500">{{ $data->created_at }}</p>
                 </div>
+                <hr class="border-gray-300">
             </td>
         </tr>
         @endforeach
     </table>
-    <div class="bg-[#F8F8F8] w-full col-span-2 rounded-r-lg p-4">
-        aa
+    {{-- detail --}}
+    <div class="bg-[#F8F8F8] w-full col-span-2 rounded-r-lg p-4" :class="{ 'hidden': selectedRow }">
+        aaa
+    </div>
+    <div class="bg-[#F8F8F8] w-full col-span-2 rounded-r-lg p-4" :class="{ 'hidden': !selectedRow }">
+        @if ($selectedNotifikasi)
+        <div>
+            <h2 class="font-bold text-lg mb-2">Detail Notifikasi</h2>
+            <p><span class="font-semibold">Dosen:</span> {{ $selectedNotifikasi->dosen->nama_dosen ?? '-' }}</p>
+            <p><span class="font-semibold">Hari:</span> {{ $selectedNotifikasi->hari ?? '-' }}</p>
+            <p><span class="font-semibold">Jam Mulai:</span> {{ $selectedNotifikasi->jamMulai->nama_jam ?? '-' }}</p>
+            <p><span class="font-semibold">Jam Selesai:</span> {{ $selectedNotifikasi->jamSelesai->nama_jam ?? '-' }}
+            </p>
+            <p><span class="font-semibold">Keterangan:</span> {{ $selectedNotifikasi->keterangan ?? '-' }}</p>
+            <p><span class="font-semibold">Status:</span> {{ $selectedNotifikasi->status ?? '-' }}</p>
+            <p><span class="font-semibold">Dibuat:</span> {{ $selectedNotifikasi->created_at ?? '-' }}</p>
+        </div>
+        @else
+        <p>Pilih notifikasi untuk melihat detail.</p>
+        @endif
     </div>
 </div>

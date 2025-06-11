@@ -23,7 +23,7 @@
                         <img src="{{ asset('images/example-user.png') }}" alt=""
                             class="size-10 rounded-full cursor-pointer" @click="open = !open">
                     </span>
-                    <div role="menu"
+                    <div role="menu" x-cloak
                         class="absolute end-0 top-12 z-auto w-36 overflow-hidden rounded border border-gray-300 bg-white shadow-sm"
                         x-show="open" x-transition.origin.top.right @click.away="open = false">
                         <form method="POST" action="{{ route('logout') }}">

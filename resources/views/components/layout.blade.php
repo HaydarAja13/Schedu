@@ -10,6 +10,11 @@
   <link rel="shortcut icon" href="{{ asset('images/schedu-icon.svg') }}" type="image/x-icon">
   @livewireStyles
   <title>Schedu</title>
+  <style>
+    [x-cloak] {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body class="h-full bg-[#F7F7FF]">

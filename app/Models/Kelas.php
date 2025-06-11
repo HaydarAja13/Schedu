@@ -15,7 +15,7 @@ class Kelas extends Model
 
     public function scopeSearch($query, $value)
     {
-        return $query->where('id_kelas', 'like', '%' . $value . '%')->orWhere('nama_kelas', 'like', '%' . $value . '%');
+        return $query->where('id', 'like', '%' . $value . '%')->orWhere('nama_kelas', 'like', '%' . $value . '%');
     }
     public function enrollmentKelas()
     {

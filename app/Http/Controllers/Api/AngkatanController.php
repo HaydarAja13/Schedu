@@ -30,7 +30,10 @@ class AngkatanController extends Controller
             'tahun_angkatan' => $request->tahun_angkatan,
         ]);
 
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('admin.angkatan')->with('error', 'Angkatan gagal dibuat');
+        }
+        return redirect()->route('admin.angkatan')->with('create', 'Angkatan berhasil dibuat');
     }
 
     /**
@@ -54,10 +57,14 @@ class AngkatanController extends Controller
         ]);
 
         $data->update([
-            'tahun_angkatan' => $request->angkatan->angkatan ?? $data->angkatan,
+            'tahun_angkatan' => $request->tahun_angkatan ?? $data->tahun_angkatan,
+
         ]);
 
-        return response()->json($data);
+        if (!$data) {
+            return redirect()->route('admin.angkatan')->with('error', 'Angkatan gagal diperbarui');
+        }
+        return redirect()->route('admin.angkatan')->with('update', 'Angkatan berhasil diperbarui');
     }
 
     /**
@@ -67,6 +74,9 @@ class AngkatanController extends Controller
     {
         $data = Angkatan::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Angkatan deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.angkatan')->with('error', 'Angkatan gagal dihapus');
+        }
+        return redirect()->route('admin.angkatan')->with('delete', 'Angkatan berhasil dihapus');
     }
 }

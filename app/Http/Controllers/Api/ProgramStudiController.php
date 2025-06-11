@@ -33,7 +33,10 @@ class ProgramStudiController extends Controller
             'kode_prodi' => $request->kode_prodi,
         ]);
 
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('admin.program-studi')->with('error', 'Program Studi gagal dibuat');
+        }
+        return redirect()->route('admin.program-studi')->with('create', 'Program Studi berhasil dibuat');
     }
 
     /**
@@ -64,7 +67,10 @@ class ProgramStudiController extends Controller
             'kode_prodi' => $request->kode_prodi ?? $data->kode_prodi,
         ]);
 
-        return response()->json($data);
+        if (!$data) {
+            return redirect()->route('admin.program-studi')->with('error', 'Program Studi gagal diperbarui');
+        }
+        return redirect()->route('admin.program-studi')->with('update', 'Program Studi berhasil diperbarui');
     }
 
     /**
@@ -74,6 +80,9 @@ class ProgramStudiController extends Controller
     {
         $data = ProgramStudi::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Program Studi deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.program-studi')->with('error', 'Program Studi gagal dihapus');
+        }
+        return redirect()->route('admin.program-studi')->with('delete', 'Program Studi berhasil dihapus');
     }
 }

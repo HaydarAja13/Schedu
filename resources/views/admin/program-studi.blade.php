@@ -15,7 +15,6 @@
             </div>
             @endif
         </div>
-
         <div class="">
             <livewire:program-studi-table></livewire:program-studi-table>
         </div>

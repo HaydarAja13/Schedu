@@ -26,11 +26,12 @@
                                                             }
                                                         }">
                                 <label for="File"
-                                    class="rounded-full size-28 hover:cursor-pointer flex justify-center items-center bg-no-repeat bg-center bg-cover overflow-hidden"
+                                    class="rounded-full size-20 md:size-28 hover:cursor-pointer flex justify-center items-center bg-no-repeat bg-center bg-cover overflow-hidden"
                                     :style="`background-image: url('${getCurrentImage()}');`">
 
                                     <input multiple type="file" id="File" class="sr-only" name="foto_profil"
-                                        accept="image/*" @change="handleFileSelect($event)" value="{{ $mahasiswa->foto_profil }}" />
+                                        accept="image/*" @change="handleFileSelect($event)"
+                                        value="{{ $mahasiswa->foto_profil }}" />
                                 </label>
                             </div>
                             <ul class="text-xs text-gray-400 list-disc pl-4">
@@ -42,7 +43,7 @@
                         <div class="col-span-2 pt-8 gap-y-4 grid h-fit">
                             <div class="flex flex-col md:flex-row md:items-center gap-4">
                                 <div class="w-72">
-                                    <label class=" whitespace-nowrap">Nama Mahasiswa <span
+                                    <label class=" whitespace-nowrap  text-sm md:text-base">Nama Mahasiswa <span
                                             class="text-red-500">*</span></label>
                                     <p class="text-xs text-gray-400">Masukan Nama Lengkap Mahasiswa</p>
                                 </div>
@@ -52,7 +53,8 @@
                             </div>
                             <div class="flex flex-col md:flex-row md:items-center gap-4">
                                 <div class="w-72">
-                                    <label class="whitespace-nowrap">NIM <span class="text-red-500">*</span></label>
+                                    <label class="whitespace-nowrap  text-sm md:text-base">NIM <span
+                                            class="text-red-500">*</span></label>
                                     <p class="text-xs text-gray-400">Masukan Nomor Induk Mahasiswa</p>
                                 </div>
                                 <input type="text" name="nim" required value="{{ $mahasiswa->nim }}"
@@ -63,7 +65,8 @@
                     <div class="grid grid-cols-1 gap-y-4 mt-4 md:mt-8">
                         <div class="flex flex-col md:flex-row md:items-center gap-4">
                             <div class="w-72">
-                                <label class="whitespace-nowrap">Email <span class="text-red-500">*</span></label>
+                                <label class="whitespace-nowrap  text-sm md:text-base">Email <span
+                                        class="text-red-500">*</span></label>
                                 <p class="text-xs text-gray-400">Masukan Email</p>
                             </div>
                             <input type="email" name="email" required value="{{ $mahasiswa->email }}"
@@ -72,7 +75,7 @@
 
                         <div class="flex flex-col md:flex-row md:items-center gap-4">
                             <div class="w-72">
-                                <label class="whitespace-nowrap">Password Baru</label>
+                                <label class="whitespace-nowrap  text-sm md:text-base">Password Baru</label>
                                 <p class="text-xs text-gray-400">Kata sandi terdiri dari minimal 8 karakter, berisi
                                     angka, huruf & simbol</p>
                             </div>
@@ -82,38 +85,14 @@
                         </div>
                         <div class="flex flex-col md:flex-row md:items-center gap-4">
                             <div class="w-72">
-                                <label class="whitespace-nowrap">Nomor Telepon <span
+                                <label class="whitespace-nowrap  text-sm md:text-base">Nomor Telepon <span
                                         class="text-red-500">*</span></label>
                                 <p class="text-xs text-gray-400">Masukan Nomor Telepon</p>
                             </div>
                             <input type="number" name="no_hp" required value="{{ $mahasiswa->no_hp }}"
                                 class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500" />
                         </div>
-                        <div class="flex justify-end items-center gap-x-4">
-                            <a class="inline-block rounded-lg px-6 py-2 text-sm font-medium bg-[#F7F7FF] text-gray-500 shadow-sm"
-                                href="/admin/mahasiswa">
-                                <div class="flex items-center justify-center gap-x-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                    </svg>
-                                    <p>Batal</p>
-                                </div>
-                            </a>
-                            <button
-                                class="inline-block rounded-lg px-6 py-2 text-sm font-medium bg-gradient-to-r from-[#6B56F6] to-[#8C4AF2] text-white shadow-sm"
-                                type="submit">
-                                <div class="flex items-center justify-center gap-x-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                    </svg>
-                                    <p>Simpan</p>
-                                </div>
-                            </button>
-                        </div>
+                        <x-form.button-group page="mahasiswa" />
                     </div>
                 </div>
             </form>

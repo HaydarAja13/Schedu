@@ -184,7 +184,7 @@
         <div x-show="selectedRow" x-transition.opacity class="fixed inset-0 z-40 bg-black/60 md:hidden"
             :class="{ 'hidden': !selectedRow }">
         </div>
-        <div class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
+        <div x-cloak class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
             :class="{ 'hidden': !selectedRow }">
             <div class="size-full flex flex-col justify-start p-4">
                 <p class="mb-2 text-center text-sm font-semibold">
@@ -229,8 +229,8 @@
             </div>
         </div>
     </div>
-    <div x-show="showAlert" class="mb-4">
+    <div x-cloak x-show="showAlert" class="mb-4">
         <x-alert titleModal="Peringatan" contentModal="Apakah anda yakin ingin menghapus data ini?" type="warning"
-            :route="route('enrollment-kelas.destroy', $selectedMataKuliah?->id ?? '')" />
+            :route="route('mata-kuliah.destroy', $selectedMataKuliah?->id ?? '')" />
     </div>
 </div>

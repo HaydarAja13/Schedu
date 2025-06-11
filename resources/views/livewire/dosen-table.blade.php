@@ -33,7 +33,8 @@
                                 :class="selectedRow === '{{ $data->id }}' ? 'pl-10' : 'px-3'">{{ $no++ }}</td>
                             <td class="px-3 py-3 whitespace-nowrap text-sm font-medium">
                                 <div class="flex w-max items-center gap-x-4">
-                                    <img src="https://placehold.co/400" alt="" class="size-10">
+                                    <img src="{{ $data->foto_profil ? asset('storage/' . $data->foto_profil) : 'https://placehold.co/400' }}" alt=""
+                                        class="size-10 rounded-full">
                                     {{ $data->nama_dosen }}
                                 </div>
                             </td>
@@ -164,10 +165,12 @@
             :class="{ 'hidden': !selectedRow }">
         </div>
         {{-- detail --}}
-        <div class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
+        <div x-cloak
+            class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
             :class="{ 'hidden': !selectedRow }">
             <div class="size-full flex flex-col justify-start p-4">
-                <img src="https://placehold.co/50" alt="" class="rounded-full mb-2 size-32 mx-auto">
+                <img src="{{ $selectedDosen?->foto_profil ? asset('storage/' . $selectedDosen->foto_profil) : 'https://placehold.co/400' }}"
+                    alt="" class="rounded-full mb-2 size-32 mx-auto">
                 <p class="text-center mb-2 font-semibold text-sm">
                     {{ $selectedDosen?->nama_dosen ?? '-' }}
                 </p>
@@ -201,8 +204,8 @@
             </div>
         </div>
     </div>
-    <div x-show="showAlert" class="mb-4">
+    <div x-cloak x-show="showAlert" class="mb-4">
         <x-alert titleModal="Peringatan" contentModal="Apakah anda yakin ingin menghapus data ini?" type="warning"
-            :route="route('dosen.destroy', $selectedEnrollmentKelas?->id ?? '')" />
+            :route="route('dosen.destroy', $selectedDosen?->id ?? '')" />
     </div>
 </div>

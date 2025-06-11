@@ -165,7 +165,7 @@
             :class="{ 'hidden': !selectedRow }">
         </div>
         {{-- detail --}}
-        <div class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
+        <div x-cloak class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
             :class="{ 'hidden': !selectedRow }">
             <div class="size-full flex flex-col justify-start p-4">
                 <img src="{{ $selectedMahasiswa?->foto_profil ? asset('storage/' . $selectedMahasiswa->foto_profil) : 'https://placehold.co/400' }}"
@@ -203,7 +203,7 @@
             </div>
         </div>
     </div>
-    <div x-show="showAlert" class="mb-4">
+    <div x-show="showAlert" x-cloak class="mb-4">
         <x-alert titleModal="Peringatan" contentModal="Apakah anda yakin ingin menghapus data ini?" type="warning"
             :route="route('mahasiswa.destroy', $selectedMahasiswa?->id ?? '')" />
     </div>

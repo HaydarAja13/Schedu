@@ -1,6 +1,6 @@
 <x-template :role="'admin'" title="Notifikasi">
   <x-slot:content>
-    <div class="w-full bg-white rounded-lg mt-4 p-4">
+    <div class="w-full bg-white rounded-lg mt-4 p-4 overflow-scroll h-[calc(100vh-200px)]">
       <div class="flex items-center justify-start gap-x-2">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
           class="size-5">
@@ -10,7 +10,7 @@
         <p class="font-semibold text-sm">Notifikasi</p>
       </div>
       <livewire:notification-table></livewire:notification-table>
-      
+
     </div>
   </x-slot:content>
 </x-template>

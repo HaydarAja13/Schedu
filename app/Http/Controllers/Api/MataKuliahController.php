@@ -27,7 +27,7 @@ class MataKuliahController extends Controller
             'sks' => 'required|integer|min:1|max:4',
             'jam' => 'required|integer|min:1|max:4',
             'semester' => 'required|integer|min:1|max:8',
-            'id_ruang' => 'required|exists:ruang,id',
+            'id_ruang' => 'nullable|exists:ruang,id',
             'jenis' => 'required|string|in:T,P',
         ]);
 
@@ -37,11 +37,14 @@ class MataKuliahController extends Controller
             'sks' => $request->sks,
             'jam' => $request->jam,
             'semester' => $request->semester,
-            'id_ruang' => $request->id_ruang,
+            'id_ruang' => $request->id_ruang ?? null,
             'jenis' => $request->jenis,
         ]);
 
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('admin.mata-kuliah')->with('error', 'Mata Kuliah gagal dibuat');
+        }
+        return redirect()->route('admin.mata-kuliah')->with('create', 'Mata Kuliah berhasil dibuat');
     }
 
     /**
@@ -66,7 +69,7 @@ class MataKuliahController extends Controller
             'sks' => 'sometimes|required|integer|min:1|max:4',
             'jam' => 'sometimes|required|integer|min:1|max:4',
             'semester' => 'sometimes|required|integer|min:1|max:8',
-            'id_ruang' => 'sometimes|required|exists:ruang,id',
+            'id_ruang' => 'nullable|sometimes|exists:ruang,id',
             'jenis' => 'sometimes|required|string|in:T,P',
         ]);
 
@@ -76,11 +79,14 @@ class MataKuliahController extends Controller
             'sks' => $request->sks ?? $data->sks,
             'jam' => $request->jam ?? $data->jam,
             'semester' => $request->semester ?? $data->semester,
-            'id_ruang' => $request->id_ruang ?? $data->id_ruang,
+            'id_ruang' => $request->id_ruang ?? $data->id_ruang ?? null,
             'jenis' => $request->jenis ?? $data->jenis,
         ]);
 
-        return response()->json($data);
+        if (!$data) {
+            return redirect()->route('admin.mata-kuliah')->with('error', 'Mata Kuliah gagal diperbarui');
+        }
+        return redirect()->route('admin.mata-kuliah')->with('update', 'Mata Kuliah berhasil diperbarui');
     }
 
     /**
@@ -90,6 +96,9 @@ class MataKuliahController extends Controller
     {
         $data = MataKuliah::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Mata Kuliah deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.mata-kuliah')->with('error', 'Mata Kuliah gagal dihapus');
+        }
+        return redirect()->route('admin.mata-kuliah')->with('delete', 'Mata Kuliah berhasil dihapus');
     }
 }

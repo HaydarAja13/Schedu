@@ -29,7 +29,10 @@ class JurusanController extends Controller
             'nama_jurusan' => $request->nama_jurusan,
         ]);
 
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('admin.jurusan')->with('error', 'Jurusan gagal dibuat');
+        }
+        return redirect()->route('admin.jurusan')->with('create', 'Jurusan berhasil dibuat');
     }
 
     /**
@@ -51,12 +54,15 @@ class JurusanController extends Controller
         $request->validate([
             'nama_jurusan' => 'sometimes|required|string|max:100|unique:jurusan,nama_jurusan,' . $id,
         ]);
-
+        
         $data->update([
             'nama_jurusan' => $request->nama_jurusan ?? $data->nama_jurusan,
         ]);
 
-        return response()->json($data);
+        if (!$data) {
+            return redirect()->route('admin.jurusan')->with('error', 'Jurusan gagal diperbarui');
+        }
+        return redirect()->route('admin.jurusan')->with('update', 'Jurusan berhasil diperbarui');
     }
 
     /**
@@ -66,6 +72,9 @@ class JurusanController extends Controller
     {
         $data = Jurusan::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Jurusan deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.jurusan')->with('error', 'Jurusan gagal dihapus');
+        }
+        return redirect()->route('admin.jurusan')->with('delete', 'Jurusan berhasil dihapus');
     }
 }

@@ -29,7 +29,10 @@ class KelasController extends Controller
             'nama_kelas' => $request->nama_kelas,
         ]);
 
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('admin.kelas')->with('error', 'Kelas gagal dibuat');
+        }
+        return redirect()->route('admin.kelas')->with('create', 'Kelas berhasil dibuat');
     }
 
     /**
@@ -56,7 +59,10 @@ class KelasController extends Controller
             'nama_kelas' => $request->nama_kelas ?? $data->nama_kelas,
         ]);
 
-        return response()->json($data);
+        if (!$data) {
+            return redirect()->route('admin.kelas')->with('error', 'Kelas gagal diperbarui');
+        }
+        return redirect()->route('admin.kelas')->with('update', 'Kelas berhasil diperbarui');
     }
 
     /**
@@ -66,6 +72,9 @@ class KelasController extends Controller
     {
         $data = Kelas::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Kelas deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.kelas')->with('error', 'Kelas gagal dihapus');
+        }
+        return redirect()->route('admin.kelas')->with('delete', 'Kelas berhasil dihapus');
     }
 }

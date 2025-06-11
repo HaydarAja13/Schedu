@@ -183,7 +183,7 @@
         <div :class="{ 'hidden': !selectedRow }" class="fixed inset-0 z-40 bg-black/60 md:hidden" x-show="selectedRow"
             x-transition.opacity>
         </div>
-        <div :class="{ 'hidden': !selectedRow }"
+        <div x-cloak :class="{ 'hidden': !selectedRow }"
             class="absolute inset-0 z-50 m-auto h-fit max-w-xs rounded-xl border-2 border-[#6B56F6] bg-white drop-shadow-[#6B56F6] drop-shadow-lg transition-all duration-500 md:static md:size-full">
             <div class="flex size-full flex-col justify-start p-4">
                 <p class="mb-2 text-center text-sm font-semibold">
@@ -233,7 +233,7 @@
             </div>
         </div>
     </div>
-    <div class="mb-4" x-show="showAlert">
+    <div x-cloak class="mb-4" x-show="showAlert">
         <x-alert :route="route('enrollment-jadwal.destroy', $selectedEnrollmentJadwal?->id ?? '')"
             contentModal="Apakah anda yakin ingin menghapus data ini?" titleModal="Peringatan" type="warning" />
     </div>

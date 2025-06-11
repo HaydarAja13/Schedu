@@ -31,7 +31,10 @@ class RuangController extends Controller
             'keterangan' => $request->keterangan,
         ]);
 
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('admin.ruang')->with('error', 'Ruang gagal dibuat');
+        }
+        return redirect()->route('admin.ruang')->with('create', 'Ruang berhasil dibuat');
     }
 
     /**
@@ -60,16 +63,22 @@ class RuangController extends Controller
             'keterangan' => $request->keterangan ?? $data->keterangan,
         ]);
 
-        return response()->json($data);
+        if (!$data) {
+            return redirect()->route('admin.ruang')->with('error', 'Ruang gagal diperbarui');
+        }
+        return redirect()->route('admin.ruang')->with('update', 'Ruang berhasil diperbarui');;
     }
 
-    /**
+    /** 
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
         $data = Ruang::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Ruang deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.ruang')->with('error', 'Ruang gagal dihapus');
+        }
+        return redirect()->route('admin.ruang')->with('delete', 'Ruang berhasil dihapus');
     }
 }

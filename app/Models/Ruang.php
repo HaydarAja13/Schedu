@@ -15,6 +15,6 @@ class Ruang extends Model
     ];
     public function scopeSearch($query, $value)
     {
-        return $query->where('id_ruang', 'like', '%' . $value . '%')->orWhere('nama_ruang', 'like', '%' . $value . '%')->orWhere('keterangan', 'like', '%' . $value . '%')->orWhere('jenis', 'like', '%' . $value . '%')->orWhere('ruang_prioritas', 'like', '%' . $value . '%');
+        return $query->where('id', 'like', '%' . $value . '%')->orWhere('nama_ruang', 'like', '%' . $value . '%')->orWhere('keterangan', 'like', '%' . $value . '%')->orWhere('jenis', 'like', '%' . $value . '%')->orWhere('ruang_prioritas', 'like', '%' . $value . '%');
     }
 }
