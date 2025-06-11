@@ -14,8 +14,8 @@ class TahunAkademik extends Model
         'status',
     ];
 
-    public function enrollmentKelas()
+    public function scopeSearch($query, $value)
     {
-        return $this->hasMany(EnrollmentKelas::class, 'id_tahun_akademik');
+        return $query->where('id', 'like', '%' . $value . '%')->orWhere('tahun_ajaran', 'like', '%' . $value . '%')->orWhere('status', 'like', '%' . $value . '%')->orWhere('jenis', 'like', '%' . $value . '%')->orWhere('ruang_prioritas', 'like', '%' . $value . '%');
     }
 }

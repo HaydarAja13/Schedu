@@ -26,12 +26,19 @@ class TahunAkademikController extends Controller
             'status' => 'required|in:0,1',
         ]);
 
+        if ($request->status == 1) {
+            TahunAkademik::where('status', 1)->update(['status' => 0]);
+        }
+
         $data = TahunAkademik::create([
             'tahun_ajaran' => $request->tahun_ajaran,
             'status' => $request->status,
         ]);
 
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('admin.tahun-akademik')->with('error', 'Tahun Ajaran gagal dibuat');
+        }
+        return redirect()->route('admin.tahun-akademik')->with('create', 'Tahun Ajaran berhasil dibuat');
     }
 
     /**
@@ -60,7 +67,10 @@ class TahunAkademikController extends Controller
             'status' => $request->status ?? $data->status,
         ]);
 
-        return response()->json($data);
+        if (!$data) {
+            return redirect()->route('admin.tahun-akademik')->with('error', 'Tahun Ajaran gagal diperbarui');
+        }
+        return redirect()->route('admin.tahun-akademik')->with('update', 'Tahun Ajaran berhasil diperbarui');
     }
 
     /**
@@ -70,6 +80,9 @@ class TahunAkademikController extends Controller
     {
         $data = TahunAkademik::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Tahun Akademik deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.tahun-akademik')->with('error', 'Tahun Ajaran gagal dibuat');
+        }
+        return redirect()->route('admin.tahun-akademik')->with('delete', 'Tahun Ajaran berhasil dibuat');
     }
 }

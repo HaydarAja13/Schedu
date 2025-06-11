@@ -17,7 +17,7 @@ use App\Http\Controllers\Api\MahasiswaController;
 use App\Http\Controllers\Api\MataKuliahController;
 use App\Http\Controllers\Api\ProgramStudiController;
 use App\Http\Controllers\Api\RuangController;
-
+use App\Http\Controllers\Api\TahunAkademikController;
 // Main Controllers
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
@@ -311,6 +311,29 @@ Route::get('/admin/angkatan-update/{id}', function ($id) {
     $angkatan = Angkatan::findOrFail($id);
     return view('admin.angkatan-update', compact('id', 'angkatan'));
 })->middleware('role:admin')->name('admin.angkatan-update');
+
+// ---------------------- ADMIN TAHUN AKADEMIK MANAGEMENT ----------------------
+
+// Tahun Akademik listing page
+Route::get('/admin/tahun-akademik', function () {
+    return view('admin.tahun-akademik');
+})->middleware('role:admin')->name('admin.tahun-akademik');
+
+// Tahun Akademik CRUD operations
+Route::post('/tahun-akademik', [TahunAkademikController::class, 'store'])->name('tahun-akademik.store');
+Route::put('/tahun-akademik/{id}', [TahunAkademikController::class, 'update'])->name('tahun-akademik.update');
+Route::delete('/tahun-akademik/{id}', [TahunAkademikController::class, 'destroy'])->name('tahun-akademik.destroy');
+
+// Tahun Akademik create form
+Route::get('/admin/tahun-akademik-create', function () {
+    return view('admin.tahun-akademik-create');
+})->middleware('role:admin')->name('admin.tahun-akademik-create');
+
+// Tahun Akademik update form
+Route::get('/admin/tahun-akademik-update/{id}', function ($id) {
+    $tahunAkademik = TahunAkademik::findOrFail($id);
+    return view('admin.tahun-akademik-update', compact('id', 'tahunAkademik'));
+})->middleware('role:admin')->name('admin.tahun-akademik-update');
 
 // ---------------------- ADMIN ENROLLMENT MANAGEMENT ----------------------
 

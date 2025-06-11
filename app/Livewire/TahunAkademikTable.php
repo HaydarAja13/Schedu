@@ -30,17 +30,17 @@ class TahunAkademikTable extends Component
         $this->sortDirection = 'desc';
     }
 
-    public $selectedRuangId = null;
+    public $selectedTahunAkademikId = null;
 
-    public function selectRuang($id)
+    public function selectTahunAkademik($id)
     {
-        $this->selectedRuangId = $id;
+        $this->selectedTahunAkademikId = $id;
     }
 
-    public function getSelectedRuangProperty()
+    public function getSelectedTahunAkademikProperty()
     {
-        return $this->selectedRuangId
-            ? TahunAkademik::find($this->selectedRuangId)
+        return $this->selectedTahunAkademikId
+            ? TahunAkademik::find($this->selectedTahunAkademikId)
             : null;
     }
 
@@ -51,11 +51,11 @@ class TahunAkademikTable extends Component
 
     public function render()
     {
-        return view('livewire.ruang-table', [
-            'ruang' => TahunAkademik::search($this->search)
+        return view('livewire.tahun-akademik-table', [
+            'tahunAkademik' => TahunAkademik::search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),
-            'selectedRuang' => $this->selectedRuang,
+            'selectedTahunAkademik' => $this->selectedTahunAkademik,
         ]);
     }
 }
