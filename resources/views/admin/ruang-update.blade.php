@@ -14,22 +14,22 @@
         </div>
 
         <div class="bg-white px-8 pt-8 pb-6 rounded-xl shadow-lg">
-            <form action="{{ route('ruang.update', $data->id) }}" method="POST">
+            <form action="{{ route('ruang.update', $ruang->id) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="space-y-6 w-full">
                     <div>
                         <label for="nama_ruang" class="block text-sm font-medium text-gray-700 mb-1">Nama Ruang<span class="text-red-500">*</span></label>
-                        <input type="text" id="nama_ruang" name="nama_ruang" value="{{ old('nama_ruang', $data->nama_ruang) }}" placeholder="cth: Ruang A" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required maxlength="50">
+                        <input type="text" id="nama_ruang" name="nama_ruang" value="{{ old('nama_ruang', $ruang->nama_ruang) }}" placeholder="cth: Ruang A" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required maxlength="50">
                         <span class="text-xs text-gray-400 ml-1">Masukkan Nama Ruang</span>
                     </div>
 
                     <div>
                         <label for="keterangan" class="block text-sm font-medium text-gray-700 mb-1">Keterangan<span class="text-red-500">*</span></label>
                         <select id="keterangan" name="keterangan" required class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                            <option value="" disabled {{ old('keterangan', $data->keterangan) === null ? 'selected' : '' }}>Pilih Keterangan</option>
-                            <option value="1" {{ old('keterangan', $data->keterangan) == 1 ? 'selected' : '' }}>Tersedia</option>
-                            <option value="0" {{ old('keterangan', $data->keterangan) == 0 ? 'selected' : '' }}>Tidak Tersedia</option>
+                            <option value="" disabled {{ old('keterangan', $ruang->keterangan) === null ? 'selected' : '' }}>Pilih Keterangan</option>
+                            <option value="1" {{ old('keterangan', $ruang->keterangan) == 1 ? 'selected' : '' }}>Tersedia</option>
+                            <option value="0" {{ old('keterangan', $ruang->keterangan) == 0 ? 'selected' : '' }}>Tidak Tersedia</option>
                         </select>
                         <span class="text-xs text-gray-400 ml-1">Pilih status ketersediaan ruang</span>
                     </div>
@@ -45,9 +45,34 @@
                     </div>
                 @endif
 
-                <div class="mt-6 flex justify-end gap-8">
+                {{-- <div class="mt-6 flex justify-end gap-8">
                     <a href="/admin/ruang" class="bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 shadow-sm">Batal</a>
                     <button type="submit" class="bg-gradient-to-r from-[#6B56F6] to-[#8C4AF2] hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold shadow-md">Update</button>
+                </div> --}}
+                <div class="flex justify-end items-center gap-x-4 mt-4">
+                    <a class="inline-block rounded-lg px-6 py-2 text-sm font-medium bg-[#F7F7FF] text-gray-500 shadow-sm"
+                        href="/admin/ruang">
+                        <div class="flex items-center justify-center gap-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            <p>Batal</p>
+                        </div>
+                    </a>
+                    <button
+                        class="inline-block rounded-lg px-6 py-2 text-sm font-medium bg-gradient-to-r from-[#6B56F6] to-[#8C4AF2] text-white shadow-sm"
+                        type="submit">
+                        <div class="flex items-center justify-center gap-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            <p>Simpan</p>
+                        </div>
+                    </button>
                 </div>
             </form>
         </div>

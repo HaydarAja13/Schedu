@@ -16,4 +16,9 @@ class Angkatan extends Model
     {
         return $this->hasMany(EnrollmentKelas::class, 'id_angkatan');
     }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('tahun_angkatan', 'like', "%{$search}%");
+    }
 }

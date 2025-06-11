@@ -14,8 +14,7 @@ class RuangController extends Controller
     public function index()
     {
         return response()->json(Ruang::all());
-        // $ruang = Ruang::all();
-        // return view('admin.ruang.index', compact('ruang'));
+        
     }
 
     /**
@@ -34,16 +33,13 @@ class RuangController extends Controller
         ]);
 
         if (!$data) {
-            return redirect()->route('admin.ruang.index')->with('error', 'Data ruang gagal ditambahkan');
+            return redirect()->route('admin.ruang')->with('error', 'Data ruang gagal ditambahkan');
         }
 
-        return redirect()->route('admin.ruang.index')->with('create', 'Data ruang berhasil ditambahkan');
+        return redirect()->route('admin.ruang')->with('create', 'Data ruang berhasil ditambahkan');
     }
     
-    function create()
-    {
-        return view('admin.ruang.create');
-    }
+    
 
     /**
      * Display the specified resource.
@@ -72,16 +68,12 @@ class RuangController extends Controller
         ]);
 
         if (!$updated) {
-            return redirect()->route('admin.ruang.index')->with('error', 'Data ruang gagal diperbarui');
+            return redirect()->route('admin.ruang')->with('error', 'Data ruang gagal diperbarui');
         }
 
-        return redirect()->route('admin.ruang.index')->with('update', 'Data ruang berhasil diperbarui');
+        return redirect()->route('admin.ruang')->with('update', 'Data ruang berhasil diperbarui');
     }
-    function edit(string $id)
-    {
-        $data = Ruang::findOrFail($id);
-        return view('admin.ruang.edit', compact('data'));
-    }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -92,9 +84,9 @@ class RuangController extends Controller
         $deleted = $data->delete();
 
         if (!$deleted) {
-            return redirect()->route('admin.ruang.index')->with('error', 'Data ruang gagal dihapus');
+            return redirect()->route('admin.ruang')->with('error', 'Data ruang gagal dihapus');
         }
 
-        return redirect()->route('admin.ruang.index')->with('delete', 'Data ruang berhasil dihapus');
+        return redirect()->route('admin.ruang')->with('delete', 'Data ruang berhasil dihapus');
     }
 }

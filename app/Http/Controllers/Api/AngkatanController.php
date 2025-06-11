@@ -23,14 +23,18 @@ class AngkatanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tahun_angkatan' => 'required|string',
+            'tahun_angkatan' => 'required|string|max:20',
         ]);
 
         $data = Angkatan::create([
             'tahun_angkatan' => $request->tahun_angkatan,
         ]);
 
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('admin.angkatan')->with('error', 'Data Angkatan gagal ditambahkan');
+        }
+
+        return redirect()->route('admin.angkatan')->with('create', 'Data Angkatan berhasil ditambahkan');
     }
 
     /**
@@ -50,15 +54,21 @@ class AngkatanController extends Controller
         $data = Angkatan::findOrFail($id);
 
         $request->validate([
-            'tahun_angkatan' => 'sometimes|required|string|',
+            'tahun_angkatan' => 'sometimes|required|string|max:20',
         ]);
 
-        $data->update([
-            'tahun_angkatan' => $request->angkatan->angkatan ?? $data->angkatan,
+        $updated = $data->update([
+            'tahun_angkatan' => $request->tahun_angkatan ?? $data->tahun_angkatan,
         ]);
 
-        return response()->json($data);
+        if (!$updated) {
+            return redirect()->route('admin.angkatan')->with('error', 'Data Angkatan gagal diperbarui');
+        }
+
+        return redirect()->route('admin.angkatan')->with('update', 'Data Angkatan berhasil diperbarui');
     }
+    
+    
 
     /**
      * Remove the specified resource from storage.
@@ -67,6 +77,9 @@ class AngkatanController extends Controller
     {
         $data = Angkatan::findOrFail($id);
         $data->delete();
-        return response()->json(['message' => 'Angkatan deleted successfully']);
+        if (!$data) {
+            return redirect()->route('admin.angkatan')->with('error', 'Angkatan gagal dihapus');
+        }
+        return redirect()->route('admin.angkatan')->with('delete', 'Angkatan berhasil dihapus');
     }
 }

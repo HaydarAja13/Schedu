@@ -1,12 +1,17 @@
 <?php
 
+use App\Http\Controllers\Api\AngkatanController;
 use App\Http\Controllers\Api\KelasController;
 use App\Http\Controllers\Api\MahasiswaController;
 use App\Http\Controllers\Api\RuangController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
 use App\Models\ProgramStudi;
+use App\Models\Angkatan;
+use App\Models\Kelas;
+use App\Models\Ruang;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -28,32 +33,65 @@ Route::get('/admin/mahasiswa', function () {
 
 
 Route::get('/admin/kelas', function () {
-    return view('admin.kelas.index');
-})->middleware('role:admin')->name('admin.kelas.index');
-Route::post('/admin/kelas', [KelasController::class, 'store'])
-    ->middleware('role:admin')
-    ->name('admin.kelas.store');
+    return view('admin.kelas');
+})->middleware('role:admin')->name('admin.kelas');
 
-Route::middleware('role:admin')->group(function () {
-    Route::get('/kelas', [KelasController::class,'index'])->name('kelas.index');
-    Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
-    Route::get('/kelas/create', [KelasController::class,'create'])->name('kelas.create');
-    Route::put('/kelas/{id}', [KelasController::class,'update'])->name('kelas.update');
-    Route::get('/kelas/{id}/edit', [KelasController::class,'edit'])->name('kelas.edit');
-    Route::delete('/kelas/{id}', [KelasController::class,'destroy'])->name('kelas.destroy');
-    Route::get('/kelas/{id}', [KelasController::class,'show'])->name('kelas.show');
-});
+Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
+Route::put('/kelas/{id}', [KelasController::class, 'update'])->name('kelas.update');
+Route::delete('/kelas/{id}', [KelasController::class, 'destroy'])->name('kelas.destroy');
+
+Route::get('/admin/kelas-create', function () {
+    return view('admin.kelas-create');
+})->middleware('role:admin')->name('admin.kelas-create');
+
+Route::get('/admin/kelas-update/{id}', function ($id) {
+    $kelas = Kelas::findOrFail($id);
+    return view('admin.kelas-update', compact('id', 'kelas'));
+})->middleware('role:admin')->name('admin.kelas-update');
+
 
 Route::get('/admin/ruang', function () {
-    return view('admin.ruang.index');
-})->middleware('role:admin')->name('admin.ruang.index');
-Route::get('/ruang', [RuangController::class,'index'])->name('ruang.index');
-Route::post('/ruang', [RuangController::class,'store'])->name('ruang.store');
-Route::get('/ruang/create', [RuangController::class,'create'])->name('ruang.create');
-Route::put('/ruang/{id}', [RuangController::class,'update'])->name('ruang.update');
-Route::get('/ruang/{id}/edit', [RuangController::class,'edit'])->name('ruang.edit');
-Route::delete('/ruang/{id}', [RuangController::class,'destroy'])->name('ruang.destroy');
-Route::get('/ruang/{id}', [RuangController::class,'show'])->name('ruang.show');
+    return view('admin.ruang');
+})->middleware('role:admin')->name('admin.ruang');
+
+Route::post('/ruang', [RuangController::class, 'store'])->name('ruang.store');
+Route::put('/ruang/{id}', [RuangController::class, 'update'])->name('ruang.update');
+Route::delete('/ruang/{id}', [RuangController::class, 'destroy'])->name('ruang.destroy');
+
+Route::get('/admin/ruang-create', function () {
+    return view('admin.ruang-create');
+})->middleware('role:admin')->name('admin.ruang-create');
+
+Route::get('/admin/ruang-update/{id}', function ($id) {
+    $ruang = Ruang::findOrFail($id);
+    return view('admin.ruang-update', compact('id', 'ruang'));
+})->middleware('role:admin')->name('admin.ruang-update');
+
+
+
+
+
+
+
+
+
+Route::get('/admin/angkatan', function () {
+    return view('admin.angkatan');
+})->middleware('role:admin')->name('admin.angkatan');
+
+Route::post('/angkatan', [AngkatanController::class, 'store'])->name('angkatan.store');
+Route::put('/angkatan/{id}', [AngkatanController::class, 'update'])->name('angkatan.update');
+Route::delete('/angkatan/{id}', [AngkatanController::class, 'destroy'])->name('angkatan.destroy');
+
+Route::get('/admin/angkatan-create', function () {
+    return view('admin.angkatan-create');
+})->middleware('role:admin')->name('admin.angkatan-create');
+
+Route::get('/admin/angkatan-update/{id}', function ($id) {
+    $angkatan = Angkatan::findOrFail($id);
+    return view('admin.angkatan-update', compact('id', 'angkatan'));
+})->middleware('role:admin')->name('admin.angkatan-update');
+
 
 Route::get('/admin/schedule', function () {
     $programStudis = ProgramStudi::limit(3)->get();

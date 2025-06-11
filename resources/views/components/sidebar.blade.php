@@ -35,6 +35,7 @@
 										['label' => 'Mata kuliah', 'href' => 'mata-kuliah'],
 										['label' => 'Ruang', 'href' => 'ruang'],
 										['label' => 'Kelas', 'href' => 'kelas'],
+										['label' => 'Angkatan', 'href' => 'angkatan'],
 										]">
 						<x-slot:icon>
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">

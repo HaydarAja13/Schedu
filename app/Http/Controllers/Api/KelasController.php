@@ -19,10 +19,7 @@ class KelasController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        return view('admin.kelas.create');
-    }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -38,10 +35,10 @@ class KelasController extends Controller
         ]);
 
         if (!$data) {
-            return redirect()->route('admin.kelas.index')->with('error', 'Data kelas gagal ditambahkan');
+            return redirect()->route('admin.kelas')->with('error', 'Data kelas gagal ditambahkan');
         }
 
-        return redirect()->route('admin.kelas.index')->with('create', 'Data kelas berhasil ditambahkan');
+        return redirect()->route('admin.kelas')->with('create', 'Data kelas berhasil ditambahkan');
     }
 
     /**
@@ -56,11 +53,7 @@ class KelasController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        $data = Kelas::findOrFail($id);
-        return view('admin.kelas.edit', compact('data'));
-    }
+    
 
     /**
      * Update the specified resource in storage.
@@ -78,10 +71,10 @@ class KelasController extends Controller
         ]);
 
         if (!$updated) {
-            return redirect()->route('admin.kelas.index')->with('error', 'Data kelas gagal diperbarui');
+            return redirect()->route('admin.kelas')->with('error', 'Data kelas gagal diperbarui');
         }
 
-        return redirect()->route('admin.kelas.index')->with('update', 'Data kelas berhasil diperbarui');
+        return redirect()->route('admin.kelas')->with('update', 'Data kelas berhasil diperbarui');
     }
 
     /**
@@ -93,9 +86,9 @@ class KelasController extends Controller
         $deleted = $data->delete();
 
         if (!$deleted) {
-            return redirect()->route('admin.kelas.index')->with('error', 'Data kelas gagal dihapus');
+            return redirect()->route('admin.kelas')->with('error', 'Data kelas gagal dihapus');
         }
 
-        return redirect()->route('admin.kelas.index')->with('delete', 'Data kelas berhasil dihapus');
+        return redirect()->route('admin.kelas')->with('delete', 'Data kelas berhasil dihapus');
     }
 }
