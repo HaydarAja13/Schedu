@@ -985,6 +985,26 @@ class PopulationSeeder extends Seeder
                 'status' => 'Belum Divalidasi',
                 'created_at' => $now,
                 'updated_at' => $now,
+            ],
+            [
+                'id_dosen' => 3,
+                'jam_mulai' => 4,
+                'jam_selesai' => 7,
+                'hari' => 'Rabu',
+                'keterangan' => 'Jadwal Kontrol Kesehatan',
+                'status' => 'Divalidasi',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+                        [
+                'id_dosen' => 13,
+                'jam_mulai' => 1,
+                'jam_selesai' => 2,
+                'hari' => 'Jumat',
+                'keterangan' => 'Piket Sekretariat',
+                'status' => 'Belum Divalidasi',
+                'created_at' => $now,
+                'updated_at' => $now,
             ]
         ]);
     }
