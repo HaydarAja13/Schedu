@@ -497,7 +497,7 @@ Route::get('/admin/profile-update', function (Request $request) {
 // DOSEN ROUTES
 // ===================================================================
 
-// Dosen dashboard
+// ---------------------- Dosen Sidebar ----------------------
 Route::get('/dosen/dashboard', function () {
     return view('dosen.dashboard');
 })->middleware('role:dosen')->name('dosen.dashboard');
@@ -514,10 +514,17 @@ Route::get('/dosen/requirement-dosen', function () {
     return view('dosen.requirement-dosen');
 })->middleware('role:dosen')->name('requirement.dosen');
 
+// ---------------------- dosen PROFILE MANAGEMENT ----------------------
+// dosen profile view
 Route::get('/dosen/profile', function () {
     return view('dosen.profile');
 })->middleware('role:dosen')->name('dosen.profile');
 
+// dosen profile update form
+Route::get('/dosen/profile-update', function (Request $request) {
+    $user = $request->session()->get('user');
+    return view('dosen.profile-update', compact('user'));
+})->middleware('role:dosen');
 
 // ===================================================================
 // MAHASISWA ROUTES
