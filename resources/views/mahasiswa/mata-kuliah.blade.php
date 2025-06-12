@@ -1,6 +1,7 @@
-<x-template :role="'mahasiswa'" :title="'Mata Kuliah'">
-  <x-slot:content>
-    <p class="my-2">Selamat datang di platform <span class="text-[#6B56F6] font-bold">Schedu</span></p>
-
+<x-template :role="'mahasiswa'" title="Mata Kuliah {{ $user->nama_kelas ?? '-' }}">
+    <x-slot:content>
+        <div class="">
+            <livewire:mata-kuliah-table></livewire:mata-kuliah-table>
+        </div>
     </x-slot:content>
 </x-template>
