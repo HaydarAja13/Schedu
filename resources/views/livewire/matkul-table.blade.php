@@ -1,11 +1,13 @@
 <div x-data="{ selectedRow: null }">
     <x-table-properties :subtitle="'Data Mata Kuliah'"></x-table-properties>
+    @if($role == 'admin')
     <div class="flex justify-end mb-4">
         <a href="{{ route('admin.mata-kuliah.create') }}"
            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
             + Tambah Data
         </a>
     </div>
+    @endif
 
     <div class="grid grid-cols-4 items-center justify-start gap-x-6 size-full">
         <div class="overflow-x-auto overflow-y-auto bg-white rounded-xl col-span-4 transition-all duration-500">
@@ -65,6 +67,7 @@
                             <td class="px-3 py-2 whitespace-nowrap">{{ $data->ruang->nama_ruang ?? '-' }}</td>
                             <td class="px-3 py-2 whitespace-nowrap">{{ $data->jenis == 'T' ? 'Teori' : 'Praktikum' }}</td>
                             <td class="px-3 py-2 whitespace-nowrap">
+                                @if($role == 'admin')
                                 <div class="flex space-x-2">
                                     <a href="{{ route('admin.mata-kuliah.edit', $data->id) }}"
                                        class="inline-block rounded-xl bg-gradient-to-tr from-[#8C4AF2] to-[#6B56F6] px-4 py-2 text-sm text-center font-medium text-white">
@@ -75,6 +78,7 @@
                                         Hapus
                                     </button>
                                 </div>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

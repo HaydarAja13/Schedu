@@ -9,6 +9,8 @@ use Livewire\WithPagination;
 
 class MatkulTable extends Component
 {
+    public $role = 'admin';
+
     use WithPagination;
 
     #[Url(history: true)]
@@ -38,6 +40,9 @@ class MatkulTable extends Component
 
     public function deleteMataKuliah($id)
     {
+        if ($this->role !== 'admin') {
+        abort(403, 'Unauthorized');
+    }
         $matkul = MataKuliah::findOrFail($id);
         $matkul->delete();
         session()->flash('message', 'Mata kuliah berhasil dihapus.');
@@ -63,6 +68,7 @@ class MatkulTable extends Component
 
         return view('livewire.matkul-table', [
             'mata_kuliah' => $mata_kuliah,
+            'role' => $this->role,
         ]);
     }
 }
