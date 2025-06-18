@@ -4,7 +4,7 @@
         <tr class="cursor-pointer transition-all duration-200"
             @click="selectedRow = '{{ $data->id }}'; $wire.selectNotifikasi({{ $data->id }})">
             <td>
-                <div class="grid gap-y-2 hover:bg-[#E5E1FF] px-2 py-4 rounded-l-lg hover:cursor-pointer"
+                <div class="grid gap-y-2 hover:bg-[#E5E1FF] px-2 py-4 hover:cursor-pointer"
                     :class="{ 'bg-[#E5E1FF]': selectedRow === '{{ $data->id }}' }">
                     <p class="text-sm"><span class="font-semibold">Permintaan Ubah Jadwal</span> {{
                         $data->dosen->nama_dosen
@@ -20,8 +20,9 @@
         @endforeach
     </table>
     {{-- detail --}}
-    <div class="bg-[#F8F8F8] w-full col-span-2 rounded-r-lg p-4" :class="{ 'hidden': selectedRow }">
-        aaa
+    <div class="bg-[#F8F8F8] w-full col-span-2 rounded-r-lg p-8 flex flex-col gap-y-4 items-center justify-center" :class="{ 'hidden': selectedRow }">
+        <img src="{{ asset('images/notification-not-select.svg') }}" alt="" class="size-52">
+        <p class="text-lg text-gray-500 font-normal">Tidak ada Notifikasi yang dipilih</p>
     </div>
     <div class="bg-[#F8F8F8] w-full col-span-2 rounded-r-lg p-4" :class="{ 'hidden': !selectedRow }">
         @if ($selectedNotifikasi)

@@ -12,9 +12,10 @@ class Ruang extends Model
     protected $fillable = [
         'nama_ruang',
         'keterangan',
+        'id_kelompok_prodi'
     ];
-    public function scopeSearch($query, $value)
+    public function kelompokProdi()
     {
-        return $query->where('id', 'like', '%' . $value . '%')->orWhere('nama_ruang', 'like', '%' . $value . '%')->orWhere('keterangan', 'like', '%' . $value . '%')->orWhere('jenis', 'like', '%' . $value . '%')->orWhere('ruang_prioritas', 'like', '%' . $value . '%');
+        return $this->belongsTo(KelompokProdi::class, 'id_kelompok_prodi');
     }
 }

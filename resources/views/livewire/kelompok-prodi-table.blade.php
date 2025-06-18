@@ -1,5 +1,5 @@
 <div x-data="{ selectedRow: null, showAlert: false }">
-    <x-table-properties :subtitle="'Menampilkan Data Program Studi'" link="program-studi-create"></x-table-properties>
+    <x-table-properties :subtitle="'Menampilkan Data Kelompok Prodi'" link="kelompok-prodi-create"></x-table-properties>
     <div class="relative grid size-full grid-cols-1 items-start justify-start gap-x-6 md:grid-cols-4">
         <div :class="selectedRow ? 'overflow-x-hidden overflow-y-auto bg-white rounded-xl md:col-span-3' :
             'overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-4'"
@@ -11,18 +11,10 @@
                         <tr class="*:font-medium *:text-gray-900">
                             <th class="whitespace-nowrap px-3 py-2">No</th>
                             <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer" wire:click="setSortBy('id')">
-                                Jurusan</th>
+                                Id Kelompok Prodi</th>
                             <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
-                                wire:click="setSortBy('nama_prodi')">
-                                Nama Prodi
-                            </th>
-                            <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
-                                wire:click="setSortBy('kode_prodi')">
-                                Kode Prodi
-                            </th>
-                            <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
-                                wire:click="setSortBy('kode_prodi')">
-                                Kelompok Prodi
+                                wire:click="setSortBy('nama_kelompok_prodi')">
+                                Nama Kelompok Prodi
                             </th>
                         </tr>
                     </thead>
@@ -31,26 +23,20 @@
                         @php
                         $no = 1;
                         @endphp
-                        @foreach ($programStudi as $data)
+                        @foreach ($kelompokProdi as $data)
                         <tr :class="[
                                 'cursor-pointer transition-all duration-200 hover:bg-gray-100',
                                 selectedRow === '{{ $data->id }}' ?
                                 'border-l-8 border-l-indigo-600 scale-105 z-10 shadow-xl shadow-indigo-200' : ''
-                            ]" @click="selectedRow = '{{ $data->id }}'; $wire.selectProgramStudi({{ $data->id }})">
+                            ]" @click="selectedRow = '{{ $data->id }}'; $wire.selectKelompokProdi({{ $data->id }})">
                             <td class="whitespace-nowrap py-3 text-sm"
                                 :class="selectedRow === '{{ $data->id }}' ? 'pl-10' : 'px-3'">
                                 {{ $no++ }}</td>
                             <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
-                                {{ $data->jurusan->nama_jurusan ?? '-' }}
+                                {{ $data->id ?? '-' }}
                             </td>
-                            <td class="whitespace-nowrap px-3 py-3 text-sm">
-                                {{ $data->nama_prodi ?? '-' }}
-                            </td>
-                            <td class="whitespace-nowrap px-3 py-3 text-sm">
-                                {{ $data->kode_prodi ?? '-' }}
-                            </td>
-                            <td class="whitespace-nowrap px-3 py-3 text-sm">
-                                {{ $data->kelompokProdi->nama_kelompok_prodi ?? '-' }}
+                            <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
+                                {{ $data->nama_kelompok_prodi ?? '-' }}
                             </td>
                         </tr>
                         @endforeach
@@ -81,17 +67,17 @@
                 </div>
                 <div class="mt-2 text-sm font-light text-gray-800">
                     Menampilkan
-                    {{ $programStudi->firstItem() ?? 0 }}
+                    {{ $kelompokProdi->firstItem() ?? 0 }}
                     hingga
-                    {{ $programStudi->lastItem() ?? 0 }}
+                    {{ $kelompokProdi->lastItem() ?? 0 }}
                     dari
-                    {{ $programStudi->total() }}
+                    {{ $kelompokProdi->total() }}
                 </div>
                 <ul class="flex items-center justify-end gap-2 text-gray-900">
                     <li>
                         <button type="button"
                             class="grid size-6 place-content-center rounded text-gray-600 transition-all duration-300 hover:scale-125 hover:text-purple-600 md:size-8 rtl:rotate-180"
-                            aria-label="Previous page" wire:click="previousPage" @if ($programStudi->onFirstPage())
+                            aria-label="Previous page" wire:click="previousPage" @if ($kelompokProdi->onFirstPage())
                             disabled @endif>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                 stroke="currentColor" class="size-4 md:size-6">
@@ -101,8 +87,8 @@
                     </li>
 
                     @php
-                    $currentPage = $programStudi->currentPage();
-                    $lastPage = $programStudi->lastPage();
+                    $currentPage = $kelompokProdi->currentPage();
+                    $lastPage = $kelompokProdi->lastPage();
                     $start = max(1, $currentPage - 1);
                     $end = min($lastPage, $currentPage + 1);
 
@@ -155,8 +141,8 @@
                                 <li>
                                     <button type="button"
                                         class="grid size-6 place-content-center rounded text-gray-600 transition-all duration-300 hover:scale-125 hover:text-purple-600 md:size-8 rtl:rotate-180"
-                                        aria-label="Next page" wire:click="nextPage" @if ($programStudi->currentPage()
-                                        == $programStudi->lastPage()) disabled @endif>
+                                        aria-label="Next page" wire:click="nextPage" @if ($kelompokProdi->currentPage()
+                                        == $kelompokProdi->lastPage()) disabled @endif>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="2" stroke="currentColor" class="size-4 md:size-6">
                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -176,28 +162,25 @@
             :class="{ 'hidden': !selectedRow }">
             <div class="size-full flex flex-col justify-start p-4">
                 <p class="mb-2 text-center text-sm font-semibold">
-                    {{ $selectedProgramStudi?->nama_prodi ?? '-' }}
+                    {{ $selectedKelompokProdi?->nama_kelompok_prodi ?? '-' }}
                 </p>
                 <span
-                    class="mx-auto w-fit rounded-full border border-[#6B56F6] bg-[#6B56F6]/25 px-2.5 py-0.5 text-xs font-medium text-[#6B56F6]">Program
-                    Studi</span>
+                    class="mx-auto w-fit rounded-full border border-[#6B56F6] bg-[#6B56F6]/25 px-2.5 py-0.5 text-xs font-medium text-[#6B56F6]">Kelompok Prodi</span>
                 <div class="mt-2 grid gap-y-2">
                     <div>
-                        <p class="text-sm font-semibold">Kode Prodi</p>
-                        <p class="text-sm">{{ $selectedProgramStudi?->kode_prodi ?? '-' }}</p>
+                        <p class="text-sm font-semibold">Nama Kelompok Prodi</p>
+                        <p class="text-sm">{{ $selectedKelompokProdi?->nama_kelompok_prodi ?? '-' }}</p>
                     </div>
+                </div>
+                <div class="mt-2 grid gap-y-2">
                     <div>
-                        <p class="text-sm font-semibold">Jurusan</p>
-                        <p class="text-sm">{{ $selectedProgramStudi?->jurusan->nama_jurusan ?? '-' }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm font-semibold">Kelompok Prodi</p>
-                        <p class="text-sm">{{ $selectedProgramStudi?->kelompokProdi->nama_kelompok_prodi ?? '-' }}</p>
+                        <p class="text-sm font-semibold">Id Kelompok Prodi</p>
+                        <p class="text-sm">{{ $selectedKelompokProdi?->id ?? '-' }}</p>
                     </div>
                 </div>
                 <div class="mt-8 md:mt-auto flex flex-col gap-2">
                     <a class="inline-block rounded-xl bg-gradient-to-tr from-[#8C4AF2] to-[#6B56F6] px-12 py-2 text-center text-sm font-medium text-white"
-                        href="{{ route('admin.program-studi-update', $selectedProgramStudi?->id ?? '') }}">
+                        href="{{ route('admin.kelompok-prodi-update', $selectedKelompokProdi?->id ?? '') }}">
                         Ubah Data
                     </a>
                     <button
@@ -211,6 +194,6 @@
     </div>
     <div x-cloak x-show="showAlert" class="mb-4">
         <x-alert titleModal="Peringatan" contentModal="Apakah anda yakin ingin menghapus data ini?" type="warning"
-            :route="route('program-studi.destroy', $selectedProgramStudi?->id ?? '')" />
+            :route="route('kelompok-prodi.destroy', $selectedKelompokProdi?->id ?? '')" />
     </div>
 </div>

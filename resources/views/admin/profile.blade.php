@@ -21,18 +21,18 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-y-2 items-center">
           <p class="font-medium text-sm md:text-base">NIP</p>
           <div class="mt-2 col-span-2">
-            <input type="number" name="nip" id="nip" readonly value="{{ $user->nip }}"
-              class="block w-full rounded-md bg-white px-3 py-1.5 text-sm md:text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500 sm:text-sm/6">
+            <input type="number" name="nip" id="nip" disabled value="{{ $user->nip }}"
+              class="block w-full rounded-md select-none bg-white px-3 py-1.5 text-sm md:text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500 sm:text-sm/6">
           </div>
           <p class="font-medium text-sm md:text-base">Email</p>
           <div class="mt-2 col-span-2">
-            <input type="email" name="email" id="email" readonly value="{{ $user->email }}"
-              class="block w-full rounded-md bg-white px-3 py-1.5 text-sm md:text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500 sm:text-sm/6">
+            <input type="email" name="email" id="email" disabled value="{{ $user->email }}"
+              class="block w-full rounded-md select-none bg-white px-3 py-1.5 text-sm md:text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500 sm:text-sm/6">
           </div>
           <p class="font-medium text-sm md:text-base">No Telp</p>
           <div class="mt-2 col-span-2">
-            <input type="number" name="no_telp" id="no_telp" readonly value="{{ $user->no_hp }}"
-              class="block w-full rounded-md bg-white px-3 py-1.5 text-sm md:text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500 sm:text-sm/6">
+            <input type="number" name="no_telp" id="no_telp" disabled value="{{ $user->no_hp }}"
+              class="block w-full rounded-md bg-white select-none px-3 py-1.5 text-sm md:text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500 sm:text-sm/6">
           </div>
         </div>
         <div class="flex justify-end items-center">

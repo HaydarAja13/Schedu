@@ -36,10 +36,6 @@ class AuthController extends Controller
             return back()->with('error', 'The provided credentials are incorrect.')->withInput();
         }
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->with('error', 'The provided credentials are incorrect.')->withInput();
-        }
-
         $request->session()->regenerate();
 
         $request->session()->put('user', $user);

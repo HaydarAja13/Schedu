@@ -38,6 +38,9 @@
                             </span>
                         </label>
                     </div>
+                    <x-form.select :label="'Nama Kelompok Prodi'" :description="'Pilih Kelompok'" :placeholder="'Pilih'"
+                        :options="$kelompokProdi" valueField="id" displayField="nama_kelompok_prodi"
+                        id="id_kelompok_prodi" name="id_kelompok_prodi" :selected="$ruang->id_kelompok_prodi" />
                     <x-form.button-group page="ruang" />
                 </div>
             </form>
