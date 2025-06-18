@@ -3,8 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\Ruang;
-use Livewire\Component;
 use Livewire\Attributes\Url;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 class RuangTable extends Component
@@ -40,7 +40,7 @@ class RuangTable extends Component
     public function getSelectedRuangProperty()
     {
         return $this->selectedRuangId
-            ? Ruang::find($this->selectedRuangId)
+            ? Ruang::with(['kelompokProdi'])->find($this->selectedRuangId)
             : null;
     }
 
@@ -51,8 +51,19 @@ class RuangTable extends Component
 
     public function render()
     {
+        $query = Ruang::with(['kelompokProdi']);
+
+        if ($this->search) {
+            $query->where(function ($q) {
+                $q->where('nama_ruang', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('kelompok_prodi', function ($q) {
+                        $q->where('nama_kelompok_prodi', 'like', '%' . $this->search . '%');
+                    });
+            });
+        }
+
         return view('livewire.ruang-table', [
-            'ruang' => Ruang::search($this->search)
+            'ruang' => $query
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),
             'selectedRuang' => $this->selectedRuang,

@@ -24,6 +24,9 @@
                     <x-form.select :label="'Nama Jurusan'" :description="'Pilih Jurusan'" :placeholder="'Pilih'"
                         :options="$jurusan" valueField="id" displayField="nama_jurusan" id="id_jurusan"
                         name="id_jurusan" :selected="$programStudi->id_jurusan" />
+                    <x-form.select :label="'Nama Kelompok Prodi'" :description="'Pilih Kelompok'" :placeholder="'Pilih'"
+                        :options="$kelompokProdi" valueField="id" displayField="nama_kelompok_prodi"
+                        id="id_kelompok_prodi" name="id_kelompok_prodi" :selected="$programStudi->id_kelompok_prodi" />
                     <x-form.button-group page="program-studi" />
                 </div>
             </form>

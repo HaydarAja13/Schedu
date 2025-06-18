@@ -18,6 +18,8 @@ use App\Http\Controllers\Api\MataKuliahController;
 use App\Http\Controllers\Api\ProgramStudiController;
 use App\Http\Controllers\Api\RuangController;
 use App\Http\Controllers\Api\TahunAkademikController;
+use App\Http\Controllers\Api\KelompokProdiController;
+
 // Main Controllers
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
@@ -37,6 +39,7 @@ use App\Models\MataKuliah;
 use App\Models\Notification;
 use App\Models\Ruang;
 use App\Models\TahunAkademik;
+use App\Models\KelompokProdi;
 
 // Laravel Core
 use Illuminate\Http\Request;
@@ -207,14 +210,16 @@ Route::delete('/program-studi/{id}', [ProgramStudiController::class, 'destroy'])
 // Program Studi create form
 Route::get('/admin/program-studi-create', function () {
     $jurusan = Jurusan::all();
-    return view('admin.program-studi-create', compact('jurusan'));
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.program-studi-create', compact('jurusan', 'kelompokProdi'));
 })->middleware('role:admin')->name('admin.program-studi-create');
 
 // Program Studi update form
 Route::get('/admin/program-studi-update/{id}', function ($id) {
     $programStudi = ProgramStudi::findOrFail($id);
     $jurusan = Jurusan::all();
-    return view('admin.program-studi-update', compact('id', 'programStudi', 'jurusan'));
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.program-studi-update', compact('id', 'programStudi', 'jurusan', 'kelompokProdi'));
 })->middleware('role:admin')->name('admin.program-studi-update');
 
 // ---------------------- ADMIN MATA KULIAH MANAGEMENT ----------------------
@@ -256,13 +261,15 @@ Route::delete('/ruang/{id}', [RuangController::class, 'destroy'])->name('ruang.d
 
 // Ruang create form
 Route::get('/admin/ruang-create', function () {
-    return view('admin.ruang-create');
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.ruang-create', compact('kelompokProdi'));
 })->middleware('role:admin')->name('admin.ruang-create');
 
 // Ruang update form
 Route::get('/admin/ruang-update/{id}', function ($id) {
     $ruang = Ruang::findOrFail($id);
-    return view('admin.ruang-update', compact('id', 'ruang'));
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.ruang-update', compact('id', 'ruang', 'kelompokProdi'));
 })->middleware('role:admin')->name('admin.ruang-update');
 
 // ---------------------- ADMIN KELAS MANAGEMENT ----------------------
@@ -311,6 +318,29 @@ Route::get('/admin/angkatan-update/{id}', function ($id) {
     $angkatan = Angkatan::findOrFail($id);
     return view('admin.angkatan-update', compact('id', 'angkatan'));
 })->middleware('role:admin')->name('admin.angkatan-update');
+
+// ---------------------- ADMIN KELOMOPK PRODI MANAGEMENT ----------------------
+
+// Kelompok Prodi listing page
+Route::get('/admin/kelompok-prodi', function () {
+    return view('admin.kelompok-prodi');
+})->middleware('role:admin')->name('admin.kelompok-prodi');
+
+// Kelompok Prodi CRUD operations
+Route::post('/kelompok-prodi', [KelompokProdiController::class, 'store'])->name('kelompok-prodi.store');
+Route::put('/kelompok-prodi/{id}', [KelompokProdiController::class, 'update'])->name('kelompok-prodi.update');
+Route::delete('/kelompok-prodi/{id}', [KelompokProdiController::class, 'destroy'])->name('kelompok-prodi.destroy');
+
+// Kelompok Prodi create form 
+Route::get('/admin/kelompok-prodi-create', function () {
+    return view('admin.kelompok-prodi-create');
+})->middleware('role:admin')->name('admin.kelompok-prodi-create');
+
+// Kelompok Prodi update form
+Route::get('/admin/kelompok-prodi-update/{id}', function ($id) {
+    $kelompokProdi = KelompokProdi::findOrFail($id);
+    return view('admin.kelompok-prodi-update', compact('id', 'kelompokProdi'));
+})->middleware('role:admin')->name('admin.kelompok-prodi-update');
 
 // ---------------------- ADMIN TAHUN AKADEMIK MANAGEMENT ----------------------
 

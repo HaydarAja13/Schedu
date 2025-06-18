@@ -13,7 +13,8 @@ class RuangController extends Controller
      */
     public function index()
     {
-        return response()->json(Ruang::all());
+        return response()->json(Ruang::with( 'kelompokProdi')->get());
+
     }
 
     /**
@@ -24,11 +25,13 @@ class RuangController extends Controller
         $request->validate([
             'nama_ruang' => 'required|string|max:50',
             'keterangan' => 'required|in:0,1',
+            'id_kelompok_ruang' => 'required|exists:kelompok_ruang,id',
         ]);
 
         $data = Ruang::create([
             'nama_ruang' => $request->nama_ruang,
             'keterangan' => $request->keterangan,
+            'id_kelompok_ruang' => $request->id_kelompok_ruang,
         ]);
 
         if (!$data) {
@@ -56,11 +59,13 @@ class RuangController extends Controller
         $request->validate([
             'nama_ruang' => 'sometimes|required|string|max:50',
             'keterangan' => 'sometimes|required|in:0,1',
+            'id_kelompok_ruang' => 'sometimes|required|exists:kelompok_ruang,id',
         ]);
 
         $data->update([
             'nama_ruang' => $request->nama_ruang ?? $data->nama_ruang,
             'keterangan' => $request->keterangan ?? $data->keterangan,
+            'id_kelompok_ruang' => $request->id_kelompok_ruang ?? $data->id_kelompok_ruang, 
         ]);
 
         if (!$data) {

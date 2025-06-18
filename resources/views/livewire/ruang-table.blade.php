@@ -17,6 +17,9 @@
                                 wire:click="setSortBy('keterangan')">
                                 Keterangan
                             </th>
+                            <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer" wire:click="setSortBy('id_kelompok_prodi')">
+                                Kelompok Prodi
+                            </th>
                         </tr>
                     </thead>
 
@@ -39,6 +42,9 @@
                             <td class="whitespace-nowrap px-3 py-3 text-sm">
                                 {{ $data->keterangan === '0' ? 'Tidak Tersedia' : ($data->keterangan ===
                                 '1' ? 'Tersedia' : '-') }} </p>
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
+                                {{ $data->kelompokProdi->nama_kelompok_prodi ?? '-' }}
                             </td>
                         </tr>
                         @endforeach

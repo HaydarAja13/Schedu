@@ -10,8 +10,7 @@
                         class="sticky top-0 z-10 border-0 bg-gray-100 text-xs uppercase text-gray-700 ltr:text-left rtl:text-right">
                         <tr class="*:font-medium *:text-gray-900">
                             <th class="whitespace-nowrap px-3 py-2">No</th>
-                            <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
-                                wire:click="setSortBy('id')">
+                            <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer" wire:click="setSortBy('id')">
                                 Jurusan</th>
                             <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
                                 wire:click="setSortBy('nama_prodi')">
@@ -21,33 +20,39 @@
                                 wire:click="setSortBy('kode_prodi')">
                                 Kode Prodi
                             </th>
+                            <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
+                                wire:click="setSortBy('kode_prodi')">
+                                Kelompok Prodi
+                            </th>
                         </tr>
                     </thead>
 
                     <tbody class="divide-y divide-gray-100">
                         @php
-                            $no = 1;
+                        $no = 1;
                         @endphp
                         @foreach ($programStudi as $data)
-                            <tr :class="[
+                        <tr :class="[
                                 'cursor-pointer transition-all duration-200 hover:bg-gray-100',
                                 selectedRow === '{{ $data->id }}' ?
                                 'border-l-8 border-l-indigo-600 scale-105 z-10 shadow-xl shadow-indigo-200' : ''
-                            ]"
-                                @click="selectedRow = '{{ $data->id }}'; $wire.selectProgramStudi({{ $data->id }})">
-                                <td class="whitespace-nowrap py-3 text-sm"
-                                    :class="selectedRow === '{{ $data->id }}' ? 'pl-10' : 'px-3'">
-                                    {{ $no++ }}</td>
-                                <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
-                                    {{ $data->jurusan->nama_jurusan ?? '-' }}
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-3 text-sm">
-                                    {{ $data->nama_prodi ?? '-' }}
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-3 text-sm">
-                                    {{ $data->kode_prodi ?? '-' }}
-                                </td>
-                            </tr>
+                            ]" @click="selectedRow = '{{ $data->id }}'; $wire.selectProgramStudi({{ $data->id }})">
+                            <td class="whitespace-nowrap py-3 text-sm"
+                                :class="selectedRow === '{{ $data->id }}' ? 'pl-10' : 'px-3'">
+                                {{ $no++ }}</td>
+                            <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
+                                {{ $data->jurusan->nama_jurusan ?? '-' }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-3 text-sm">
+                                {{ $data->nama_prodi ?? '-' }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-3 text-sm">
+                                {{ $data->kode_prodi ?? '-' }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-3 text-sm">
+                                {{ $data->kelompokProdi->nama_kelompok_prodi ?? '-' }}
+                            </td>
+                        </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -86,8 +91,8 @@
                     <li>
                         <button type="button"
                             class="grid size-6 place-content-center rounded text-gray-600 transition-all duration-300 hover:scale-125 hover:text-purple-600 md:size-8 rtl:rotate-180"
-                            aria-label="Previous page" wire:click="previousPage"
-                            @if ($programStudi->onFirstPage()) disabled @endif>
+                            aria-label="Previous page" wire:click="previousPage" @if ($programStudi->onFirstPage())
+                            disabled @endif>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                 stroke="currentColor" class="size-4 md:size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -96,21 +101,18 @@
                     </li>
 
                     @php
-                        $currentPage = $programStudi->currentPage();
-                        $lastPage = $programStudi->lastPage();
-                        $start = max(1, $currentPage - 1);
-                        $end = min($lastPage, $currentPage + 1);
+                    $currentPage = $programStudi->currentPage();
+                    $lastPage = $programStudi->lastPage();
+                    $start = max(1, $currentPage - 1);
+                    $end = min($lastPage, $currentPage + 1);
 
-                        if ($currentPage <= 3) {
-                            $start = 1;
-                            $end = min(3, $lastPage);
-                        } elseif ($currentPage >= $lastPage - 2) {
-                            $start = max(1, $lastPage - 2);
-                            $end = $lastPage;
+                    if ($currentPage <= 3) { $start=1; $end=min(3, $lastPage); } elseif ($currentPage>= $lastPage - 2) {
+                        $start = max(1, $lastPage - 2);
+                        $end = $lastPage;
                         }
-                    @endphp
+                        @endphp
 
-                    @if ($start > 1)
+                        @if ($start > 1)
                         <li>
                             <button type="button"
                                 class="block size-8 rounded-full border border-gray-200 text-center text-sm/8 font-medium transition-colors hover:bg-gray-50"
@@ -119,17 +121,15 @@
                             </button>
                         </li>
                         @if ($start > 2)
-                            <li class="flex items-center px-2">...</li>
+                        <li class="flex items-center px-2">...</li>
                         @endif
-                    @endif
+                        @endif
 
-                    @for ($page = $start; $page <= $end; $page++)
-                        @if ($page == $currentPage)
-                            <li
-                                class="block size-8 rounded-full bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] text-center text-sm/8 font-medium text-white">
-                                {{ $page }}
+                        @for ($page = $start; $page <= $end; $page++) @if ($page==$currentPage) <li
+                            class="block size-8 rounded-full bg-gradient-to-tr from-[#6B56F6] to-[#8C4AF2] text-center text-sm/8 font-medium text-white">
+                            {{ $page }}
                             </li>
-                        @else
+                            @else
                             <li>
                                 <button type="button"
                                     class="block size-8 rounded-full border border-gray-200 text-center text-sm/8 font-medium transition-colors hover:bg-gray-50"
@@ -137,34 +137,33 @@
                                     {{ $page }}
                                 </button>
                             </li>
-                        @endif
-                    @endfor
+                            @endif
+                            @endfor
 
-                    @if ($end < $lastPage)
-                        @if ($end < $lastPage - 1)
-                            <li class="flex items-center px-2">...
-                            </li>
-                        @endif
-                        <li>
-                            <button type="button"
-                                class="block size-8 rounded-full border border-gray-200 text-center text-sm/8 font-medium transition-colors hover:bg-gray-50"
-                                wire:click="gotoPage({{ $lastPage }})">
-                                {{ $lastPage }}
-                            </button>
-                        </li>
-                    @endif
+                            @if ($end < $lastPage) @if ($end < $lastPage - 1) <li class="flex items-center px-2">...
+                                </li>
+                                @endif
+                                <li>
+                                    <button type="button"
+                                        class="block size-8 rounded-full border border-gray-200 text-center text-sm/8 font-medium transition-colors hover:bg-gray-50"
+                                        wire:click="gotoPage({{ $lastPage }})">
+                                        {{ $lastPage }}
+                                    </button>
+                                </li>
+                                @endif
 
-                    <li>
-                        <button type="button"
-                            class="grid size-6 place-content-center rounded text-gray-600 transition-all duration-300 hover:scale-125 hover:text-purple-600 md:size-8 rtl:rotate-180"
-                            aria-label="Next page" wire:click="nextPage"
-                            @if ($programStudi->currentPage() == $programStudi->lastPage()) disabled @endif>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                stroke="currentColor" class="size-4 md:size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
-                        </button>
-                    </li>
+                                <li>
+                                    <button type="button"
+                                        class="grid size-6 place-content-center rounded text-gray-600 transition-all duration-300 hover:scale-125 hover:text-purple-600 md:size-8 rtl:rotate-180"
+                                        aria-label="Next page" wire:click="nextPage" @if ($programStudi->currentPage()
+                                        == $programStudi->lastPage()) disabled @endif>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="2" stroke="currentColor" class="size-4 md:size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                        </svg>
+                                    </button>
+                                </li>
                 </ul>
             </div>
 
@@ -172,14 +171,16 @@
         <div x-show="selectedRow" x-transition.opacity class="fixed inset-0 z-40 bg-black/60 md:hidden"
             :class="{ 'hidden': !selectedRow }">
         </div>
-        <div x-cloak class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
+        <div x-cloak
+            class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
             :class="{ 'hidden': !selectedRow }">
             <div class="size-full flex flex-col justify-start p-4">
                 <p class="mb-2 text-center text-sm font-semibold">
                     {{ $selectedProgramStudi?->nama_prodi ?? '-' }}
                 </p>
                 <span
-                    class="mx-auto w-fit rounded-full border border-[#6B56F6] bg-[#6B56F6]/25 px-2.5 py-0.5 text-xs font-medium text-[#6B56F6]">Program Studi</span>
+                    class="mx-auto w-fit rounded-full border border-[#6B56F6] bg-[#6B56F6]/25 px-2.5 py-0.5 text-xs font-medium text-[#6B56F6]">Program
+                    Studi</span>
                 <div class="mt-2 grid gap-y-2">
                     <div>
                         <p class="text-sm font-semibold">Kode Prodi</p>
@@ -188,6 +189,10 @@
                     <div>
                         <p class="text-sm font-semibold">Jurusan</p>
                         <p class="text-sm">{{ $selectedProgramStudi?->jurusan->nama_jurusan ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold">Kelompok Prodi</p>
+                        <p class="text-sm">{{ $selectedProgramStudi?->kelompokProdi->nama_kelompok_prodi ?? '-' }}</p>
                     </div>
                 </div>
                 <div class="mt-8 md:mt-auto flex flex-col gap-2">
@@ -205,8 +210,7 @@
         </div>
     </div>
     <div x-cloak x-show="showAlert" class="mb-4">
-        <x-alert titleModal="Peringatan"
-            contentModal="Apakah anda yakin ingin menghapus data ini?"
-            type="warning" :route="route('program-studi.destroy', $selectedProgramStudi?->id ?? '')" />
+        <x-alert titleModal="Peringatan" contentModal="Apakah anda yakin ingin menghapus data ini?" type="warning"
+            :route="route('program-studi.destroy', $selectedProgramStudi?->id ?? '')" />
     </div>
 </div>

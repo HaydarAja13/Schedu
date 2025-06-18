@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('program_studi', function (Blueprint $table) {
+        Schema::create('kelompok_prodi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_jurusan')->constrained('jurusan')->onDelete('cascade');
-            $table->string('nama_prodi');
-            $table->string('kode_prodi');
-            $table->foreignId('id_kelompok_prodi')->constrained('kelompok_prodi')->onDelete('cascade');
+            $table->string('nama_kelompok_prodi', 100)->unique();
             $table->timestamps();
         });
     }
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('program_studi');
+        Schema::dropIfExists('kelompok_prodi');
     }
 };
