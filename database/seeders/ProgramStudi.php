@@ -19,6 +19,10 @@ class ProgramStudi extends Seeder
 
         // Program studi
         DB::table('program_studi')->insert([
+<<<<<<< HEAD
+=======
+            //Elektro
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
             [
                 'id_jurusan' => 1,
                 'nama_prodi' => 'D4 Teknologi Rekayasa Komputer',
@@ -29,16 +33,174 @@ class ProgramStudi extends Seeder
             ],
             [
                 'id_jurusan' => 1,
+<<<<<<< HEAD
+=======
+                'nama_prodi' => 'D4 Teknologi Rekayasa Elektronika',
+                'kode_prodi' => 'RE',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'id_jurusan' => 1,
+                'nama_prodi' => 'D4 Teknologi Rekayasa Instalasi Listrik',
+                'kode_prodi' => 'IL',
+                'id_kelompok_prodi' => 4,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'id_jurusan' => 1,
+                'nama_prodi' => 'D4 Teknik Telekomunikasi',
+                'kode_prodi' => 'TE',
+                'id_kelompok_prodi' => 2,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'id_jurusan' => 1,
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
                 'nama_prodi' => 'D3 Teknik Informatika',
                 'kode_prodi' => 'IK',
                 'id_kelompok_prodi' => 1,
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
+<<<<<<< HEAD
+=======
+            [
+                'id_jurusan' => 1,
+                'nama_prodi' => 'D3 Teknik Elektronika',
+                'kode_prodi' => 'EK',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'id_jurusan' => 1,
+                'nama_prodi' => 'D3 Teknik Listrik',
+                'kode_prodi' => 'LT',
+                'id_kelompok_prodi' => 4,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'id_jurusan' => 1,
+                'nama_prodi' => 'D3 Teknik Telekomunikasi',
+                'kode_prodi' => 'TK',
+                'id_kelompok_prodi' => 2,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]
+        ]);
+
+        // Jam awal
+        DB::table('jam_awal')->insert([
+            [
+                'nama_jam' => 1,
+                'keterangan' => '07:00-07:45',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 2,
+                'keterangan' => '07:45-08:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 3,
+                'keterangan' => '08:30-09:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 4,
+                'keterangan' => '09:35-10:20',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 5,
+                'keterangan' => '10:20-11:05',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 6,
+                'keterangan' => '11:05-11:50',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 7,
+                'keterangan' => '12:30-13:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 8,
+                'keterangan' => '13:15-14:00',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 9,
+                'keterangan' => '14:00-14:45',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 10,
+                'keterangan' => '14:45-15:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 11,
+                'keterangan' => '16:00-16:45',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 12,
+                'keterangan' => '16:45-17:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 13,
+                'keterangan' => '17:30-18:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 14,
+                'keterangan' => '18:45-19:30',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 15,
+                'keterangan' => '19:30-20:15',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_jam' => 16,
+                'keterangan' => '20:15-21:00',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
         ]);
 
         // Ruang
         DB::table('ruang')->insert([
+<<<<<<< HEAD
+=======
+            //RUANG INFORMATIKA
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
             [
                 'nama_ruang' => 'GKT 801',
                 'keterangan' => '1',
@@ -89,6 +251,7 @@ class ProgramStudi extends Seeder
                 'updated_at' => $now,
             ],
             [
+<<<<<<< HEAD
                 'nama_ruang' => 'GKT 808',
                 'keterangan' => '1',
                 'id_kelompok_prodi' => 1,
@@ -103,6 +266,8 @@ class ProgramStudi extends Seeder
                 'updated_at' => $now,
             ],
             [
+=======
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
                 'nama_ruang' => 'GKT 810',
                 'keterangan' => '1',
                 'id_kelompok_prodi' => 1,
@@ -159,6 +324,7 @@ class ProgramStudi extends Seeder
                 'updated_at' => $now,
             ],
             [
+<<<<<<< HEAD
                 'nama_ruang' => 'SA 204',
                 'keterangan' => '1',
                 'id_kelompok_prodi' => 1,
@@ -173,6 +339,8 @@ class ProgramStudi extends Seeder
                 'updated_at' => $now,
             ],
             [
+=======
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
                 'nama_ruang' => 'Lab Multimedia',
                 'keterangan' => '1',
                 'id_kelompok_prodi' => 1,
@@ -193,6 +361,244 @@ class ProgramStudi extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
+<<<<<<< HEAD
+=======
+
+            //Ruang Elektronika
+            [
+                'nama_ruang' => 'Lab Analog',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'SA 203',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab EK Digital',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Ruang Gambar SB2',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Bengkel ME/EK',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab Instrumen',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Labkom EK',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'SA 209',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'SA 208',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab Mikro',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab Kendali',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'SA 207',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 308',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 809',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+
+            //Ruang Listrik
+            [
+                'nama_ruang' => 'GKT 710',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'GKT 711',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab LT Barat',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab Komputer',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab Mekatronika',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab Kendali Mikro',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab PLC',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab LT Timur',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Ruang Multimedia',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'SB1 06',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'SB1 08',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'SB1 09',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'SB2 01',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'UPA Bahasa',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Workshop Timur',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Workshop Barat',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Lab Gambar',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'Ruang Maintenance-Repair',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'nama_ruang' => 'RPL Bengkel Maintenance',
+                'keterangan' => '1',
+                'id_kelompok_prodi' => '4',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
         ]);
     }
 }

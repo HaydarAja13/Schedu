@@ -39,8 +39,13 @@
 
                     </div>
                     <x-form.select :label="'Nama Kelompok Prodi'" :description="'Pilih Kelompok'" :placeholder="'Pilih'"
+<<<<<<< HEAD
                         :options="$kelompokProdi" valueField="id" displayField="nama_kelompok_prodi" id="id_kelompok_prodi"
                         name="id_kelompok_prodi" />
+=======
+                        :options="$kelompokProdi" valueField="id" displayField="nama_kelompok_prodi"
+                        id="id_kelompok_prodi" name="id_kelompok_prodi" />
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
                     <x-form.button-group page="ruang" />
                 </div>
             </form>

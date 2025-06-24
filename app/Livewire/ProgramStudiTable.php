@@ -60,7 +60,11 @@ class ProgramStudiTable extends Component
                     ->orWhereHas('jurusan', function ($q) {
                         $q->where('nama_jurusan', 'like', '%' . $this->search . '%');
                     })
+<<<<<<< HEAD
                     ->orWhereHas('kelompok_prodi', function ($q) {
+=======
+                    ->orWhereHas('kelompokProdi', function ($q) {
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
                         $q->where('nama_kelompok_prodi', 'like', '%' . $this->search . '%');
                     });
             });

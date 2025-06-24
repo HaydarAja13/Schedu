@@ -43,7 +43,11 @@
                                 {{ $data->keterangan === '0' ? 'Tidak Tersedia' : ($data->keterangan ===
                                 '1' ? 'Tersedia' : '-') }} </p>
                             </td>
+<<<<<<< HEAD
                             <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
+=======
+                            <td class="whitespace-nowrap px-3 py-3 text-sm">
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
                                 {{ $data->kelompokProdi->nama_kelompok_prodi ?? '-' }}
                             </td>
                         </tr>
@@ -177,6 +181,10 @@
                     <div>
                         <p class="text-sm font-semibold">Nama Ruang</p>
                         <p class="text-sm">{{ $selectedRuang?->nama_ruang ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold">Nama Kelompok Prodi</p>
+                        <p class="text-sm">{{ $selectedRuang?->kelompokProdi->nama_kelompok_prodi ?? '-' }}</p>
                     </div>
                     <div>
                         <p class="text-sm font-semibold">Keterangan</p>

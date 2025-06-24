@@ -1,4 +1,4 @@
-<x-template :role="'admin'" :title="'Kelompok Prodi'">
+<x-template :role="'admin'" :title="'Data Jadwal'">
     <x-slot:content>
         <div x-data="{ showAlert: true }">
             @if(session('create'))
@@ -17,11 +17,7 @@
         </div>
 
         <div class="">
-<<<<<<< HEAD
-            <livewire:jurusan-table></livewire:jurusan-table>
-=======
-            <livewire:kelompok-prodi-table></livewire:kelompok-prodi-table>
->>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
+            <livewire:schedule-table></livewire:schedule-table>
         </div>
     </x-slot:content>
-</x-template>   
+</x-template>

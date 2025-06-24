@@ -1,25 +1,48 @@
-<<<<<<< HEAD
 <div>
-    {{-- To attain knowledge, add things every day; To attain wisdom, subtract things every day. --}}
-</div>
-=======
-<div x-data="{ selectedRow: null, showAlert: false }">
-    <x-table-properties :subtitle="'Menampilkan Data Kelompok Prodi'" link="kelompok-prodi-create"></x-table-properties>
+    <div class="flex items-center justify-between mb-4 mt-2">
+        <p class="text-base text-gray-500 hidden md:block">Menampilkan Data Jadwal</p>
+        <div
+            class="grid grid-cols-3 md:flex md:flex-row items-center w-full justify-between md:w-fit md:justify-center gap-y-2 gap-x-4 md:gap-x-8">
+            <div
+                class="col-span-2 flex items-center rounded-lg w-full bg-white px-3 py-2 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6 mr-2 text-gray-600">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+                <input wire:model.live.debounce.300ms="search" type="search"
+                    class="block w-full bg-transparent text-base outline-none placeholder:text-gray-400 sm:text-sm/6"
+                    placeholder="Cari...">
+            </div>
+            <a class="inline-block rounded-lg bg-gradient-to-tr w-full md:w-fit from-[#6B56F6] to-[#8C4AF2] px-4 py-2.5 text-sm font-medium text-white hover:bg-gradient-to-bl hover:from-[#7c3bdd] hover:to-[#6955e8]"
+                href="schedule-create">
+                <div class="flex items-center justify-center gap-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+                        <path fill-rule="evenodd"
+                            d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5ZM16.5 15a.75.75 0 0 1 .712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 0 1 0 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 0 1-1.422 0l-.395-1.183a1.5 1.5 0 0 0-.948-.948l-1.183-.395a.75.75 0 0 1 0-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0 1 16.5 15Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Generate
+                </div>
+            </a>
+        </div>
+    </div>
+
     <div class="relative grid size-full grid-cols-1 items-start justify-start gap-x-6 md:grid-cols-4">
-        <div :class="selectedRow ? 'overflow-x-hidden overflow-y-auto bg-white rounded-xl md:col-span-3' :
-            'overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-4'"
-            class="max-h-[calc(100vh-300px)] min-h-[calc(100vh-300px)] transition-all duration-500  md:min-h-[calc(100vh-220px)] md:max-h-[calc(100vh-220px)]">
+        <div
+            class="max-h-[calc(100vh-300px)] min-h-[calc(100vh-300px)] transition-all duration-500  md:min-h-[calc(100vh-220px)] md:max-h-[calc(100vh-220px)] overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-4">
             <div class="w-full overflow-x-scroll md:overflow-x-hidden">
-                <table class="w-full table-auto divide-y-2 divide-gray-200" @click.away="selectedRow = null">
+                <table class="w-full table-auto divide-y-2 divide-gray-200">
                     <thead
                         class="sticky top-0 z-10 border-0 bg-gray-100 text-xs uppercase text-gray-700 ltr:text-left rtl:text-right">
                         <tr class="*:font-medium *:text-gray-900">
                             <th class="whitespace-nowrap px-3 py-2">No</th>
-                            <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer" wire:click="setSortBy('id')">
-                                Id Kelompok Prodi</th>
                             <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer"
                                 wire:click="setSortBy('nama_kelompok_prodi')">
-                                Nama Kelompok Prodi
+                                Kelompok Program Studi
+                            </th>
+                            <th class="text-center whitespace-nowrap px-3 py-2 hover:cursor-pointer">
+                                Aksi
                             </th>
                         </tr>
                     </thead>
@@ -29,19 +52,30 @@
                         $no = 1;
                         @endphp
                         @foreach ($kelompokProdi as $data)
-                        <tr :class="[
-                                'cursor-pointer transition-all duration-200 hover:bg-gray-100',
-                                selectedRow === '{{ $data->id }}' ?
-                                'border-l-8 border-l-indigo-600 scale-105 z-10 shadow-xl shadow-indigo-200' : ''
-                            ]" @click="selectedRow = '{{ $data->id }}'; $wire.selectKelompokProdi({{ $data->id }})">
-                            <td class="whitespace-nowrap py-3 text-sm"
-                                :class="selectedRow === '{{ $data->id }}' ? 'pl-10' : 'px-3'">
+                        <tr>
+                            <td class="whitespace-nowrap py-3 text-sm pl-3">
                                 {{ $no++ }}</td>
                             <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
-                                {{ $data->id ?? '-' }}
-                            </td>
-                            <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
                                 {{ $data->nama_kelompok_prodi ?? '-' }}
+                            </td>
+                            <td class="text-right pr-8">
+                                <span
+                                    class="inline-flex divide-x divide-gray-300 overflow-hidden rounded border border-gray-300 bg-white shadow-sm">
+                                    <button type="button"
+                                        class="px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:relative">
+                                        Edit
+                                    </button>
+
+                                    <button type="button"
+                                        class="px-3 py-1.5 text-sm font-medium text-red-700 transition-colors hover:bg-gray-50 hover:text-red-900 focus:relative">
+                                        Hapus
+                                    </button>
+
+                                    <button type="button"
+                                        class="px-3 py-1.5 text-sm font-medium text-purple-700 transition-colors hover:bg-gray-50 hover:text-purple-900 focus:relative">
+                                        Detail
+                                    </button>
+                                </span>
                             </td>
                         </tr>
                         @endforeach
@@ -159,47 +193,5 @@
             </div>
 
         </div>
-        <div x-show="selectedRow" x-transition.opacity class="fixed inset-0 z-40 bg-black/60 md:hidden"
-            :class="{ 'hidden': !selectedRow }">
-        </div>
-        <div x-cloak
-            class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
-            :class="{ 'hidden': !selectedRow }">
-            <div class="size-full flex flex-col justify-start p-4">
-                <p class="mb-2 text-center text-sm font-semibold">
-                    {{ $selectedKelompokProdi?->nama_kelompok_prodi ?? '-' }}
-                </p>
-                <span
-                    class="mx-auto w-fit rounded-full border border-[#6B56F6] bg-[#6B56F6]/25 px-2.5 py-0.5 text-xs font-medium text-[#6B56F6]">Kelompok Prodi</span>
-                <div class="mt-2 grid gap-y-2">
-                    <div>
-                        <p class="text-sm font-semibold">Nama Kelompok Prodi</p>
-                        <p class="text-sm">{{ $selectedKelompokProdi?->nama_kelompok_prodi ?? '-' }}</p>
-                    </div>
-                </div>
-                <div class="mt-2 grid gap-y-2">
-                    <div>
-                        <p class="text-sm font-semibold">Id Kelompok Prodi</p>
-                        <p class="text-sm">{{ $selectedKelompokProdi?->id ?? '-' }}</p>
-                    </div>
-                </div>
-                <div class="mt-8 md:mt-auto flex flex-col gap-2">
-                    <a class="inline-block rounded-xl bg-gradient-to-tr from-[#8C4AF2] to-[#6B56F6] px-12 py-2 text-center text-sm font-medium text-white"
-                        href="{{ route('admin.kelompok-prodi-update', $selectedKelompokProdi?->id ?? '') }}">
-                        Ubah Data
-                    </a>
-                    <button
-                        class="inline-block rounded-xl border border-red-600 bg-red-600 px-12 py-2 text-center text-sm font-medium text-white hover:cursor-pointer"
-                        type="button" @click="showAlert = true">
-                        Hapus Data
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div x-cloak x-show="showAlert" class="mb-4">
-        <x-alert titleModal="Peringatan" contentModal="Apakah anda yakin ingin menghapus data ini?" type="warning"
-            :route="route('kelompok-prodi.destroy', $selectedKelompokProdi?->id ?? '')" />
     </div>
 </div>
->>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911

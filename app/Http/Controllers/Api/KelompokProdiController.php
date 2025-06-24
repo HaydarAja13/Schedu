@@ -23,7 +23,11 @@ class KelompokProdiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+<<<<<<< HEAD
             'nama_kelompok_prodi' => 'required|string|max:100|unique:nama_kelompok_prodi,nama_kelompok_prodi',
+=======
+            'nama_kelompok_prodi' => 'required|string|max:100',
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
         ]);
 
         $data = KelompokProdi::create([
@@ -53,7 +57,11 @@ class KelompokProdiController extends Controller
         $data = KelompokProdi::findOrFail($id);
 
         $request->validate([
+<<<<<<< HEAD
             'nama_kelompok_prodi' => 'sometimes|required|string|max:100|unique:nama_kelompok_prodi,nama_kelompok_prodi,' . $id,
+=======
+            'nama_kelompok_prodi' => 'sometimes|required|string|max:100,' . $id,
+>>>>>>> 11d4c02c44be8ec803fe5ac2baf430ac6b6fd911
         ]);
 
         $data->update([
