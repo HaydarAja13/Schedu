@@ -15,7 +15,7 @@
 
 			<p class="text-white text-xl mt-4 font-semibold">Menu</p>
 			<hr class="h-0.5 mt-3 bg-[#6317DA] border-none">
-			<div class="overflow-y-scroll md:h-84 [&::-webkit-scrollbar]:w-0 ">
+			<div class="overflow-y-scroll h-[calc(100vh-400px)] md:h-84 [&::-webkit-scrollbar]:w-0 ">
 				<ul class="mt-6 space-y-2">
 					<x-sidebar.single-nav-link :title="'Beranda'" :href="'/' . $role . '/dashboard'"
 						:active="request()->is($role.'/dashboard')">

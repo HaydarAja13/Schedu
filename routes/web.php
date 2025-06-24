@@ -81,10 +81,12 @@ Route::get('/admin/dashboard', function () {
     // Get program studi that already have schedules (max 3)
     $prodiSudah = ProgramStudi::whereIn('id', $prodiIds)->get()->take(3);
     // Get program studi that don't have schedules yet (max 5)
-    $prodiBelum = ProgramStudi::whereNotIn('id', $prodiIds)->get()->take(5);
+    $prodiBelum = ProgramStudi::whereNotIn('id', $prodiIds)->get()->take(3);
+    $prodiBelumSebenarnya = ProgramStudi::whereNotIn('id', $prodiIds)->get();
 
     $prodiSudahCount = $prodiSudah->count();
     $prodiBelumCount = $prodiBelum->count();
+    $prodiBelumCountSebenarnya = $prodiBelumSebenarnya->count();
 
     // Get latest notifications for dashboard
     $notification = Notification::with(['dosen', 'jamMulai', 'jamSelesai'])
@@ -101,7 +103,8 @@ Route::get('/admin/dashboard', function () {
         'prodiSudah',
         'prodiBelum',
         'prodiSudahCount',
-        'prodiBelumCount'
+        'prodiBelumCount',
+        'prodiBelumCountSebenarnya'
     ));
 })->middleware('role:admin')->name('admin.dashboard');
 
@@ -504,6 +507,34 @@ Route::get('/admin/schedule', function () {
     $programStudis = ProgramStudi::limit(3)->get();
     return view('admin.schedule', compact('programStudis', 'notification'));
 })->middleware('role:admin')->name('admin.schedule');
+
+// Schedule Detail management page
+Route::get('/admin/schedule-detail', function () {
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.schedule-detail', compact('kelompokProdi'));
+})->middleware('role:admin')->name('admin.schedule-detail');
+
+// Untuk download file JSON
+Route::get('/download/jadwal/{filename}', [GenerateController::class, 'downloadJadwal'])
+    ->name('download.jadwal')
+    ->where('filename', '.*\.json$');
+
+// Schdedule CRUD operations
+Route::post('/schedule', [GenerateController::class, 'generateJadwal'])->name('schedule.generate');
+Route::put('/schedule/{id}', [GenerateController::class, 'update'])->name('schedule.update');
+Route::delete('/schedule/{id}', [GenerateController::class, 'destroy'])->name('schedule.destroy');
+
+// Schedule create form
+Route::get('/admin/schedule-create', function () {
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.schedule-create', compact('kelompokProdi'));
+})->middleware('role:admin')->name('admin.schedule-create');
+
+// Schedule update form 
+Route::get('/admin/schedule-update/{id}', function ($id) {
+    $jurusan = Jurusan::findOrFail($id);
+    return view('admin.schedule-update', compact('id', 'schedule'));
+})->middleware('role:admin')->name('admin.schedule-update');
 
 // Notification management page
 Route::get('/admin/notification', function () {

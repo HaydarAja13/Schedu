@@ -27,7 +27,7 @@ class NotificationController extends Controller
             'jam_akhir' => 'required|string|max:255|exists:jam_akhir,nama_jam',
             'hari' => 'required|string|max:10|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
             'keterangan' => 'required|string',
-            'status' => 'required|string|in:Belum Divalidasi,Divalidasi',
+            'status' => 'required|string|in:Belum Divalidasi,Divalidasi,Ditolak',
         ]);
 
         $data = Notification::create([
@@ -64,7 +64,7 @@ class NotificationController extends Controller
             'jam_akhir' => 'sometimes|required|string|max:255|exists:jam_akhir,nama_jam',
             'hari' => 'sometimes|required|string|max:10|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
             'keterangan' => 'sometimes|required|string',
-            'status' => 'sometimes|required|string|in:Belum Divalidasi,Divalidasi',
+            'status' => 'sometimes|required|string|in:Belum Divalidasi,Divalidasi,Ditolak',
         ]);
 
         $data->update([
