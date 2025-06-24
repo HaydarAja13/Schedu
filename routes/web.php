@@ -493,6 +493,19 @@ Route::get('/admin/profile-update', function (Request $request) {
     return view('admin.profile-update', compact('user'));
 })->middleware('role:admin');
 
+// ---------------------- MAHASISWA PROFILE MANAGEMENT ----------------------
+
+// Mahasiswa profile view
+Route::get('/mahasiswa/profile', function () {
+    return view('mahasiswa.profile');
+})->middleware('role:mahasiswa')->name('mahasiswa.profile');
+
+// mahasiswa profile update form
+Route::get('/mahasiswa/profile-update', function (Request $request) {
+    $user = $request->session()->get('user');
+    return view('mahasiswa.profile-update', compact('user'));
+})->middleware('role:mahasiswa');
+
 // ===================================================================
 // DOSEN ROUTES
 // ===================================================================
@@ -501,6 +514,15 @@ Route::get('/admin/profile-update', function (Request $request) {
 Route::get('/dosen/dashboard', function () {
     return view('dosen.dashboard');
 })->middleware('role:dosen')->name('dosen.dashboard');
+Route::get('/dosen/schedule', function () {
+    return view('dosen.schedule');
+})->middleware('role:dosen')->name('dosen.schedule');
+Route::get('/dosen/mata-kuliah', function () {
+    return view('dosen.mata-kuliah');
+})->middleware('role:dosen')->name('dosen.mata-kuliah');
+Route::get('/dosen/requirement-dosen', function () {
+    return view('dosen.requirement-dosen');
+})->middleware('role:dosen')->name('dosen.requirement-dosen');
 
 // ===================================================================
 // MAHASISWA ROUTES
@@ -510,6 +532,14 @@ Route::get('/dosen/dashboard', function () {
 Route::get('/mahasiswa/dashboard', function () {
     return view('mahasiswa.dashboard');
 })->middleware('role:mahasiswa')->name('mahasiswa.dashboard');
+Route::get('/mahasiswa/schedule', function () {
+    return view('mahasiswa.schedule');
+})->middleware('role:mahasiswa')->name('mahasiswa.schedule');
+Route::get('/mahasiswa/mata-kuliah', function () {
+    return view('mahasiswa.mata-kuliah');
+})->middleware('role:mahasiswa')->name('mahasiswa.mata-kuliah');
+
+// Route::put('/mahasiswa/profile/{id}', [MahasiswaController::class, 'update'])->middleware('role:mahasiswa')->name('mahasiswa.update');
 
 // ===================================================================
 // SHARED PROFILE ROUTES (ALL ROLES)
