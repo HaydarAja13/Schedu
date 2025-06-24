@@ -900,7 +900,7 @@ class DatabaseSeeder extends Seeder
                 'nama_mahasiswa' => 'ADRIANSYAH ALFARISYI',
                 'email' => 'adriansyah.alfarisyi@student.example.com',
                 'password' => Hash::make('adriansyah_alfarisyi'),
-                'no_hp' => '081234567891',
+                'no_hp' => '081234060305',
                 'foto_profil' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
