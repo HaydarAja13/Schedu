@@ -9,6 +9,7 @@ class EnrollmentMkMhsDsnRng extends Model
     protected $table = 'enrollment_mk_mhs_dsn_rng';
 
     protected $fillable = [
+        'id_mahasiswa',
         'id_mata_kuliah',
         'id_enrollment_kelas',
         'id_dosen',
@@ -26,5 +27,12 @@ class EnrollmentMkMhsDsnRng extends Model
     {
         return $this->belongsTo(Dosen::class, 'id_dosen');
     }
-    
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'id_mahasiswa');
+    }
+    public function enrollmentMahasiswaKelas()
+    {
+        return $this->belongsTo(EnrollmentMahasiswaKelas::class, 'id_enrollment_kelas');
+    }
 }

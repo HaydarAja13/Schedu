@@ -33,15 +33,29 @@ class EnrollmentMkMhsDsnRngController extends Controller
             'id_dosen' => $request->id_dosen,
         ]);
 
-        if (!$data) {
-            return redirect()->route('admin.enrollment-jadwal')->with('error', 'Enrollment Jadwal gagal dibuat');
-        }
-        return redirect()->route('admin.enrollment-jadwal')->with('create', 'Enrollment Jadwal berhasil dibuat');
+        return response()->json($data, 201);
     }
 
     /**
      * Display the specified resource.
      */
+
+    public function countByMahasiswa($id_mahasiswa)
+    {
+        $jumlah = EnrollmentMkMhsDsnRng::where('id_mahasiswa', $id_mahasiswa)
+            ->whereHas('mataKuliah', function($query) {
+                $query->where('status', 'aktif'); // jika ada field status di tabel mata kuliah
+            })
+            ->count();
+        return response()->json(['jumlah_mata_kuliah' => $jumlah]);
+    }
+
+    public function countByDosen($dosen_id)
+    {
+        $count = EnrollmentMkMhsDsnRng::where('dosen_id', $dosen_id)->count();
+        return response()->json(['count' => $count]);
+    }
+
     public function show(string $id)
     {
         $data = EnrollmentMkMhsDsnRng::with(['mataKuliah', 'enrollmentKelas', 'dosen'])->findOrFail($id);
@@ -67,10 +81,7 @@ class EnrollmentMkMhsDsnRngController extends Controller
             'id_dosen' => $request->id_dosen ?? $data->id_dosen,
         ]);
 
-        if (!$data) {
-            return redirect()->route('admin.enrollment-jadwal')->with('error', 'Enrollment Jadwal gagal diperbarui');
-        }
-        return redirect()->route('admin.enrollment-jadwal')->with('update', 'Enrollment Jadwal berhasil diperbarui');
+        return response()->json($data);
     }
 
     /**
@@ -80,9 +91,6 @@ class EnrollmentMkMhsDsnRngController extends Controller
     {
         $data = EnrollmentMkMhsDsnRng::findOrFail($id);
         $data->delete();
-        if (!$data) {
-            return redirect()->route('admin.enrollment-jadwal')->with('error', 'Enrollment Jadwal gagal dihapus');
-        }
-        return redirect()->route('admin.enrollment-jadwal')->with('delete', 'Enrollment Jadwal berhasil dihapus');
+        return response()->json(['message' => 'Enrollment deleted successfully']);
     }
 }

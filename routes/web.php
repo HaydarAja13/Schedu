@@ -19,10 +19,14 @@ use App\Http\Controllers\Api\ProgramStudiController;
 use App\Http\Controllers\Api\RuangController;
 use App\Http\Controllers\Api\TahunAkademikController;
 use App\Http\Controllers\Api\KelompokProdiController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\MahasiswaDashboardController;
+use App\Http\Controllers\Api\DosenDashboardController;
 
 // Main Controllers
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
+
 
 // Models
 use App\Models\Angkatan;
@@ -548,29 +552,49 @@ Route::get('/admin/profile', function () {
     return view('admin.profile');
 })->middleware('role:admin')->name('admin.profile');
 
-// Admin profile update form
-Route::get('/admin/profile-update', function (Request $request) {
-    $user = $request->session()->get('user');
-    return view('admin.profile-update', compact('user'));
-})->middleware('role:admin');
 
 // ===================================================================
 // DOSEN ROUTES
 // ===================================================================
 
 // Dosen dashboard
-Route::get('/dosen/dashboard', function () {
-    return view('dosen.dashboard');
-})->middleware('role:dosen')->name('dosen.dashboard');
+Route::get('/dosen/dashboard', [DosenDashboardController::class, 'index'])
+    ->middleware('role:dosen')
+    ->name('dosen.dashboard');
+
+// Dosen requirements view
+Route::get('/dosen/requirement-dosen', function () {
+    return view('dosen.requirement-dosen');
+})->middleware('role:dosen')->name('dosen.requirement-dosen');
+
+Route::post('/dosen', [NotificationController::class, 'store'])->name('requirement-dosen.store');
+
+// Dosen schedule view
+Route::get('/dosen/schedule', function () {
+    return view('dosen.schedule');
+})->middleware('role:dosen')->name('dosen.schedule');
+
+// Dosen matakuliah view
+Route::get('/dosen/mata-kuliah', function () {
+    return view('dosen.mata-kuliah');
+})->middleware('role:dosen')->name('dosen.mata-kuliah');
+
+// Dosen profile view
+Route::get('/dosen/profile', function () {
+    return view('dosen.profile');
+})->middleware('role:dosen')->name('dosen.profile');
+
+
+
 
 // ===================================================================
 // MAHASISWA ROUTES
 // ===================================================================
 
 // Mahasiswa dashboard
-Route::get('/mahasiswa/dashboard', function () {
-    return view('mahasiswa.dashboard');
-})->middleware('role:mahasiswa')->name('mahasiswa.dashboard');
+Route::get('/mahasiswa/dashboard', [MahasiswaDashboardController::class, 'index'])
+    ->middleware('role:mahasiswa')
+    ->name('mahasiswa.dashboard');
 
 // ===================================================================
 // SHARED PROFILE ROUTES (ALL ROLES)

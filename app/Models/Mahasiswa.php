@@ -15,7 +15,7 @@ class Mahasiswa extends Model
         'email',
         'password',
         'no_hp',
-        'foto_profil'
+        'foto'
     ];
 
     protected $hidden = [
@@ -34,5 +34,15 @@ class Mahasiswa extends Model
     public function enrollmentMahasiswaKelas()
     {
         return $this->hasMany(EnrollmentMahasiswaKelas::class, 'id_mahasiswa');
+    }
+    public function prodi() {
+        return $this->belongsTo(ProgramStudi::class, 'prodi_id');
+    }
+    public function kelas() {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+    public function enrollmentMkMhsDsnRng()
+    {
+        return $this->hasMany(EnrollmentMkMhsDsnRng::class, 'id_mahasiswa');
     }
 }
