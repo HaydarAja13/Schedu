@@ -18,6 +18,8 @@ use App\Http\Controllers\Api\MataKuliahController;
 use App\Http\Controllers\Api\ProgramStudiController;
 use App\Http\Controllers\Api\RuangController;
 use App\Http\Controllers\Api\TahunAkademikController;
+use App\Http\Controllers\Api\KelompokProdiController;
+
 // Main Controllers
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
@@ -37,6 +39,7 @@ use App\Models\MataKuliah;
 use App\Models\Notification;
 use App\Models\Ruang;
 use App\Models\TahunAkademik;
+use App\Models\KelompokProdi;
 
 // Laravel Core
 use Illuminate\Http\Request;
@@ -78,10 +81,12 @@ Route::get('/admin/dashboard', function () {
     // Get program studi that already have schedules (max 3)
     $prodiSudah = ProgramStudi::whereIn('id', $prodiIds)->get()->take(3);
     // Get program studi that don't have schedules yet (max 5)
-    $prodiBelum = ProgramStudi::whereNotIn('id', $prodiIds)->get()->take(5);
+    $prodiBelum = ProgramStudi::whereNotIn('id', $prodiIds)->get()->take(3);
+    $prodiBelumSebenarnya = ProgramStudi::whereNotIn('id', $prodiIds)->get();
 
     $prodiSudahCount = $prodiSudah->count();
     $prodiBelumCount = $prodiBelum->count();
+    $prodiBelumCountSebenarnya = $prodiBelumSebenarnya->count();
 
     // Get latest notifications for dashboard
     $notification = Notification::with(['dosen', 'jamMulai', 'jamSelesai'])
@@ -98,7 +103,8 @@ Route::get('/admin/dashboard', function () {
         'prodiSudah',
         'prodiBelum',
         'prodiSudahCount',
-        'prodiBelumCount'
+        'prodiBelumCount',
+        'prodiBelumCountSebenarnya'
     ));
 })->middleware('role:admin')->name('admin.dashboard');
 
@@ -207,14 +213,16 @@ Route::delete('/program-studi/{id}', [ProgramStudiController::class, 'destroy'])
 // Program Studi create form
 Route::get('/admin/program-studi-create', function () {
     $jurusan = Jurusan::all();
-    return view('admin.program-studi-create', compact('jurusan'));
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.program-studi-create', compact('jurusan', 'kelompokProdi'));
 })->middleware('role:admin')->name('admin.program-studi-create');
 
 // Program Studi update form
 Route::get('/admin/program-studi-update/{id}', function ($id) {
     $programStudi = ProgramStudi::findOrFail($id);
     $jurusan = Jurusan::all();
-    return view('admin.program-studi-update', compact('id', 'programStudi', 'jurusan'));
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.program-studi-update', compact('id', 'programStudi', 'jurusan', 'kelompokProdi'));
 })->middleware('role:admin')->name('admin.program-studi-update');
 
 // ---------------------- ADMIN MATA KULIAH MANAGEMENT ----------------------
@@ -256,13 +264,15 @@ Route::delete('/ruang/{id}', [RuangController::class, 'destroy'])->name('ruang.d
 
 // Ruang create form
 Route::get('/admin/ruang-create', function () {
-    return view('admin.ruang-create');
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.ruang-create', compact('kelompokProdi'));
 })->middleware('role:admin')->name('admin.ruang-create');
 
 // Ruang update form
 Route::get('/admin/ruang-update/{id}', function ($id) {
     $ruang = Ruang::findOrFail($id);
-    return view('admin.ruang-update', compact('id', 'ruang'));
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.ruang-update', compact('id', 'ruang', 'kelompokProdi'));
 })->middleware('role:admin')->name('admin.ruang-update');
 
 // ---------------------- ADMIN KELAS MANAGEMENT ----------------------
@@ -311,6 +321,29 @@ Route::get('/admin/angkatan-update/{id}', function ($id) {
     $angkatan = Angkatan::findOrFail($id);
     return view('admin.angkatan-update', compact('id', 'angkatan'));
 })->middleware('role:admin')->name('admin.angkatan-update');
+
+// ---------------------- ADMIN KELOMOPK PRODI MANAGEMENT ----------------------
+
+// Kelompok Prodi listing page
+Route::get('/admin/kelompok-prodi', function () {
+    return view('admin.kelompok-prodi');
+})->middleware('role:admin')->name('admin.kelompok-prodi');
+
+// Kelompok Prodi CRUD operations
+Route::post('/kelompok-prodi', [KelompokProdiController::class, 'store'])->name('kelompok-prodi.store');
+Route::put('/kelompok-prodi/{id}', [KelompokProdiController::class, 'update'])->name('kelompok-prodi.update');
+Route::delete('/kelompok-prodi/{id}', [KelompokProdiController::class, 'destroy'])->name('kelompok-prodi.destroy');
+
+// Kelompok Prodi create form 
+Route::get('/admin/kelompok-prodi-create', function () {
+    return view('admin.kelompok-prodi-create');
+})->middleware('role:admin')->name('admin.kelompok-prodi-create');
+
+// Kelompok Prodi update form
+Route::get('/admin/kelompok-prodi-update/{id}', function ($id) {
+    $kelompokProdi = KelompokProdi::findOrFail($id);
+    return view('admin.kelompok-prodi-update', compact('id', 'kelompokProdi'));
+})->middleware('role:admin')->name('admin.kelompok-prodi-update');
 
 // ---------------------- ADMIN TAHUN AKADEMIK MANAGEMENT ----------------------
 
@@ -475,6 +508,40 @@ Route::get('/admin/schedule', function () {
     return view('admin.schedule', compact('programStudis', 'notification'));
 })->middleware('role:admin')->name('admin.schedule');
 
+// Schedule Detail management page
+Route::get('/admin/schedule-detail', function () {
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.schedule-detail', compact('kelompokProdi'));
+})->middleware('role:admin')->name('admin.schedule-detail');
+
+// Untuk download file JSON
+Route::get('/download/jadwal/{filename}', [GenerateController::class, 'downloadJadwal'])
+    ->name('download.jadwal')
+    ->where('filename', '.*\.json$');
+
+// Schdedule CRUD operations
+Route::post('/schedule', [GenerateController::class, 'generateJadwal'])->name('schedule.generate');
+Route::put('/schedule/{id}', [GenerateController::class, 'update'])->name('schedule.update');
+Route::delete('/schedule/{id}', [GenerateController::class, 'destroy'])->name('schedule.destroy');
+
+// Schedule create form
+Route::get('/admin/schedule-create', function () {
+    $kelompokProdi = KelompokProdi::all();
+    return view('admin.schedule-create', compact('kelompokProdi'));
+})->middleware('role:admin')->name('admin.schedule-create');
+
+// Schedule update form 
+Route::get('/admin/schedule-update/{id}', function ($id) {
+    // Make sure the view exists: resources/views/admin/schedule-update.blade.php
+    // If not, use an existing view or create the file.
+    // Example: fallback to 'admin.schedule' if 'admin.schedule-update' does not exist
+    // return view('admin.schedule', compact('id'));
+    // Or, if you want to create the file, do so in resources/views/admin/schedule-update.blade.php
+
+    // For now, fallback to 'admin.schedule' to avoid the error
+    return view('admin.schedule', compact('id'));
+})->middleware('role:admin')->name('admin.schedule-update');
+
 // Notification management page
 Route::get('/admin/notification', function () {
     return view('admin.notification');
@@ -524,6 +591,24 @@ Route::get('/dosen/requirement-dosen', function () {
     return view('dosen.requirement-dosen');
 })->middleware('role:dosen')->name('dosen.requirement-dosen');
 
+
+
+
+Route::put('/dosen/{id}/update-foto', [DosenController::class, 'updateProfilePicture'])->name('dosen.updateProfilePicture');
+Route::get('/dosen/profile', [DosenController::class, 'profile'])->name('dosen.profile');
+
+
+Route::get('/dosen/profile/{id}', function ($id) {
+    $user = \App\Models\Dosen::findOrFail($id);
+    return view('dosen.profile', [
+        'user' => $user,
+        'role' => 'dosen'
+    ]);
+});
+
+Route::put('/dosen/profile/{id}', [DosenController::class, 'updateProfilePicture'])->name('dosen.updateProfilePicture');
+
+
 // ===================================================================
 // MAHASISWA ROUTES
 // ===================================================================
@@ -539,6 +624,20 @@ Route::get('/mahasiswa/mata-kuliah', function () {
     return view('mahasiswa.mata-kuliah');
 })->middleware('role:mahasiswa')->name('mahasiswa.mata-kuliah');
 
+Route::put('/mahasiswa/{id}/update-foto', [MahasiswaController::class, 'updateProfilePicture'])->name('mahasiswa.updateProfilePicture');
+Route::get('/mahasiswa/profile', [MahasiswaController::class, 'profile'])->name('mahasiswa.profile');
+
+
+Route::get('/mahasiswa/profile/{id}', function ($id) {
+    $user = \App\Models\Mahasiswa::findOrFail($id);
+    return view('mahasiswa.profile', [
+        'user' => $user,
+        'role' => 'mahasiswa'
+    ]);
+});
+
+Route::put('/mahasiswa/profile/{id}', [MahasiswaController::class, 'updateProfilePicture'])->name('mahasiswa.updateProfilePicture');
+// Route::put('/mahasiswa/profile/{id}', [MahasiswaController::class, 'updateProfile'])->name('mahasiswa.updateProfile');
 // Route::put('/mahasiswa/profile/{id}', [MahasiswaController::class, 'update'])->middleware('role:mahasiswa')->name('mahasiswa.update');
 
 // ===================================================================

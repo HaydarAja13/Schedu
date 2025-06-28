@@ -16,7 +16,7 @@
                             <label class=" whitespace-nowrap  text-sm md:text-base">Ketersediaan Ruang <span
                                     class="text-red-500">*</span></label>
                             <p class="text-xs text-gray-400">Masukan Ketersediaan Ruang</p>
-                            </div>
+                        </div>
                         <input type="hidden" name="keterangan" value="0" />
                         <label for="AcceptConditions"
                             class="group relative block h-6 w-12 rounded-full bg-gray-300 transition-colors [-webkit-tap-highlight-color:_transparent] has-checked:bg-purple-500">
@@ -36,7 +36,11 @@
                                 </svg>
                             </span>
                         </label>
+
                     </div>
+                    <x-form.select :label="'Nama Kelompok Prodi'" :description="'Pilih Kelompok'" :placeholder="'Pilih'"
+                        :options="$kelompokProdi" valueField="id" displayField="nama_kelompok_prodi"
+                        id="id_kelompok_prodi" name="id_kelompok_prodi" />
                     <x-form.button-group page="ruang" />
                 </div>
             </form>

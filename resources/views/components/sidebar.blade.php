@@ -35,6 +35,7 @@
                                 ['label' => 'Mahasiswa', 'href' => 'mahasiswa'],
                                 ['label' => 'Prodi', 'href' => 'program-studi'],
                                 ['label' => 'Mata kuliah', 'href' => 'mata-kuliah'],
+                                ['label' => 'Kelompok Prodi', 'href' => 'kelompok-prodi'],
                                 ['label' => 'Ruang', 'href' => 'ruang'],
                                 ['label' => 'Kelas', 'href' => 'kelas'],
                                 ['label' => 'Angkatan', 'href' => 'angkatan'],

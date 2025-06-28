@@ -51,7 +51,7 @@ class ProgramStudiTable extends Component
 
     public function render()
     {
-        $query = ProgramStudi::with(['jurusan']);
+        $query = ProgramStudi::with(['jurusan', 'kelompokProdi']);
 
         if ($this->search) {
             $query->where(function ($q) {
@@ -59,6 +59,9 @@ class ProgramStudiTable extends Component
                     ->orWhere('kode_prodi', 'like', '%' . $this->search . '%')
                     ->orWhereHas('jurusan', function ($q) {
                         $q->where('nama_jurusan', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhereHas('kelompokProdi', function ($q) {
+                        $q->where('nama_kelompok_prodi', 'like', '%' . $this->search . '%');
                     });
             });
         }

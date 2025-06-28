@@ -29,7 +29,7 @@
       </div>
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-4 mt-4">
         <x-dashboard.schedule-card :prodiBelum="$prodiBelum" :prodiSudah="$prodiSudah"
-          :prodiBelumCount="$prodiBelumCount" :prodiSudahCount="$prodiSudahCount" />
+          :prodiBelumCount="$prodiBelumCountSebenarnya" :prodiSudahCount="$prodiSudahCount" />
         <x-request-card :notification="$notification" />
       </div>
     </div>

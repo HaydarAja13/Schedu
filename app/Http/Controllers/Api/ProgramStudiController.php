@@ -13,7 +13,7 @@ class ProgramStudiController extends Controller
      */
     public function index()
     {
-        return response()->json(ProgramStudi::with('jurusan')->get());
+        return response()->json(ProgramStudi::with('jurusan', 'kelompokProdi')->get());
     }
 
     /**
@@ -25,12 +25,14 @@ class ProgramStudiController extends Controller
             'id_jurusan' => 'required|exists:jurusan,id',
             'nama_prodi' => 'required|string|max:100',
             'kode_prodi' => 'required|string|max:10|unique:program_studi,kode_prodi',
+            'id_kelompok_prodi' => 'required|exists:kelompok_prodi,id',
         ]);
 
         $data = ProgramStudi::create([
             'id_jurusan' => $request->id_jurusan,
             'nama_prodi' => $request->nama_prodi,
             'kode_prodi' => $request->kode_prodi,
+            'id_kelompok_prodi' => $request->id_kelompok_prodi,
         ]);
 
         if (!$data) {
@@ -59,12 +61,14 @@ class ProgramStudiController extends Controller
             'id_jurusan' => 'sometimes|required|exists:jurusan,id',
             'nama_prodi' => 'sometimes|required|string|max:100',
             'kode_prodi' => 'sometimes|required|string|max:10|unique:program_studi,kode_prodi,' . $id,
+            'id_kelompok_prodi' => 'sometimes|required|exists:kelompok_prodi,id',
         ]);
 
         $data->update([
             'id_jurusan' => $request->id_jurusan ?? $data->id_jurusan,
             'nama_prodi' => $request->nama_prodi ?? $data->nama_prodi,
             'kode_prodi' => $request->kode_prodi ?? $data->kode_prodi,
+            'id_kelompok_prodi' => $request->id_kelompok_prodi ?? $data->id_kelompok_prodi,
         ]);
 
         if (!$data) {

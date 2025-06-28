@@ -2,12 +2,12 @@
 
 namespace App\Livewire;
 
-use App\Models\Ruang;
+use App\Models\KelompokProdi;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class RuangTable extends Component
+class KelompokProdiTable extends Component
 {
     use WithPagination;
 
@@ -30,17 +30,17 @@ class RuangTable extends Component
         $this->sortDirection = 'desc';
     }
 
-    public $selectedRuangId = null;
+    public $selectedKelompokProdiId = null;
 
-    public function selectRuang($id)
+    public function selectKelompokProdi($id)
     {
-        $this->selectedRuangId = $id;
+        $this->selectedKelompokProdiId = $id;
     }
 
-    public function getSelectedRuangProperty()
+    public function getSelectedKelompokProdiProperty()
     {
-        return $this->selectedRuangId
-            ? Ruang::with(['kelompokProdi'])->find($this->selectedRuangId)
+        return $this->selectedKelompokProdiId
+            ? KelompokProdi::find($this->selectedKelompokProdiId)
             : null;
     }
 
@@ -51,22 +51,11 @@ class RuangTable extends Component
 
     public function render()
     {
-        $query = Ruang::with(['kelompokProdi']);
-
-        if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('nama_ruang', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('kelompokProdi', function ($q) {
-                        $q->where('nama_kelompok_prodi', 'like', '%' . $this->search . '%');
-                    });
-            });
-        }
-
-        return view('livewire.ruang-table', [
-            'ruang' => $query
+        return view('livewire.kelompok-prodi-table', [
+            'kelompokProdi' => KelompokProdi::search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),
-            'selectedRuang' => $this->selectedRuang,
+            'selectedKelompokProdi' => $this->selectedKelompokProdi,
         ]);
     }
 }

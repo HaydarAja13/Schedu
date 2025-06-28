@@ -13,7 +13,8 @@ class RuangController extends Controller
      */
     public function index()
     {
-        return response()->json(Ruang::all());
+        return response()->json(Ruang::with('kelompokProdi')->get());
+
     }
 
     /**
@@ -24,11 +25,13 @@ class RuangController extends Controller
         $request->validate([
             'nama_ruang' => 'required|string|max:50',
             'keterangan' => 'required|in:0,1',
+            'id_kelompok_prodi' => 'required|exists:kelompok_prodi,id'
         ]);
 
         $data = Ruang::create([
             'nama_ruang' => $request->nama_ruang,
             'keterangan' => $request->keterangan,
+            'id_kelompok_prodi' => $request->id_kelompok_prodi
         ]);
 
         if (!$data) {
@@ -56,17 +59,20 @@ class RuangController extends Controller
         $request->validate([
             'nama_ruang' => 'sometimes|required|string|max:50',
             'keterangan' => 'sometimes|required|in:0,1',
+            'id_kelompok_prodi' => 'sometimes|required|exists:kelompok_prodi,id'
         ]);
 
         $data->update([
             'nama_ruang' => $request->nama_ruang ?? $data->nama_ruang,
             'keterangan' => $request->keterangan ?? $data->keterangan,
+            'id_kelompok_prodi' => $request->id_kelompok_prodi ?? $data->id_kelompok_prodi
         ]);
 
         if (!$data) {
             return redirect()->route('admin.ruang')->with('error', 'Ruang gagal diperbarui');
         }
-        return redirect()->route('admin.ruang')->with('update', 'Ruang berhasil diperbarui');;
+        return redirect()->route('admin.ruang')->with('update', 'Ruang berhasil diperbarui');
+        ;
     }
 
     /** 

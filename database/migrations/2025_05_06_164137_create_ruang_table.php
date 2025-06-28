@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("nama_ruang", 50);
             $table->enum('keterangan', ['0', '1']);
+            $table->foreignId('id_kelompok_prodi')->constrained('kelompok_prodi')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -22,7 +22,7 @@ class MataKuliahController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kode_matkul' => 'required|string|max:10|unique:mata_kuliah',
+            'kode_matkul' => 'required|string|unique:mata_kuliah',
             'nama_matkul' => 'required|string|max:255',
             'sks' => 'required|integer|min:1|max:4',
             'jam' => 'required|integer|min:1|max:4',
@@ -64,7 +64,7 @@ class MataKuliahController extends Controller
         $data = MataKuliah::findOrFail($id);
 
         $request->validate([
-            'kode_matkul' => 'sometimes|required|string|max:10|unique:mata_kuliah,kode_matkul,' . $id,
+            'kode_matkul' => 'sometimes|required|string|max:20',
             'nama_matkul' => 'sometimes|required|string|max:255',
             'sks' => 'sometimes|required|integer|min:1|max:4',
             'jam' => 'sometimes|required|integer|min:1|max:4',

@@ -13,7 +13,7 @@ class JurusanController extends Controller
      */
     public function index()
     {
-        return response()->json(Jurusan::with('programStudi')->get());
+    return response()->json(Jurusan::with('programStudi')->get());
     }
 
     /**

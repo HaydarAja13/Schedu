@@ -96,6 +96,32 @@ class MahasiswaController extends Controller
         return redirect()->route('admin.mahasiswa')->with('update', 'Mahasiswa berhasil diperbarui');
     }
 
+
+    // ... di dalam MahasiswaController.php
+
+    public function updateProfilePicture(Request $request, string $id)
+    {
+        $data = Mahasiswa::findOrFail($id);
+
+        $request->validate([
+            'foto_profil' => 'required|image|mimes:jpeg,png,jpg|max:4096',
+        ]);
+
+        // Hapus foto lama jika ada
+        if ($data->foto_profil && Storage::disk('public')->exists($data->foto_profil)) {
+            Storage::disk('public')->delete($data->foto_profil);
+        }
+
+        // Simpan foto baru
+        $path = $request->file('foto_profil')->store('foto_profil', 'public');
+        $data->foto_profil = $path;
+        $data->save();
+
+        // PERBAIKAN: Tambahkan 'role' => 'mahasiswa' ke dalam array data view
+        return redirect('/mahasiswa/profile/' . $id)->with('success', 'Foto profil berhasil diperbarui.');
+    }
+
+
     /**
      * Remove the specified resource from storage.
      */
