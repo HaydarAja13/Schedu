@@ -1,38 +1,49 @@
-<div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group relative overflow-hidden min-h-[180px] flex flex-col justify-between">
-    {{-- Background gradient effect --}}
-    <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 to-white opacity-70"></div>
+{{-- Menggunakan <a> sebagai elemen utama agar seluruh kartu bisa di-klik, sesuai tema --}}
+<a href="#" class="block bg-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:ring-2 hover:ring-[#6B56F6] transition-all duration-300 transform hover:-translate-y-1 group relative z-50 will-change-transform min-h-[180px] flex flex-col">
 
-    @if($count > 0)
-        <div class="relative z-10 flex items-center justify-between">
-            <div>
-                {{-- Judul utama --}}
-                <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Mata Kuliah Diampu</p>
-                {{-- Angka jumlah mata kuliah --}}
-                <p class="text-3xl font-bold text-gray-900 mt-1">{{ $count }}</p>
+    {{-- Latar belakang dari tema --}}
+    <img src="{{ asset('images/sidebar-background.svg') }}" alt="Background Pattern"
+        class="absolute inset-0 w-full h-full object-cover object-top z-0 rounded-xl opacity-70">
+
+    {{-- Konten diletakkan di atas latar belakang --}}
+    <div class="relative z-10 flex-grow flex flex-col">
+
+        @if($count > 0)
+            {{-- TAMPILAN JIKA ADA DATA --}}
+            <div class="flex-grow">
+                <div class="flex items-center justify-between mb-3">
+                    {{-- Judul utama --}}
+                    <h3 class="text-lg font-semibold text-gray-700">Mata Kuliah Diampu</h3>
+                    
+                    {{-- Ikon utama dengan gaya tema --}}
+                    <div class="h-8 w-8 bg-white rounded-full text-[#6B56F6] group-hover:scale-110 transition-transform duration-200 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 15c1.255 0 2.443-.29 3.5-.804V4.804zM14.5 4c1.255 0 2.443.29 3.5.804v10A7.969 7.969 0 0114.5 15c-1.255 0-2.443-.29-3.5-.804V4.804A7.968 7.968 0 0114.5 4z" />
+                        </svg>
+                    </div>
+                </div>
+
+                {{-- Angka jumlah --}}
+                <p class="text-4xl font-bold text-[#6B56F6] leading-tight">{{ $count }}</p>
+                
                 {{-- Deskripsi tambahan --}}
-                <p class="text-xs text-gray-400 mt-1">Jumlah total mata kuliah Anda.</p>
+                <p class="text-sm text-gray-500">Jumlah total mata kuliah Anda.</p>
             </div>
-            
-            {{-- Ikon utama dengan latar belakang lingkaran --}}
-            <div class="text-indigo-500 text-4xl bg-indigo-500/10 p-3 rounded-full group-hover:scale-105 transition-transform duration-200">
-                <i class="fas fa-book-open"></i> {{-- Menggunakan ikon buku terbuka untuk mata kuliah --}}
+        @else
+            {{-- TAMPILAN JIKA TIDAK ADA DATA --}}
+            <div class="flex-grow flex flex-col items-center justify-center text-center">
+                {{-- Ikon status kosong --}}
+                <div class="text-gray-400 mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                    </svg>
+                </div>
+                
+                {{-- Teks status kosong --}}
+                <p class="text-lg font-semibold text-gray-600 mb-1">Belum Ada Kelas</p>
+                <p class="text-sm text-gray-500">Hubungi admin untuk info lebih lanjut.</p>
             </div>
-        </div>
+        @endif
 
-        {{-- Ikon latar belakang besar dan samar --}}
-        <div class="absolute bottom-0 right-0 opacity-10 text-indigo-500 text-8xl">
-            <i class="fas fa-book"></i>
-        </div>
-    @else
-        {{-- Kondisi jika tidak ada mata kuliah --}}
-        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center">
-            <i class="fas fa-book-reader text-4xl mb-3 text-gray-400"></i>
-            <p class="text-lg font-semibold text-gray-600 mb-1">Belum Ada Kelas</p>
-            <p class="text-sm text-gray-500">Hubungi admin untuk info lebih lanjut.</p>
-        </div>
-        {{-- Ikon latar belakang samar untuk kondisi tanpa data --}}
-        <div class="absolute bottom-0 right-0 opacity-5 text-gray-300 text-8xl">
-            <i class="fas fa-exclamation-circle"></i>
-        </div>
-    @endif
-</div>
+    </div>
+</a>
