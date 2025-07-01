@@ -26,5 +26,10 @@ class EnrollmentMkMhsDsnRng extends Model
     {
         return $this->belongsTo(Dosen::class, 'id_dosen');
     }
+
+    public function jadwal()
+    {
+        return $this->hasMany(Jadwal::class, 'id_enrollment_mk_mhs_dsn_rng');
+    }
     
 }

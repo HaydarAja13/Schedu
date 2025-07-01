@@ -35,4 +35,9 @@ class Mahasiswa extends Model
     {
         return $this->hasMany(EnrollmentMahasiswaKelas::class, 'id_mahasiswa');
     }
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'id_kelas'); // Sesuaikan kolom kunci asing
+    }
+
 }

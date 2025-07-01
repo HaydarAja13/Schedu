@@ -6,6 +6,7 @@
 
 // API Controllers
 
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AngkatanController;
 use App\Http\Controllers\Api\DosenController;
 use App\Http\Controllers\Api\EnrollmentKelasController;
@@ -19,11 +20,11 @@ use App\Http\Controllers\Api\ProgramStudiController;
 use App\Http\Controllers\Api\RuangController;
 use App\Http\Controllers\Api\TahunAkademikController;
 use App\Http\Controllers\Api\KelompokProdiController;
-
+use App\Http\Controllers\Api\NotificationController;
 // Main Controllers
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenerateController;
-
+use App\Models\Admin;
 // Models
 use App\Models\Angkatan;
 use App\Models\Dosen;
@@ -34,6 +35,8 @@ use App\Models\EnrollmentKelas;
 use App\Models\EnrollmentMahasiswaKelas;
 use App\Models\EnrollmentMkMhsDsnRng;
 use App\Models\Jadwal;
+use App\Models\JamAkhir;
+use App\Models\JamAwal;
 use App\Models\Jurusan;
 use App\Models\MataKuliah;
 use App\Models\Notification;
@@ -79,7 +82,7 @@ Route::get('/admin/dashboard', function () {
         ->unique();
 
     // Get program studi that already have schedules (max 3)
-    $prodiSudah = ProgramStudi::whereIn('id', $prodiIds)->get()->take(3);
+    $prodiSudah = ProgramStudi::whereIn('id', $prodiIds)->get();
     // Get program studi that don't have schedules yet (max 5)
     $prodiBelum = ProgramStudi::whereNotIn('id', $prodiIds)->get()->take(3);
     $prodiBelumSebenarnya = ProgramStudi::whereNotIn('id', $prodiIds)->get();
@@ -510,9 +513,53 @@ Route::get('/admin/schedule', function () {
 
 // Schedule Detail management page
 Route::get('/admin/schedule-detail', function () {
-    $kelompokProdi = KelompokProdi::all();
+    $kelompokProdi = KelompokProdi::with('programStudi')->get();
+
+    // Ambil semua program studi yang sudah ada di jadwal
+    $prodiIdsInJadwal = Jadwal::with('enrollmentMkMhsDsnRng.enrollmentKelas')
+        ->get()
+        ->pluck('enrollmentMkMhsDsnRng.enrollmentKelas.id_program_studi')
+        ->unique()
+        ->toArray();
+
+    // Tambahkan status ke setiap kelompok prodi
+    foreach ($kelompokProdi as $kp) {
+        $prodiIds = $kp->programStudi->pluck('id')->toArray();
+        $kp->status_jadwal = count(array_intersect($prodiIds, $prodiIdsInJadwal)) > 0 ? 'Sudah Terjadwal' : 'Belum Terjadwal';
+    }
+
     return view('admin.schedule-detail', compact('kelompokProdi'));
 })->middleware('role:admin')->name('admin.schedule-detail');
+
+
+Route::get('/admin/schedule-read/{id}', function ($idKelompokProdi) {
+    // Validasi parameter ID kelompok prodi
+    if (!is_numeric($idKelompokProdi)) {
+        abort(404, 'ID Kelompok Prodi tidak valid.');
+    }
+
+    // Tentukan path direktori untuk file jadwal
+    $directoryPath = storage_path('app/jadwal');
+
+    // Cari file JSON yang sesuai dengan pola nama
+    $files = collect(glob($directoryPath . "/jadwal_kelompok_{$idKelompokProdi}.json"));
+
+    if ($files->isEmpty()) {
+        abort(404, 'File jadwal tidak ditemukan untuk ID ini.');
+    }
+
+    // Gabungkan semua data dari file yang cocok
+    $data = $files->map(function ($file) {
+        return json_decode(file_get_contents($file), true);
+    })->collapse();
+
+    return view('admin.schedule-read', [
+        'data' => $data,
+        'id_kelompok_prodi' => $idKelompokProdi
+    ]);
+})->middleware('role:admin')->name('admin.schedule-read');
+
+
 
 // Untuk download file JSON
 Route::get('/download/jadwal/{filename}', [GenerateController::class, 'downloadJadwal'])
@@ -541,6 +588,9 @@ Route::get('/admin/notification', function () {
     return view('admin.notification');
 })->middleware('role:admin')->name('admin.notification');
 
+// Notification CRUD operations
+Route::put('/notification/{id}', [NotificationController::class, 'update'])->name('notification.update');
+
 // ---------------------- ADMIN PROFILE MANAGEMENT ----------------------
 
 // Admin profile view
@@ -549,37 +599,178 @@ Route::get('/admin/profile', function () {
 })->middleware('role:admin')->name('admin.profile');
 
 // Admin profile update form
-Route::get('/admin/profile-update', function (Request $request) {
-    $user = $request->session()->get('user');
-    return view('admin.profile-update', compact('user'));
-})->middleware('role:admin');
+Route::get('/admin/profile-update/{id}', function ($id) {
+    $admin = Admin::findOrFail($id);
+    return view('admin.profile-update', compact('id', 'admin'));
+})->middleware('role:admin')->name('admin.profile-update');
+
+// Admin profile update
+Route::put('/profile/{id}', [AdminController::class, 'update'])->name('profile.update');
+
+
 
 // ===================================================================
 // DOSEN ROUTES
 // ===================================================================
 
 // Dosen dashboard
-Route::get('/dosen/dashboard', function () {
-    return view('dosen.dashboard');
+Route::get('/dosen/dashboard', function (Request $request) {
+    $dosen = $request->session()->get('user');
+
+    if (!$dosen) {
+        return redirect('/login')->withErrors('Anda harus login sebagai dosen.');
+    }
+
+    // Ambil semua id_enrollment_kelas yang diampu oleh dosen
+    $enrollmentKelasIds = EnrollmentMkMhsDsnRng::where('id_dosen', $dosen->id)
+        ->pluck('id_enrollment_kelas')
+        ->unique();
+
+    // Jumlah mahasiswa unik dari semua kelas yang diampu dosen
+    $jumlahMahasiswa = EnrollmentMahasiswaKelas::whereIn('id_enrollment_kelas', $enrollmentKelasIds)
+        ->distinct('id_mahasiswa')
+        ->count('id_mahasiswa');
+
+    // Jumlah mata kuliah unik yang diampu dosen
+    $jumlahMataKuliah = EnrollmentMkMhsDsnRng::where('id_dosen', $dosen->id)
+        ->distinct('id_mata_kuliah')
+        ->count('id_mata_kuliah');
+
+    // Jumlah kelas unik yang diampu dosen
+    $jumlahKelas = $enrollmentKelasIds->count();
+
+    // Hitung jam mengajar (di sini anggap setiap kelas berdurasi 2 jam)
+    $jamMengajar = EnrollmentMkMhsDsnRng::where('id_dosen', $dosen->id)->sum('jam');
+
+    $notification = Notification::with(['dosen', 'jamMulai', 'jamSelesai'])
+        ->where('id_dosen', $dosen->id) // hanya notifikasi untuk dosen yang login
+        ->orderBy('created_at', 'desc')
+        ->take(4)
+        ->get();
+
+    return view('dosen.dashboard', [
+        'dosen' => $dosen,
+        'jumlahMataKuliah' => $jumlahMataKuliah,
+        'jumlahKelas' => $jumlahKelas,
+        'jumlahMahasiswa' => $jumlahMahasiswa,
+        'jamMengajar' => $jamMengajar,
+        'notification' => $notification,
+    ]);
 })->middleware('role:dosen')->name('dosen.dashboard');
+
+// Dosen requirements view
+Route::get('/dosen/requirement-dosen', function () {
+    $jamAwal = JamAwal::all();
+    $jamAkhir = JamAkhir::all();
+    return view('dosen.requirement-dosen', compact('jamAwal', 'jamAkhir'));
+})->middleware('role:dosen')->name('dosen.requirement-dosen');
+
+Route::post('/dosen', [NotificationController::class, 'store'])->name('requirement-dosen.store');
+
+// Dosen schedule view
+Route::get('/dosen/schedule', function () {
+    return view('dosen.schedule');
+})->middleware('role:dosen')->name('dosen.schedule');
+
+// Dosen matakuliah view
+Route::get('/dosen/mata-kuliah', function () {
+    return view('dosen.mata-kuliah');
+})->middleware('role:dosen')->name('dosen.mata-kuliah');
+
+// Dosen profile view
+Route::get('/dosen/profile', function () {
+    return view('dosen.profile');
+})->middleware('role:dosen')->name('dosen.profile');
+
+// Dosen profile update form
+Route::get('/dosen/profile-update/{id}', function ($id) {
+    $dosen = Dosen::findOrFail($id);
+    return view('dosen.profile-update', compact('id', 'dosen'));
+})->middleware('role:dosen')->name('dosen.profile-update');
+
+// Dosen profile update
+Route::put('/dosen/profile/{id}', [DosenController::class, 'profileDosen'])->name('dosen.profile.update');
+
 
 // ===================================================================
 // MAHASISWA ROUTES
 // ===================================================================
 
-// Mahasiswa dashboard
-Route::get('/mahasiswa/dashboard', function () {
-    return view('mahasiswa.dashboard');
+Route::get('/mahasiswa/dashboard', function (Request $request) {
+    $mahasiswa = $request->session()->get('user');
+
+    if (!$mahasiswa) {
+        return redirect('/login')->withErrors('Anda harus login sebagai mahasiswa.');
+    }
+
+    // Ambil detail mahasiswa beserta relasinya
+    $mahasiswaDetail = Mahasiswa::with([
+        'enrollmentMahasiswaKelas.enrollmentMkMhsDsnRng',
+    ])->find($mahasiswa->id);
+
+    // Jumlah mata kuliah yang dipelajari
+    $mataKuliahIds = $mahasiswaDetail->enrollmentMahasiswaKelas
+        ->flatMap->enrollmentMkMhsDsnRng
+        ->pluck('id_mata_kuliah')
+        ->unique();
+    $jumlahMataKuliah = $mataKuliahIds->count();
+
+    // Jumlah dosen yang mengajar mahasiswa ini
+    $dosenIds = $mahasiswaDetail->enrollmentMahasiswaKelas
+        ->flatMap->enrollmentMkMhsDsnRng
+        ->pluck('id_dosen')
+        ->unique();
+    $jumlahDosen = $dosenIds->count();
+
+    // ID kelas saat ini
+    $idEnrollmentKelas = $mahasiswaDetail->enrollmentMahasiswaKelas->pluck('id_enrollment_kelas')->unique();
+
+    // Jumlah teman sekelas
+    $jumlahTemanSekelas = EnrollmentMahasiswaKelas::whereIn('id_enrollment_kelas', $idEnrollmentKelas)
+        ->distinct('id_mahasiswa')
+        ->count();
+
+    return view('mahasiswa.dashboard', [
+        'mahasiswa' => $mahasiswa,
+        'jumlahMataKuliah' => $jumlahMataKuliah,
+        'jumlahDosen' => $jumlahDosen,
+        'jumlahTemanSekelas' => $jumlahTemanSekelas,
+    ]);
 })->middleware('role:mahasiswa')->name('mahasiswa.dashboard');
+
+
+// Mahasiswa schedule view
+Route::get('/mahasiswa/schedule', function () {
+    return view('mahasiswa.schedule');
+})->middleware('role:mahasiswa')->name('mahasiswa.schedule');
+
+// Mahasiswa matakuliah view
+Route::get('/mahasiswa/mata-kuliah', function () {
+    return view('mahasiswa.mata-kuliah');
+})->middleware('role:mahasiswa')->name('mahasiswa.mata-kuliah');
+
+// Mahasiswa profile view
+Route::get('/mahasiswa/profile', function () {
+    return view('mahasiswa.profile');
+})->middleware('role:mahasiswa')->name('mahasiswa.profile');
+
+// Mahasiswa profile update form
+Route::get('/mahasiswa/profile-update/{id}', function ($id) {
+    $mahasiswa = Mahasiswa::findOrFail($id);
+    return view('mahasiswa.profile-update', compact('id', 'mahasiswa'));
+})->middleware('role:mahasiswa')->name('mahasiswa.profile-update');
+
+// Mahasiswa profile update
+Route::put('/mahasiswa/profile/{id}', [MahasiswaController::class, 'profileMahasiswa'])->name('mahasiswa.profile.update');
 
 // ===================================================================
 // SHARED PROFILE ROUTES (ALL ROLES)
 // ===================================================================
 
 // Profile routes accessible by all authenticated users
-Route::get('/admin/profile', [AuthController::class, 'profile'])->name('profile');
-Route::get('/dosen/profile', [AuthController::class, 'profile'])->name('profile');
-Route::get('/mahasiswa/profile', [AuthController::class, 'profile'])->name('profile');
+Route::get('/admin/profile', [AuthController::class, 'profile'])->name('admin.profile');
+Route::get('/dosen/profile', [AuthController::class, 'profile'])->name('dosen.profile');
+Route::get('/mahasiswa/profile', [AuthController::class, 'profile'])->name('mahasiswa.profile');
 
 // ===================================================================
 // UTILITY ROUTES

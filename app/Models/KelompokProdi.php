@@ -24,4 +24,5 @@ class KelompokProdi extends Model
     {
         return $this->hasMany(Ruang::class, 'id_kelompok_prodi');
     }
+    
 }

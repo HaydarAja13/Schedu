@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Jadwal;
 use App\Models\KelompokProdi;
 use App\Models\ProgramStudi;
 use Livewire\Component;
@@ -40,12 +41,36 @@ class ScheduleTable extends Component
         $this->resetPage();
     }
 
+    public function getKelompokProdiProperty()
+    {
+        // Query dengan search, sort, dan pagination
+        $query = KelompokProdi::with('programStudi')
+            ->when($this->search, function ($q) {
+                $q->where('nama_kelompok_prodi', 'like', '%' . $this->search . '%');
+            })
+            ->orderBy($this->sortBy, $this->sortDirection);
+
+        $kelompokProdi = $query->paginate($this->perPage);
+
+        // Ambil semua program studi yang sudah ada di jadwal
+        $prodiIdsInJadwal = Jadwal::with('enrollmentMkMhsDsnRng.enrollmentKelas')
+            ->get()
+            ->pluck('enrollmentMkMhsDsnRng.enrollmentKelas.id_program_studi')
+            ->unique()
+            ->toArray();
+
+        // Tambahkan status ke setiap kelompok prodi
+        foreach ($kelompokProdi as $kp) {
+            $prodiIds = $kp->programStudi->pluck('id')->toArray();
+            $kp->status_jadwal = count(array_intersect($prodiIds, $prodiIdsInJadwal)) > 0 ? 'Sudah' : 'Belum';
+        }
+
+        return $kelompokProdi;
+    }
     public function render()
     {
         return view('livewire.schedule-table', [
-            'kelompokProdi' => KelompokProdi::search($this->search)
-                ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage),
+            'kelompokProdi' => $this->kelompokProdi, // gunakan accessor
         ]);
     }
 }

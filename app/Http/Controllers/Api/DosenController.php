@@ -89,6 +89,44 @@ class DosenController extends Controller
         return redirect()->route('admin.dosen')->with('update', 'Dosen berhasil diperbarui');
     }
 
+    public function profileDosen(Request $request, string $id)
+    {
+        $data = Dosen::findOrFail($id);
+
+        $request->validate([
+            'nip' => 'sometimes|required|string|max:18|unique:dosen,nip,' . $id,
+            'nama_dosen' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email|unique:dosen,email,' . $id,
+            'password' => 'sometimes|nullable|string|max:10',
+            'no_hp' => 'sometimes|required|string|max:15|unique:dosen,no_hp,' . $id,
+            'foto_profil' => 'sometimes|image|mimes:jpeg,png,jpg|max:4096',
+
+        ]);
+        if ($request->hasFile('foto_profil')) {
+            if ($data->foto_profil && Storage::disk('public')->exists($data->foto_profil)) {
+                Storage::disk('public')->delete($data->foto_profil);
+            }
+            $path = $request->file('foto_profil')->store('foto_profil', 'public');
+        } else {
+            $path = $data->foto_profil;
+        }
+
+        $data->update([
+            'nip' => $request->nip->nip ?? $data->nip,
+            'nama_dosen' => $request->nama_dosen ?? $data->nama_dosen,
+            'email' => $request->email ?? $data->email,
+            'password' => $request->password ? bcrypt($request->password) : $data->password,
+            'no_hp' => $request->no_hp ?? $data->no_hp,
+            'foto_profil' => $path,
+
+        ]);
+
+        if (!$data) {
+            return redirect()->route('dosen.profile')->with('error', 'Profile gagal diperbarui');
+        }
+        return redirect()->route('dosen.profile')->with('update', 'Profile berhasil diperbarui, silahkan Login kembali');
+    }
+
     public function destroy(string $id)
     {
         $data = Dosen::findOrFail($id);

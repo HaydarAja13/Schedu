@@ -41,6 +41,9 @@
                                 wire:click="setSortBy('nama_kelompok_prodi')">
                                 Kelompok Program Studi
                             </th>
+                            <th class="whitespace-nowrap px-3 py-2 hover:cursor-pointer">
+                                Status
+                            </th>
                             <th class="text-center whitespace-nowrap px-3 py-2 hover:cursor-pointer">
                                 Aksi
                             </th>
@@ -58,25 +61,38 @@
                             <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
                                 {{ $data->nama_kelompok_prodi ?? '-' }}
                             </td>
+                            <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
+                                @if ($data->status_jadwal === 'Sudah')
+                                <span class="px-2 py-1 rounded bg-green-100 text-green-700 font-semibold">
+                                    {{ $data->status_jadwal }}
+                                </span>
+                                @elseif ($data->status_jadwal === 'Belum')
+                                <span class="px-2 py-1 rounded bg-red-100 text-red-700 font-semibold">
+                                    {{ $data->status_jadwal }}
+                                </span>
+                                @endif
+                            </td>
+                            @if ($data->status_jadwal === 'Sudah')
                             <td class="text-right pr-8">
                                 <span
                                     class="inline-flex divide-x divide-gray-300 overflow-hidden rounded border border-gray-300 bg-white shadow-sm">
-                                    <button type="button"
+                                    <a type="button"
                                         class="px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:relative">
                                         Edit
-                                    </button>
+                                    </a>
 
                                     <button type="button"
                                         class="px-3 py-1.5 text-sm font-medium text-red-700 transition-colors hover:bg-gray-50 hover:text-red-900 focus:relative">
                                         Hapus
                                     </button>
 
-                                    <button type="button"
+                                    <a href="schedule-read/{{ $data->id }}"
                                         class="px-3 py-1.5 text-sm font-medium text-purple-700 transition-colors hover:bg-gray-50 hover:text-purple-900 focus:relative">
                                         Detail
-                                    </button>
+                                    </a>
                                 </span>
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>

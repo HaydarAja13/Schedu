@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -62,7 +63,18 @@ class AdminController extends Controller
             'email' => 'sometimes|required|email|unique:admin,email,' . $id,
             'password' => 'sometimes|nullable|string|max:10',
             'no_hp' => 'sometimes|required|string|max:15|unique:admin,no_hp,' . $id,
+            'foto_profil' => 'sometimes|image|mimes:jpeg,png,jpg|max:4096',
+
         ]);
+
+        if ($request->hasFile('foto_profil')) {
+            if ($data->foto_profil && Storage::disk('public')->exists($data->foto_profil)) {
+                Storage::disk('public')->delete($data->foto_profil);
+            }
+            $path = $request->file('foto_profil')->store('foto_profil', 'public');
+        } else {
+            $path = $data->foto_profil;
+        }
 
         $data->update([
             'nip' => $request->nip->nip ?? $data->nip,
@@ -70,9 +82,14 @@ class AdminController extends Controller
             'email' => $request->email ?? $data->email,
             'password' => $request->password ? bcrypt($request->password) : $data->password,
             'no_hp' => $request->no_hp ?? $data->no_hp,
+            'foto_profil' => $path,
+
         ]);
 
-        return response()->json($data);
+        if (!$data) {
+            return redirect()->route('admin.profile')->with('error', 'Profile gagal diperbarui');
+        }
+        return redirect()->route('admin.profile')->with('update', 'Profile berhasil diperbarui, silahkan Login kembali');
     }
 
     /**

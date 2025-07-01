@@ -1,5 +1,7 @@
 <div x-data="{ selectedRow: null, showAlert: false }">
+    @if($role === 'admin')
     <x-table-properties :subtitle="'Menampilkan Data Mata Kuliah'" link="mata-kuliah-create"></x-table-properties>
+    @endif
     <div class="relative grid size-full grid-cols-1 items-start justify-start gap-x-6 md:grid-cols-4">
         <div :class="selectedRow ? 'overflow-x-hidden overflow-y-auto bg-white rounded-xl md:col-span-3' :
             'overflow-x-hidden overflow-y-auto bg-white rounded-xl col-span-4'"
@@ -62,7 +64,7 @@
                             <td class="whitespace-nowrap px-3 py-3 text-sm" :class="{ 'hidden': selectedRow }">
                                 {{ $data->semester ?? '-' }}
                             </td>
-                            <td class="whitespace-nowrap px-3 py-3 text-sm" :class="{ 'hidden': selectedRow }" >
+                            <td class="whitespace-nowrap px-3 py-3 text-sm" :class="{ 'hidden': selectedRow }">
                                 {{ $data->jenis ?? '-' }}
                             </td>
                         </tr>
@@ -184,7 +186,8 @@
         <div x-show="selectedRow" x-transition.opacity class="fixed inset-0 z-40 bg-black/60 md:hidden"
             :class="{ 'hidden': !selectedRow }">
         </div>
-        <div x-cloak class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
+        <div x-cloak
+            class="bg-white absolute inset-0 m-auto h-fit max-w-xs z-50 md:static md:size-full rounded-xl transition-all duration-500 border-2 drop-shadow-lg drop-shadow-[#6B56F6] border-[#6B56F6]"
             :class="{ 'hidden': !selectedRow }">
             <div class="size-full flex flex-col justify-start p-4">
                 <p class="mb-2 text-center text-sm font-semibold">
@@ -215,6 +218,7 @@
                         <p class="text-sm">{{ $selectedMataKuliah?->jenis ?? '-' }}</p>
                     </div>
                 </div>
+                @if($role === 'admin')
                 <div class="mt-8 md:mt-auto flex flex-col gap-2">
                     <a class="inline-block rounded-xl bg-gradient-to-tr from-[#8C4AF2] to-[#6B56F6] px-12 py-2 text-center text-sm font-medium text-white"
                         href="{{ route('admin.mata-kuliah-update', $selectedMataKuliah?->id ?? '') }}">
@@ -226,6 +230,7 @@
                         Hapus Data
                     </button>
                 </div>
+                @endif
             </div>
         </div>
     </div>

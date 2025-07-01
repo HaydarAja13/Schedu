@@ -20,7 +20,7 @@ class GenerateController extends Controller
         $startTime = microtime(true);
 
         // Atur batas waktu eksekusi menjadi 5 menit (300 detik)
-        set_time_limit(300);
+        set_time_limit(3000);
         ini_set('memory_limit', '512M');
 
         $request->validate([
@@ -177,8 +177,7 @@ class GenerateController extends Controller
     {
         try {
             // Buat nama file unik dengan timestamp
-            $timestamp = now()->format('Y-m-d_H-i-s');
-            $fileName = "jadwal_kelompok_{$idKelompokProdi}_{$timestamp}.json";
+            $fileName = "jadwal_kelompok_{$idKelompokProdi}.json";
             $filePath = "jadwal/{$fileName}";
 
             // Pastikan direktori ada

@@ -20,7 +20,7 @@
                     @mouseenter="if(closeTimeout){clearTimeout(closeTimeout);} open = true"
                     @mouseleave="closeTimeout = setTimeout(() => open = false, 300)">
                     <span class="inline-flex divide-x divide-gray-300 overflow-hidden ">
-                        <img src="{{ asset('images/example-user.png') }}" alt=""
+                        <img src="{{ $sidebarUser->foto_profil ? asset('storage/' . $sidebarUser->foto_profil) : 'https://placehold.co/100' }}" alt=""
                             class="size-10 rounded-full cursor-pointer" @click="open = !open">
                     </span>
                     <div role="menu" x-cloak

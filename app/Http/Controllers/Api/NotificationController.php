@@ -39,7 +39,10 @@ class NotificationController extends Controller
             'status' => $request->status,
         ]);
 
-        return response()->json($data, 201);
+        if (!$data) {
+            return redirect()->route('dosen.dashboard')->with('error', 'Notifikasi gagal di ajukan silahkan menunggu kabar dari admin ');
+        }
+        return redirect()->route('dosen.dashboard')->with('create', 'Notifikasi berhasil di ajukan silahkan menunggu kabar dari admin ');
     }
 
     /**

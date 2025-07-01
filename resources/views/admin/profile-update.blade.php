@@ -1,20 +1,39 @@
-<x-template :role="'admin'" title="Edit Profile">
+<x-template :role="'admin'" title="Edit admin">
     <x-slot:content>
         <div class="overflow-scroll h-[calc(100vh-200px)]">
-            <form action="" method="POST">
+            <form action="{{ route('admin.update' , $id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
                 <div class="mt-4 bg-white rounded-lg p-8">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-2">
                         <div class="grid grid-cols-1 items-center gap-y-4">
                             <p class="text-base font-medium">Atur Foto Profil</p>
-                            <label for="File"
-                                class="rounded-full size-28 bg-gray-200 hover:cursor-pointer flex justify-center items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                </svg>
-                                <input multiple type="file" id="File" class="sr-only" />
-                            </label>
+                            <div x-data="{ 
+                                                            imagePreview: null,
+                                                            originalImage: '{{ $admin->foto_profil ? asset('storage/' . $admin->foto_profil) : 'https://placehold.co/400' }}',
+                                                            handleFileSelect(event) {
+                                                                const file = event.target.files[0];
+                                                                if (file) {
+                                                                    const reader = new FileReader();
+                                                                    reader.onload = (e) => {
+                                                                        this.imagePreview = e.target.result;
+                                                                    };
+                                                                    reader.readAsDataURL(file);
+                                                                }
+                                                            },
+                                                            getCurrentImage() {
+                                                                return this.imagePreview || this.originalImage;
+                                                            }
+                                                        }">
+                                <label for="File"
+                                    class="rounded-full size-20 md:size-28 hover:cursor-pointer flex justify-center items-center bg-no-repeat bg-center bg-cover overflow-hidden"
+                                    :style="`background-image: url('${getCurrentImage()}');`">
+
+                                    <input multiple type="file" id="File" class="sr-only" name="foto_profil"
+                                        accept="image/*" @change="handleFileSelect($event)"
+                                        value="{{ $admin->foto_profil }}" />
+                                </label>
+                            </div>
                             <ul class="text-xs text-gray-400 list-disc pl-4">
                                 <li>Resolusi: maksimal 2000 x 2000px</li>
                                 <li>Maks. ukuran file 2.0 MB</li>
@@ -24,54 +43,53 @@
                         <div class="col-span-2 pt-8 gap-y-4 grid h-fit">
                             <div class="flex flex-col md:flex-row md:items-center gap-4">
                                 <div class="w-72">
-                                    <label class=" whitespace-nowrap">Nama Admin <span
+                                    <label class=" whitespace-nowrap  text-sm md:text-base">Nama admin <span
                                             class="text-red-500">*</span></label>
-                                    <p class="text-xs text-gray-400">Masukan Nama Lengkap Admin</p>
+                                    <p class="text-xs text-gray-400">Masukan Nama Lengkap admin</p>
                                 </div>
-                                <input type="text"
-                                    class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500"
-                                    value="{{ $user->nama_admin }}" />
+                                <input type="text" name="nama_admin" required value="{{ $admin->nama_admin }}"
+                                    class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500" />
                             </div>
                             <div class="flex flex-col md:flex-row md:items-center gap-4">
                                 <div class="w-72">
-                                    <label class="whitespace-nowrap">NIP <span class="text-red-500">*</span></label>
+                                    <label class="whitespace-nowrap  text-sm md:text-base">NIP <span
+                                            class="text-red-500">*</span></label>
                                     <p class="text-xs text-gray-400">Masukan Nomor Induk Pegawai</p>
                                 </div>
-                                <input type="text"
-                                    class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500"
-                                    value="{{ $user->nip }}" />
+                                <input type="text" name="nip" required value="{{ $admin->nip }}"
+                                    class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500" />
                             </div>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 gap-y-4 mt-4 md:mt-8">
                         <div class="flex flex-col md:flex-row md:items-center gap-4">
                             <div class="w-72">
-                                <label class="whitespace-nowrap">Email <span class="text-red-500">*</span></label>
+                                <label class="whitespace-nowrap  text-sm md:text-base">Email <span
+                                        class="text-red-500">*</span></label>
                                 <p class="text-xs text-gray-400">Masukan Email</p>
                             </div>
-                            <input type="email"
-                                class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500"
-                                value="{{ $user->email }}" />
+                            <input type="email" name="email" required value="{{ $admin->email }}"
+                                class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500" />
                         </div>
 
                         <div class="flex flex-col md:flex-row md:items-center gap-4">
                             <div class="w-72">
-                                <label class="whitespace-nowrap">Password Baru</label>
-                                <p class="text-xs text-gray-400">Kata sandi terdiri dari minimal 8 karakter, berisi angka, huruf & simbol</p>
+                                <label class="whitespace-nowrap  text-sm md:text-base">Password Baru</label>
+                                <p class="text-xs text-gray-400">Kata sandi terdiri dari minimal 8 karakter, berisi
+                                    angka, huruf & simbol</p>
                             </div>
-                            <input type="password" name="password"
+                            <input type="password" name="password" placeholder="Password baru (opsional)"
                                 class="w-full rounded-md px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500"
-                                placeholder="Password baru (opsional)" />
+                                placeholder="••••••••" />
                         </div>
                         <div class="flex flex-col md:flex-row md:items-center gap-4">
                             <div class="w-72">
-                                <label class="whitespace-nowrap">Nomor Telepon <span
+                                <label class="whitespace-nowrap  text-sm md:text-base">Nomor Telepon <span
                                         class="text-red-500">*</span></label>
                                 <p class="text-xs text-gray-400">Masukan Nomor Telepon</p>
                             </div>
-                            <input type="number"
-                                class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500"
-                                value="{{ $user->no_hp }}" />
+                            <input type="number" name="no_hp" required value="{{ $admin->no_hp }}"
+                                class="w-full rounded-md  px-3 py-1.5 text-sm md:text-sm text-gray-700 outline-1 -outline-offset-1 outline-gray-300 bg-gray-50 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-purple-500" />
                         </div>
                         <x-form.button-group page="profile" />
                     </div>

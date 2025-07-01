@@ -16,4 +16,9 @@ class EnrollmentMahasiswaKelas extends Model
     {
         return $this->belongsTo(EnrollmentKelas::class, 'id_enrollment_kelas');
     }
+    public function enrollmentMkMhsDsnRng()
+    {
+        return $this->hasMany(EnrollmentMkMhsDsnRng::class, 'id_enrollment_kelas', 'id_enrollment_kelas'); // Sesuaikan kolom kunci asing
+    }
+
 }

@@ -20,6 +20,6 @@ class ProgramStudi extends Model
     }
     public function enrollmentKelas()
     {
-        return $this->hasMany(EnrollmentKelas::class, 'id_program_studi ');
+        return $this->hasMany(EnrollmentKelas::class, 'id_program_studi');
     }
 }

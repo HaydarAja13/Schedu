@@ -21,4 +21,10 @@ class Kelas extends Model
     {
         return $this->hasMany(EnrollmentKelas::class, 'id_kelas');
     }
+
+    public function mahasiswa()
+    {
+        return $this->hasMany(Mahasiswa::class, 'id_kelas'); // Sesuaikan kolom kunci asing
+    }
+
 }

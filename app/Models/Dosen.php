@@ -40,4 +40,9 @@ class Dosen extends Authenticatable
     {
         return $this->hasMany(EnrollmentMkMhsDsnRng::class, 'id_dosen');
     }
+    public function enrollmentMkMhsDsnRng()
+    {
+        return $this->hasMany(EnrollmentMkMhsDsnRng::class, 'id_dosen'); // Sesuaikan kolom kunci asing
+    }
+
 }

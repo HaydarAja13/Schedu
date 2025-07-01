@@ -51,10 +51,37 @@ class MataKuliahTable extends Component
 
     public function render()
     {
+        $role = session('role');
+        $user = session('user');
+        $query = MataKuliah::query();
+
+        if ($role === 'dosen') {
+            // Ambil id dosen dari session user
+            $idDosen = $user['id'] ?? $user->id_dosen ?? null;
+
+            // Join ke tabel enrollment_mk_mhs_dsn_rng dan filter id_dosen
+            $query->whereHas('enrollments', function ($q) use ($idDosen) {
+                $q->where('id_dosen', $idDosen);
+            });
+        } elseif ($role === 'mahasiswa') {
+            // Ambil id mahasiswa dari session user
+            $idMahasiswa = $user['id'] ?? $user->id_mahasiswa ?? null;
+
+            // Join ke tabel enrollment_mahasiswa_kelas dan filter id_mahasiswa
+            $query->whereHas('enrollmentMahasiswaKelas', function ($q) use ($idMahasiswa) {
+                $q->where('id_mahasiswa', $idMahasiswa);
+            });
+        }
+
+        // Tambahkan pencarian, sorting, dan pagination
+        $mataKuliah = $query
+            ->search($this->search)
+            ->orderBy($this->sortBy, $this->sortDirection)
+            ->paginate($this->perPage);
+
         return view('livewire.mata-kuliah-table', [
-            'mataKuliah' => MataKuliah::search($this->search)
-                ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage),
+            'role' => $role,
+            'mataKuliah' => $mataKuliah,
             'selectedMataKuliah' => $this->selectedMataKuliah,
         ]);
     }
