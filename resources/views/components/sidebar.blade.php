@@ -1,3 +1,4 @@
+<div id="mobile-sidebar" class="md:block hidden">
 @props(['role'])
 <div class="h-screen md:p-4" x-show="open" x-transition>
 	<div class="fixed inset-0 z-20 bg-black/70 md:hidden"></div>
@@ -105,4 +106,5 @@
 			<p class="text-center w-full text-white text-xs mb-3">Powered By <b>TI-2A III</b>.</p>
 		</div>
 	</div>
+</div>
 </div>

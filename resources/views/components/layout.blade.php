@@ -18,3 +18,14 @@
 </body>
 
 </html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const menuButton = document.getElementById("mobile-menu-button");
+        const sidebar = document.getElementById("mobile-sidebar");
+
+        menuButton?.addEventListener("click", function () {
+            sidebar?.classList.toggle("hidden");
+        });
+    });
+</script>
