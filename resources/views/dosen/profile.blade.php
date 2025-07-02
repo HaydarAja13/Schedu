@@ -1,6 +1,5 @@
 <x-template :role="'dosen'" title="Halo, {{ $user->nama_dosen ?? '-' }}">
-    <x-slot:content>
-        <x-slot:content>
+  <x-slot:content>
     <div class="grid grid-cols-1 w-full mt-4">
       <div class="relative h-28 overflow-hidden rounded-t-lg">
         <div class="absolute inset-0 z-10">
@@ -16,7 +15,7 @@
         <div class="relative flex items-center justify-center bg-white size-fit p-1.5 -mt-16 z-30 rounded-full">
           {{-- PERBAIKAN: Alt text lebih deskriptif --}}
           <img src="{{ $user->foto_profil ? asset('storage/' . $user->foto_profil) : 'https://placehold.co/100' }}" 
-               alt="Foto Profil {{ $user->nama_dosen ?? 'Pengguna' }}" 
+               alt="Foto Profil {{ $user->nama_mahasiswa ?? 'Pengguna' }}" 
                class="size-22 md:size-28 rounded-full object-cover">
         </div>
         <p class="text-lg md:text-xl font-semibold">{{ $user->nama_dosen ?? 'Nama Dosen' }}</p>
@@ -62,5 +61,5 @@
         </div>
       </div>
     </div>
-    </x-slot:content>
+  </x-slot:content>
 </x-template>

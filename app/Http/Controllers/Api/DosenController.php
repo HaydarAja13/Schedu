@@ -88,29 +88,34 @@ class DosenController extends Controller
         }
         return redirect()->route('admin.dosen')->with('update', 'Dosen berhasil diperbarui');
     }
-
     public function updateProfilePicture(Request $request, string $id)
     {
-        $data = Dosen::findOrFail($id);
+        // Ambil data dosen
+        $dosen = Dosen::findOrFail($id);
 
+        // Validasi file foto
         $request->validate([
-            'foto_profil' => 'required|image|mimes:jpeg,png,jpg|max:4096',
+            'foto_profil' => 'required|image|mimes:jpeg,png,jpg|max:4096', // ukuran dalam KB (4096 = 4MB)
         ]);
 
         // Hapus foto lama jika ada
-        if ($data->foto_profil && Storage::disk('public')->exists($data->foto_profil)) {
-            Storage::disk('public')->delete($data->foto_profil);
+        if ($dosen->foto_profil && Storage::disk('public')->exists($dosen->foto_profil)) {
+            Storage::disk('public')->delete($dosen->foto_profil);
         }
 
-        // Simpan foto baru
+        // Upload dan simpan foto baru
         $path = $request->file('foto_profil')->store('foto_profil', 'public');
-        $data->foto_profil = $path;
-        $data->save();
+        $dosen->update([
+            'foto_profil' => $path,
+        ]);
 
-        return redirect('/dosen/profile/' . $id)->with('success', 'Foto profil berhasil diperbarui.');
+        // Redirect dengan pesan sukses
+        return redirect()->route('dosen.profile', ['id' => $id])
+            ->with('success', 'Foto profil berhasil diperbarui.');
     }
 
-    
+
+
 
     public function destroy(string $id)
     {

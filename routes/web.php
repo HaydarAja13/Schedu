@@ -599,14 +599,14 @@ Route::get('/dosen/profile', [DosenController::class, 'profile'])->name('dosen.p
 
 
 Route::get('/dosen/profile/{id}', function ($id) {
-    $user = \App\Models\Dosen::findOrFail($id);
+    $user = Dosen::findOrFail($id);
     return view('dosen.profile', [
         'user' => $user,
         'role' => 'dosen'
     ]);
 });
 
-Route::put('/dosen/profile/{id}', [DosenController::class, 'updateProfilePicture'])->name('dosen.updateProfilePicture');
+Route::put('/dosen/profile/{id}', [MahasiswaController::class, 'updateProfilePicture'])->name('mahasiswa.updateProfilePicture');
 
 
 // ===================================================================

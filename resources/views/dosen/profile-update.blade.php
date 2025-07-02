@@ -1,11 +1,10 @@
-<x-template :role="'dosen'" title="Edit Profile Dosen">
+<x-template :role="'dosen'" title="Edit Profile dosen">
     <x-slot:content>
         <div class="overflow-scroll h-[calc(100vh-200px)]">
-            <!-- Form -->
-            <form action="{{ route('dosen.updateProfilePicture') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('dosen.updateProfilePicture', $user->id) }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-
                 <div class="mt-4 bg-white rounded-lg p-8 space-y-8">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-2">
                         <div class="grid grid-cols-1 items-center gap-y-4">
@@ -48,7 +47,7 @@
                             class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-200">
                             Simpan
                         </button>
-                        <a href="/dosen/profile"
+                        <a href="/mahasiswa/profile"
                             class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition duration-200">
                             Batal
                         </a>
