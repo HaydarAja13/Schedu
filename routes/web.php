@@ -531,34 +531,55 @@ Route::get('/admin/schedule-detail', function () {
     return view('admin.schedule-detail', compact('kelompokProdi'));
 })->middleware('role:admin')->name('admin.schedule-detail');
 
-
 Route::get('/admin/schedule-read/{id}', function ($idKelompokProdi) {
-    // Validasi parameter ID kelompok prodi
     if (!is_numeric($idKelompokProdi)) {
         abort(404, 'ID Kelompok Prodi tidak valid.');
     }
 
-    // Tentukan path direktori untuk file jadwal
     $directoryPath = storage_path('app/jadwal');
-
-    // Cari file JSON yang sesuai dengan pola nama
     $files = collect(glob($directoryPath . "/jadwal_kelompok_{$idKelompokProdi}.json"));
 
     if ($files->isEmpty()) {
         abort(404, 'File jadwal tidak ditemukan untuk ID ini.');
     }
 
-    // Gabungkan semua data dari file yang cocok
-    $data = $files->map(function ($file) {
-        return json_decode(file_get_contents($file), true);
-    })->collapse();
+    $jsonData = json_decode(file_get_contents($files->first()), true);
+
+    // Daftar hari lengkap yang mungkin ada
+    $allPossibleDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+
+    // Daftar hari yang benar-benar ada di data
+    $existingDays = collect($jsonData['berhasil_ditempatkan'])
+        ->pluck('jadwal.hari')
+        ->unique()
+        ->filter(function ($day) use ($allPossibleDays) {
+            return in_array($day, $allPossibleDays);
+        })
+        ->sortBy(function ($day) use ($allPossibleDays) {
+            return array_search($day, $allPossibleDays);
+        })
+        ->values()
+        ->toArray();
+
+    $programStudiList = collect($jsonData['program_studi']);
+
+    // Ambil daftar kelas lengkap untuk filter
+    $kelasList = collect($jsonData['berhasil_ditempatkan'])
+        ->pluck('kelas_lengkap') // Gunakan kelas_lengkap bukan kelas
+        ->unique()
+        ->sort()
+        ->values()
+        ->toArray();
 
     return view('admin.schedule-read', [
-        'data' => $data,
-        'id_kelompok_prodi' => $idKelompokProdi
+        'data' => $jsonData,
+        'id_kelompok_prodi' => $idKelompokProdi,
+        'program_studi_list' => $programStudiList,
+        'kelas_list' => $kelasList,
+        'available_days' => $existingDays,
+        'all_possible_days' => $allPossibleDays
     ]);
 })->middleware('role:admin')->name('admin.schedule-read');
-
 
 
 // Untuk download file JSON

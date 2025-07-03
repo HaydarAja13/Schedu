@@ -50,23 +50,31 @@ class EnrollmentJadwalTable extends Component
 
     public function render()
     {
-        $query = EnrollmentMkMhsDsnRng::with(['mataKuliah', 'enrollmentKelas', 'dosen']);
+        $query = EnrollmentMkMhsDsnRng::with(['mataKuliah', 'enrollmentKelas.programStudi', 'enrollmentKelas.kelas', 'enrollmentKelas.angkatan', 'dosen']);
         if ($this->search) {
-            $query->whereHas('mataKuliah', function($q) {
-                $q->where('nama_matkul', 'like', '%'.$this->search.'%');
+            $query->whereHas('mataKuliah', function ($q) {
+                $q->where('nama_matkul', 'like', '%' . $this->search . '%');
             })
-            ->orWhereHas('enrollmentKelas.tahunAkademik', function($q) {
-                $q->where('tahun_ajaran', 'like', '%'.$this->search.'%');
-            })
-            ->orWhereHas('enrollmentKelas.programStudi', function($q) {
-                $q->where('nama_prodi', 'like', '%'.$this->search.'%');
-            })
-            ->orWhereHas('enrollmentKelas.kelas', function($q) {
-                $q->where('nama_kelas', 'like', '%'.$this->search.'%');
-            })
-            ->orWhereHas('dosen', function($q) {
-                $q->where('nama_dosen', 'like', '%'.$this->search.'%');
-            });
+                ->orWhereHas('enrollmentKelas.tahunAkademik', function ($q) {
+                    $q->where('tahun_ajaran', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('enrollmentKelas.programStudi', function ($q) {
+                    $q->where('nama_prodi', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('enrollmentKelas.kelas', function ($q) {
+                    $q->where('nama_kelas', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('dosen', function ($q) {
+                    $q->where('nama_dosen', 'like', '%' . $this->search . '%');
+                })
+                // Tambahkan pencarian kelas lengkap
+                ->orWhereHas('enrollmentKelas', function ($q) {
+                    $q->whereRaw("CONCAT_WS('-', 
+                    (SELECT kode_prodi FROM program_studi WHERE program_studi.id = enrollment_kelas.id_program_studi LIMIT 1),
+                    (SELECT tahun_angkatan FROM angkatan WHERE angkatan.id = enrollment_kelas.id_angkatan LIMIT 1),
+                    (SELECT nama_kelas FROM kelas WHERE kelas.id = enrollment_kelas.id_kelas LIMIT 1)
+                ) LIKE ?", ['%' . $this->search . '%']);
+                });
         }
         return view('livewire.enrollment-jadwal-table', [
             'enrollmentJadwal' => $query->orderBy($this->sortBy, $this->sortDirection)->paginate($this->perPage),

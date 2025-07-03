@@ -22,6 +22,10 @@ input[type="password"]::-webkit-input-password-toggle-button {
     display: none;
 }
 
+.grid-cols-6 > * {
+    border-right: 1px solid #e5e7eb;
+}
+
 /* Hide scrollbar for IE, Edge and Firefox */
 * {
     -ms-overflow-style: none; /* IE and Edge */

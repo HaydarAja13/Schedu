@@ -35,4 +35,5 @@ class EnrollmentKelas extends Model
         return $this->hasMany(EnrollmentMahasiswaKelas::class, 'id_enrollment_kelas');
     }
     
+    
 }
