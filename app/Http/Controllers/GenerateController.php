@@ -11,16 +11,28 @@ use App\Models\Jadwal;
 use App\Models\Ruang;
 use App\Models\ProgramStudi;
 use App\Models\EnrollmentKelas;
+use Illuminate\Support\Collection;
 
 class GenerateController extends Controller
 {
+    private const MAX_JAM_PER_HARI_PER_KELAS = 8;
+    private const MAX_EXECUTION_TIME = 360; // 6 menit
+    private const MAX_ITERATIONS = 20000;
+    private const MAX_BACKTRACKS = 2000;
+
+    private $scheduleMatrix;
+    private $dosenSchedule;
+    private $kelasSchedule;
+    private $jamAwalList;
+    private $ruangList;
+    private $days;
+    private $backtrackCount = 0;
+    private $retryQueue = [];
+
     public function generateJadwal(Request $request)
     {
-        // Mulai tracking waktu eksekusi
         $startTime = microtime(true);
-
-        // Atur batas waktu eksekusi menjadi 5 menit (300 detik)
-        set_time_limit(3000);
+        set_time_limit(self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '512M');
 
         $request->validate([
@@ -28,201 +40,536 @@ class GenerateController extends Controller
         ]);
 
         $idKelompokProdi = $request->id_kelompok_prodi;
-        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+        $this->days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
 
         try {
-            // Ambil semua prodi dalam kelompok ini
+            // Inisialisasi data
             $programStudiList = ProgramStudi::where('id_kelompok_prodi', $idKelompokProdi)->get();
             if ($programStudiList->isEmpty()) {
                 return response()->json(['error' => 'Tidak ada program studi dalam kelompok ini'], 400);
             }
             $prodiIDs = $programStudiList->pluck('id');
 
-            // Ambil semua ruang milik kelompok prodi
-            $ruangList = Ruang::where('id_kelompok_prodi', $idKelompokProdi)->get();
-            if ($ruangList->isEmpty()) {
+            $this->ruangList = Ruang::where('id_kelompok_prodi', $idKelompokProdi)->get();
+            if ($this->ruangList->isEmpty()) {
                 return response()->json(['error' => 'Tidak ada ruang tersedia untuk kelompok prodi ini'], 400);
             }
 
-            // Ambil semua jam awal (dipakai untuk membentuk slot waktu)
-            $jamAwalList = JamAwal::orderBy('id')->get();
-            if ($jamAwalList->isEmpty()) {
+            $this->jamAwalList = JamAwal::orderBy('id')->get();
+            if ($this->jamAwalList->isEmpty()) {
                 return response()->json(['error' => 'Tidak ada jam tersedia'], 400);
             }
 
-            // Ambil semua enrollment_kelas dari semua prodi
+            // Debug: Log jam data untuk kelompok prodi ini
+            Log::debug('Jam Awal Data for Kelompok Prodi ' . $idKelompokProdi, [
+                'count' => $this->jamAwalList->count(),
+                'sample' => $this->jamAwalList->take(5)->toArray()
+            ]);
+
             $enrollmentKelasIDs = EnrollmentKelas::whereIn('id_program_studi', $prodiIDs)->pluck('id');
 
-            // Ambil data enrollment mata kuliah - mahasiswa - dosen - ruang dengan relasi program studi
-            $enrollments = EnrollmentMkMhsDsnRng::with([
-                'mataKuliah',
-                'dosen',
-                'enrollmentKelas.programStudi',
-                'enrollmentKelas.kelas'
-            ])
+            // Dapatkan enrollments dengan prioritas yang lebih baik
+            $enrollments = EnrollmentMkMhsDsnRng::with(['mataKuliah', 'dosen', 'enrollmentKelas.programStudi', 'enrollmentKelas.kelas'])
                 ->whereIn('id_enrollment_kelas', $enrollmentKelasIDs)
                 ->get()
                 ->sortByDesc(function ($e) {
-                    return $e->mataKuliah->jam ?? 0;
+                    $priority = $e->mataKuliah->jam ?? 0;
+                    $priority += optional($e->dosen)->enrollments ? count($e->dosen->enrollments) * 0.1 : 0;
+                    $priority += optional($e->enrollmentKelas)->enrollments ? count($e->enrollmentKelas->enrollments) * 0.1 : 0;
+                    return $priority;
                 });
 
-            // Hapus jadwal lama yang terkait prodi-prodi tersebut
-            Jadwal::whereHas('enrollmentMkMhsDsnRng.enrollmentKelas', function ($q) use ($prodiIDs) {
-                $q->whereIn('id_program_studi', $prodiIDs);
-            })->delete();
+            // Hapus jadwal lama
+            Jadwal::whereHas('enrollmentMkMhsDsnRng.enrollmentKelas', fn($q) => $q->whereIn('id_program_studi', $prodiIDs))->delete();
 
-            // Inisialisasi matriks jadwal
-            $scheduleMatrix = $this->initializeScheduleMatrix($days, $jamAwalList, $ruangList);
-            $dosenSchedule = [];
-            $kelasSchedule = [];
+            $this->initializeScheduleMatrix();
+
+            $placements = [];
             $failedPlacements = [];
-            $successPlacements = [];
-            $successCount = 0;
+            $iteration = 0;
+            $maxRetries = 3;
 
+            // Fase pertama - coba tempatkan semua jadwal
             foreach ($enrollments as $enrollment) {
-                try {
-                    $placementResult = $this->placeEnrollment(
-                        $enrollment,
-                        $days,
-                        $ruangList,
-                        $jamAwalList,
-                        $scheduleMatrix,
-                        $dosenSchedule,
-                        $kelasSchedule
-                    );
+                $placementResult = $this->findAndPlaceBestSlot($enrollment, false);
 
-                    // Dapatkan info program studi dari enrollment
-                    $prodi = $enrollment->enrollmentKelas->programStudi ?? null;
-                    $namaProdi = $prodi ? $prodi->nama_prodi : 'N/A';
-                    $prodiId = $prodi ? $prodi->id : null;
+                if ($placementResult['success']) {
+                    $placements[] = $this->formatSuccessOutput($enrollment, $placementResult['jadwal']);
+                } else {
+                    $this->retryQueue[] = $enrollment;
+                }
+
+                $iteration++;
+                if ((microtime(true) - $startTime) > self::MAX_EXECUTION_TIME)
+                    break;
+            }
+
+            // Fase kedua - coba tempatkan yang gagal dengan strategi berbeda
+            $retryAttempt = 0;
+            while (
+                !empty($this->retryQueue) &&
+                (microtime(true) - $startTime) < self::MAX_EXECUTION_TIME &&
+                $iteration < self::MAX_ITERATIONS &&
+                $retryAttempt < $maxRetries
+            ) {
+                $currentRetryQueue = $this->retryQueue;
+                $this->retryQueue = [];
+
+                foreach ($currentRetryQueue as $enrollment) {
+                    $placementResult = $this->findAndPlaceBestSlot($enrollment, true);
 
                     if ($placementResult['success']) {
-                        $successCount++;
-                        $successPlacements[] = [
-                            'id' => $enrollment->id,
-                            'mata_kuliah' => $enrollment->mataKuliah->nama_matkul ?? 'N/A',
-                            'dosen' => $enrollment->dosen->nama_dosen ?? 'N/A',
-                            'kelas' => $enrollment->enrollmentKelas->kelas->nama_kelas ?? 'N/A',
-                            'kelas_lengkap' => $this->getNamaKelasLengkap($enrollment),
-                            'program_studi' => $namaProdi,
-                            'prodi_id' => $prodiId,
-                            'jadwal' => $placementResult['jadwal']
-                        ];
+                        $placements[] = $this->formatSuccessOutput($enrollment, $placementResult['jadwal']);
                     } else {
-                        $failedPlacements[] = [
-                            'id' => $enrollment->id,
-                            'mata_kuliah' => $enrollment->mataKuliah->nama_matkul ?? 'N/A',
-                            'dosen' => $enrollment->dosen->nama_dosen ?? 'N/A',
-                            'kelas' => $enrollment->enrollmentKelas->kelas->nama_kelas ?? 'N/A',
-                            'kelas_lengkap' => $this->getNamaKelasLengkap($enrollment),
-                            'program_studi' => $namaProdi,
-                            'prodi_id' => $prodiId,
-                            'reason' => $placementResult['reason'] ?? 'Tidak ada slot tersedia'
-                        ];
+                        $this->retryQueue[] = $enrollment;
                     }
-                } catch (\Throwable $e) {
-                    $failedPlacements[] = [
-                        'id' => $enrollment->id,
-                        'mata_kuliah' => $enrollment->mataKuliah->nama_matkul ?? 'N/A',
-                        'dosen' => $enrollment->dosen->nama_dosen ?? 'N/A',
-                        'kelas' => $enrollment->enrollmentKelas->kelas->nama_kelas ?? 'N/A',
-                        'kelas_lengkap' => $this->getNamaKelasLengkap($enrollment),
-                        'program_studi' => $enrollment->enrollmentKelas->programStudi->nama_prodi ?? 'N/A',
-                        'prodi_id' => $enrollment->enrollmentKelas->programStudi->id ?? null,
-                        'reason' => 'Error: ' . $e->getMessage()
-                    ];
-                    Log::error('Error placing enrollment: ' . $e->getMessage(), [
-                        'enrollment_id' => $enrollment->id
-                    ]);
+
+                    $iteration++;
+                    if ((microtime(true) - $startTime) > self::MAX_EXECUTION_TIME)
+                        break 2;
+                }
+                $retryAttempt++;
+            }
+
+            // Fase ketiga - coba dengan backtracking untuk yang masih gagal
+            if (!empty($this->retryQueue) && $this->backtrackCount < self::MAX_BACKTRACKS) {
+                foreach ($this->retryQueue as $key => $enrollment) {
+                    $backtrackResult = $this->tryBacktrackPlacement($enrollment, $placements, $enrollments);
+
+                    if ($backtrackResult['success']) {
+                        $placements[] = $this->formatSuccessOutput($enrollment, $backtrackResult['jadwal']);
+                        unset($this->retryQueue[$key]);
+                    }
+
+                    if ((microtime(true) - $startTime) > self::MAX_EXECUTION_TIME || $this->backtrackCount >= self::MAX_BACKTRACKS) {
+                        break;
+                    }
                 }
             }
 
+            // Format output untuk yang gagal
+            if (!empty($this->retryQueue)) {
+                $failedPlacements = array_map(function ($enrollment) {
+                    return $this->formatFailedOutput($enrollment, 'Tidak ditemukan slot yang cocok setelah iterasi maksimum.');
+                }, array_values($this->retryQueue));
+            }
+
             $executionTime = round(microtime(true) - $startTime, 2);
+            $responseData = $this->buildFinalResponse(
+                $idKelompokProdi,
+                $programStudiList,
+                $enrollments->count(),
+                $placements,
+                $failedPlacements,
+                $executionTime,
+                $this->ruangList->count(),
+                $this->jamAwalList->count(),
+                count($this->days)
+            );
 
-            // Siapkan data untuk response dan JSON file
-            $responseData = [
-                'success' => true,
-                'timestamp' => now()->toDateTimeString(),
-                'kelompok_prodi_id' => $idKelompokProdi,
-                'program_studi' => $programStudiList->map(function ($prodi) {
-                    return [
-                        'id' => $prodi->id,
-                        'nama' => $prodi->nama_prodi ?? 'N/A',
-                        'kode' => $prodi->kode_prodi ?? substr($prodi->nama_prodi, 0, 2)
-                    ];
-                })->toArray(),
-                'statistics' => [
-                    'total_enrollments' => $enrollments->count(),
-                    'jumlah_jadwal_berhasil' => $successCount,
-                    'jumlah_gagal' => count($failedPlacements),
-                    'success_rate' => $enrollments->count() > 0 ? round(($successCount / $enrollments->count()) * 100, 2) : 0,
-                    'waktu_eksekusi' => "{$executionTime} detik"
-                ],
-                'berhasil_ditempatkan' => $successPlacements,
-                'gagal_ditempatkan' => $failedPlacements,
-                'resources' => [
-                    'total_ruang' => $ruangList->count(),
-                    'total_jam_slot' => $jamAwalList->count(),
-                    'total_hari' => count($days)
-                ]
-            ];
-
-            // Simpan ke file JSON
             $jsonResult = $this->saveToJsonFile($responseData, $idKelompokProdi);
-
-            // Tambahkan info file ke response
             $responseData['file_info'] = $jsonResult;
 
             return response()->json($responseData);
 
         } catch (\Exception $e) {
-            Log::error('Error in generateJadwal: ' . $e->getMessage(), [
-                'kelompok_prodi_id' => $idKelompokProdi,
-                'trace' => $e->getTraceAsString()
+            Log::error('Error Kritis di generateJadwal: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'kelompok_prodi' => $idKelompokProdi
             ]);
-
             return response()->json([
                 'success' => false,
-                'error' => 'Terjadi kesalahan saat generate jadwal',
+                'error' => 'Terjadi kesalahan fatal saat generate jadwal',
                 'message' => $e->getMessage(),
-                'timestamp' => now()->toDateTimeString()
+                'kelompok_prodi' => $idKelompokProdi
             ], 500);
         }
     }
 
-    /**
-     * Method untuk mendapatkan nama kelas lengkap dengan format [KodeProdi]-[Angkatan][Kelas]
-     * Contoh: TI-1A, SI-2B
-     */
+    private function findAndPlaceBestSlot($enrollment, bool $isRetry = false)
+    {
+        if (!$enrollment?->mataKuliah || !$enrollment->id_dosen || !$enrollment->id_enrollment_kelas) {
+            return ['success' => false, 'reason' => 'Data enrollment tidak lengkap'];
+        }
+
+        $durasi = $enrollment->mataKuliah->jam ?? 1;
+        $idDosen = $enrollment->id_dosen;
+        $idKelas = $enrollment->id_enrollment_kelas;
+
+        if ($durasi <= 0 || $durasi > $this->jamAwalList->count()) {
+            return ['success' => false, 'reason' => "Durasi tidak valid: {$durasi}. Harus antara 1 dan " . $this->jamAwalList->count()];
+        }
+
+        $bestSlot = null;
+        $lowestCost = PHP_INT_MAX;
+
+        $days = $isRetry ? $this->shuffleWithPriority($this->days) : $this->days;
+        $ruangList = $isRetry ? $this->shuffleWithPriority($this->ruangList) : $this->ruangList;
+
+        foreach ($days as $hari) {
+            foreach ($ruangList as $ruang) {
+                for ($i = 0; $i <= $this->jamAwalList->count() - $durasi; $i++) {
+                    $slotJam = $this->jamAwalList->slice($i, $durasi);
+
+                    if ($this->isSlotAvailable($hari, $ruang->id, $slotJam, $idDosen, $idKelas, $durasi)) {
+                        $currentCost = $this->calculateAdvancedSlotCost($hari, $slotJam, $idDosen, $idKelas, $durasi, $isRetry);
+
+                        if ($currentCost < $lowestCost) {
+                            $lowestCost = $currentCost;
+                            $bestSlot = [
+                                'hari' => $hari,
+                                'ruang' => $ruang,
+                                'slotJam' => $slotJam,
+                                'jamAwal' => $slotJam->first(),
+                                'jamAkhir' => $slotJam->last()
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($bestSlot) {
+            try {
+                $this->markSlotAsUsed($bestSlot['hari'], $bestSlot['ruang']->id, $bestSlot['slotJam'], $idDosen, $idKelas, $durasi);
+
+                $jadwal = Jadwal::create([
+                    'id_enrollment_mk_mhs_dsn_rng' => $enrollment->id,
+                    'hari' => $bestSlot['hari'],
+                    'id_jam_awal' => $bestSlot['jamAwal']->id,
+                    'id_jam_akhir' => $bestSlot['jamAkhir']->id,
+                    'id_ruang' => $bestSlot['ruang']->id,
+                ]);
+
+                return [
+                    'success' => true,
+                    'jadwal' => [
+                        'id' => $jadwal->id,
+                        'hari' => $bestSlot['hari'],
+                        'jam_awal' => $bestSlot['jamAwal']->keterangan,
+                        'jam_akhir' => $bestSlot['jamAkhir']->keterangan,
+                        'id_jam_awal' => $bestSlot['jamAwal']->id,
+                        'id_jam_akhir' => $bestSlot['jamAkhir']->id,
+                        'ruang' => $bestSlot['ruang']->nama_ruang,
+                        'durasi' => $durasi
+                    ]
+                ];
+            } catch (\Exception $e) {
+                Log::error('Gagal membuat jadwal setelah menemukan slot terbaik: ' . $e->getMessage());
+                return ['success' => false, 'reason' => 'Error saat menyimpan jadwal: ' . $e->getMessage()];
+            }
+        }
+
+        return ['success' => false, 'reason' => 'Tidak ada slot tersedia yang memenuhi semua kriteria'];
+    }
+
+    private function tryBacktrackPlacement($enrollment, &$placements, Collection $enrollments)
+    {
+        $this->backtrackCount++;
+
+        $durasi = $enrollment->mataKuliah->jam ?? 1;
+        $idDosen = $enrollment->id_dosen;
+        $idKelas = $enrollment->id_enrollment_kelas;
+
+        if ($durasi <= 0 || $durasi > $this->jamAwalList->count()) {
+            return ['success' => false, 'reason' => "Durasi tidak valid: {$durasi}"];
+        }
+
+        foreach ($this->days as $hari) {
+            foreach ($this->ruangList as $ruang) {
+                for ($i = 0; $i <= $this->jamAwalList->count() - $durasi; $i++) {
+                    $slotJam = $this->jamAwalList->slice($i, $durasi);
+                    $conflicts = $this->findConflicts($hari, $ruang->id, $slotJam, $idDosen, $idKelas);
+
+                    if (count($conflicts) > 0 && $this->canRescheduleConflicts($conflicts)) {
+                        if ($this->rescheduleConflicts($conflicts, $placements, $enrollments)) {
+                            if ($this->isSlotAvailable($hari, $ruang->id, $slotJam, $idDosen, $idKelas, $durasi)) {
+                                $this->markSlotAsUsed($hari, $ruang->id, $slotJam, $idDosen, $idKelas, $durasi);
+
+                                $jadwal = Jadwal::create([
+                                    'id_enrollment_mk_mhs_dsn_rng' => $enrollment->id,
+                                    'hari' => $hari,
+                                    'id_jam_awal' => $slotJam->first()->id,
+                                    'id_jam_akhir' => $slotJam->last()->id,
+                                    'id_ruang' => $ruang->id,
+                                ]);
+
+                                return [
+                                    'success' => true,
+                                    'jadwal' => [
+                                        'id' => $jadwal->id,
+                                        'hari' => $hari,
+                                        'jam_awal' => $slotJam->first()->keterangan,
+                                        'jam_akhir' => $slotJam->last()->keterangan,
+                                        'id_jam_awal' => $slotJam->first()->id,
+                                        'id_jam_akhir' => $slotJam->last()->id,
+                                        'ruang' => $ruang->nama_ruang,
+                                        'durasi' => $durasi
+                                    ]
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return ['success' => false, 'reason' => 'Tidak bisa menemukan slot bahkan dengan backtracking'];
+    }
+
+    private function findConflicts($hari, $idRuang, $slotJam, $idDosen, $idKelas)
+    {
+        $conflicts = [];
+
+        foreach ($slotJam as $jam) {
+            $jamId = $jam->id;
+            if (!empty($this->scheduleMatrix[$hari][$idRuang][$jamId])) {
+                $conflicts[] = ['type' => 'ruang', 'hari' => $hari, 'id_ruang' => $idRuang, 'jam_id' => $jamId];
+            }
+            if (!empty($this->dosenSchedule[$idDosen][$hari]) && in_array($jamId, $this->dosenSchedule[$idDosen][$hari])) {
+                $conflicts[] = ['type' => 'dosen', 'hari' => $hari, 'id_dosen' => $idDosen, 'jam_id' => $jamId];
+            }
+            if (!empty($this->kelasSchedule[$idKelas][$hari]['slots']) && in_array($jamId, $this->kelasSchedule[$idKelas][$hari]['slots'])) {
+                $conflicts[] = ['type' => 'kelas', 'hari' => $hari, 'id_kelas' => $idKelas, 'jam_id' => $jamId];
+            }
+        }
+        return array_unique($conflicts, SORT_REGULAR);
+    }
+
+    private function canRescheduleConflicts($conflicts)
+    {
+        return count($conflicts) > 0 && count($conflicts) <= 2;
+    }
+
+    private function rescheduleConflicts($conflicts, &$placements, Collection $enrollments)
+    {
+        $rescheduled = false;
+        foreach ($conflicts as $conflict) {
+            if ($conflict['type'] === 'ruang') {
+                foreach ($placements as $key => $placement) {
+                    if (
+                        $placement['jadwal']['hari'] === $conflict['hari'] &&
+                        $this->ruangList->firstWhere('nama_ruang', $placement['jadwal']['ruang'])->id == $conflict['id_ruang'] &&
+                        $this->isJamInRange($conflict['jam_id'], $placement['jadwal']['id_jam_awal'], $placement['jadwal']['id_jam_akhir'])
+                    ) {
+                        $jamAwalObj = $this->jamAwalList->firstWhere('id', $placement['jadwal']['id_jam_awal']);
+                        $jamAkhirObj = $this->jamAwalList->firstWhere('id', $placement['jadwal']['id_jam_akhir']);
+
+                        if (!$jamAwalObj || !$jamAkhirObj)
+                            continue;
+
+                        $this->clearSlotFromMatrix(
+                            $placement['jadwal']['hari'],
+                            $conflict['id_ruang'],
+                            $jamAwalObj,
+                            $jamAkhirObj,
+                            $placement['id_dosen'],
+                            $placement['id_kelas']
+                        );
+
+                        Jadwal::where('id', $placement['jadwal']['id'])->delete();
+
+                        $enrollmentToReschedule = $enrollments->firstWhere('id', $placement['id']);
+                        if ($enrollmentToReschedule) {
+                            unset($placements[$key]);
+                            $this->retryQueue[] = $enrollmentToReschedule;
+                            $rescheduled = true;
+                        } else {
+                            Log::warning("Enrollment to reschedule not found", ['id' => $placement['id']]);
+                        }
+                        break;
+                    }
+                }
+            }
+            // Implementasi serupa untuk jenis konflik dosen dan kelas jika diperlukan
+        }
+        return $rescheduled;
+    }
+
+    private function isJamInRange($jamId, $startId, $endId)
+    {
+        return $jamId >= $startId && $jamId <= $endId;
+    }
+
+    private function clearSlotFromMatrix($hari, $idRuang, $jamAwal, $jamAkhir, $idDosen, $idKelas)
+    {
+        $jamAwalId = is_object($jamAwal) ? $jamAwal->id : $jamAwal;
+        $jamAkhirId = is_object($jamAkhir) ? $jamAkhir->id : $jamAkhir;
+
+        if (!is_numeric($jamAwalId) || !is_numeric($jamAkhirId)) {
+            Log::error('Invalid jam IDs in clearSlotFromMatrix', compact('hari', 'idRuang', 'jamAwal', 'jamAkhir', 'idDosen', 'idKelas'));
+            return;
+        }
+
+        $jamIds = range($jamAwalId, $jamAkhirId);
+
+        foreach ($jamIds as $jamId) {
+            if (isset($this->scheduleMatrix[$hari][$idRuang][$jamId])) {
+                $this->scheduleMatrix[$hari][$idRuang][$jamId] = false;
+            }
+
+            if (isset($this->dosenSchedule[$idDosen][$hari])) {
+                $this->dosenSchedule[$idDosen][$hari] = array_diff($this->dosenSchedule[$idDosen][$hari], [$jamId]);
+            }
+
+            if (isset($this->kelasSchedule[$idKelas][$hari]['slots'])) {
+                $this->kelasSchedule[$idKelas][$hari]['slots'] = array_diff($this->kelasSchedule[$idKelas][$hari]['slots'], [$jamId]);
+                $this->kelasSchedule[$idKelas][$hari]['total_jam'] -= 1;
+            }
+        }
+    }
+
+    private function calculateAdvancedSlotCost($hari, $slotJam, $idDosen, $idKelas, $durasi, $isRetry)
+    {
+        $cost = 0;
+        $dayIndex = array_search($hari, $this->days);
+        if ($dayIndex !== false) {
+            $cost += $isRetry ? ($dayIndex * 5) : ((count($this->days) - 1 - $dayIndex) * 10);
+        }
+
+        $jamMulaiId = $slotJam->first()->id;
+        $jamAkhirId = $slotJam->last()->id;
+        $totalJam = count($this->jamAwalList);
+
+        if ($jamMulaiId <= 2)
+            $cost += 10;
+        elseif ($jamMulaiId <= 4)
+            $cost += 5;
+        if ($jamAkhirId >= $totalJam - 2)
+            $cost += 10;
+        elseif ($jamAkhirId >= $totalJam - 4)
+            $cost += 5;
+
+        $cost += ($this->dosenSchedule[$idDosen][$hari] ?? []) ? count($this->dosenSchedule[$idDosen][$hari]) * 2 : 0;
+        $cost += ($this->kelasSchedule[$idKelas][$hari]['total_jam'] ?? 0) * 3;
+        $cost += ($durasi - 1) * 5;
+
+        return $cost;
+    }
+
+    private function shuffleWithPriority($items)
+    {
+        $itemsArray = is_array($items) ? $items : $items->all();
+        $firstItems = array_slice($itemsArray, 0, 2);
+        $restItems = array_slice($itemsArray, 2);
+        shuffle($restItems);
+        return array_merge($firstItems, $restItems);
+    }
+
+    private function isSlotAvailable($hari, $idRuang, $slotJam, $idDosen, $idKelas, $durasi)
+    {
+        $bebanJamSaatIni = $this->kelasSchedule[$idKelas][$hari]['total_jam'] ?? 0;
+        if (($bebanJamSaatIni + $durasi) > self::MAX_JAM_PER_HARI_PER_KELAS) {
+            return false;
+        }
+
+        foreach ($slotJam as $jam) {
+            $jamId = $jam->id;
+            if (!empty($this->scheduleMatrix[$hari][$idRuang][$jamId]))
+                return false;
+            if (!empty($this->dosenSchedule[$idDosen][$hari]) && in_array($jamId, $this->dosenSchedule[$idDosen][$hari]))
+                return false;
+            if (!empty($this->kelasSchedule[$idKelas][$hari]['slots']) && in_array($jamId, $this->kelasSchedule[$idKelas][$hari]['slots']))
+                return false;
+        }
+        return true;
+    }
+
+    private function markSlotAsUsed($hari, $idRuang, $slotJam, $idDosen, $idKelas, $durasi)
+    {
+        if (!isset($this->dosenSchedule[$idDosen][$hari]))
+            $this->dosenSchedule[$idDosen][$hari] = [];
+        if (!isset($this->kelasSchedule[$idKelas][$hari]))
+            $this->kelasSchedule[$idKelas][$hari] = ['total_jam' => 0, 'slots' => []];
+
+        $this->kelasSchedule[$idKelas][$hari]['total_jam'] += $durasi;
+
+        foreach ($slotJam as $jam) {
+            $jamId = $jam->id;
+            $this->scheduleMatrix[$hari][$idRuang][$jamId] = true;
+            $this->dosenSchedule[$idDosen][$hari][] = $jamId;
+            $this->kelasSchedule[$idKelas][$hari]['slots'][] = $jamId;
+        }
+    }
+
+    private function initializeScheduleMatrix()
+    {
+        $this->scheduleMatrix = [];
+        $this->dosenSchedule = [];
+        $this->kelasSchedule = [];
+
+        foreach ($this->days as $day) {
+            $this->scheduleMatrix[$day] = [];
+            foreach ($this->ruangList as $ruang) {
+                $this->scheduleMatrix[$day][$ruang->id] = array_fill_keys($this->jamAwalList->pluck('id')->toArray(), false);
+            }
+        }
+    }
+
+    private function formatSuccessOutput($enrollment, $jadwalData)
+    {
+        $prodi = $enrollment->enrollmentKelas->programStudi;
+        return [
+            'id' => $enrollment->id,
+            'mata_kuliah' => $enrollment->mataKuliah->nama_matkul ?? 'N/A',
+            'dosen' => $enrollment->dosen->nama_dosen ?? 'N/A',
+            'kelas_lengkap' => $this->getNamaKelasLengkap($enrollment),
+            'program_studi' => $prodi->nama_prodi ?? 'N/A',
+            'prodi_id' => $prodi->id ?? null,
+            'id_dosen' => $enrollment->id_dosen,
+            'id_kelas' => $enrollment->id_enrollment_kelas,
+            'jadwal' => $jadwalData
+        ];
+    }
+
+    private function formatFailedOutput($enrollment, $reason)
+    {
+        $prodi = $enrollment->enrollmentKelas->programStudi;
+        return [
+            'id' => $enrollment->id,
+            'mata_kuliah' => $enrollment->mataKuliah->nama_matkul ?? 'N/A',
+            'dosen' => $enrollment->dosen->nama_dosen ?? 'N/A',
+            'kelas_lengkap' => $this->getNamaKelasLengkap($enrollment),
+            'program_studi' => $prodi->nama_prodi ?? 'N/A',
+            'prodi_id' => $prodi->id ?? null,
+            'id_dosen' => $enrollment->id_dosen,
+            'id_kelas' => $enrollment->id_enrollment_kelas,
+            'reason' => $reason
+        ];
+    }
+
+    private function buildFinalResponse($idKelompokProdi, $programStudiList, $totalEnrollments, $successPlacements, $failedPlacements, $executionTime, $totalRuang, $totalJamSlot, $totalHari)
+    {
+        return [
+            'success' => true,
+            'timestamp' => now()->toDateTimeString(),
+            'kelompok_prodi_id' => $idKelompokProdi,
+            'program_studi' => $programStudiList->map(fn($prodi) => ['id' => $prodi->id, 'nama' => $prodi->nama_prodi, 'kode' => $prodi->kode_prodi])->toArray(),
+            'statistics' => [
+                'total_enrollments' => $totalEnrollments,
+                'jumlah_jadwal_berhasil' => count($successPlacements),
+                'jumlah_gagal' => count($failedPlacements),
+                'success_rate' => $totalEnrollments > 0 ? round((count($successPlacements) / $totalEnrollments) * 100, 2) : 0,
+                'waktu_eksekusi' => "{$executionTime} detik"
+            ],
+            'berhasil_ditempatkan' => $successPlacements,
+            'gagal_ditempatkan' => $failedPlacements,
+            'resources' => ['total_ruang' => $totalRuang, 'total_jam_slot' => $totalJamSlot, 'total_hari' => $totalHari]
+        ];
+    }
+
     private function getNamaKelasLengkap($enrollment)
     {
         try {
-            $enrollmentKelas = $enrollment->enrollmentKelas;
-            if (!$enrollmentKelas) {
-                return 'N/A';
-            }
-
-            $kelas = $enrollmentKelas->kelas;
-            $prodi = $enrollmentKelas->programStudi;
-            $angkatan = $enrollmentKelas->angkatan->tahun_angkatan ?? '0'; // ambil dari relasi angkatan
-
-            if (!$kelas || !$prodi) {
-                return 'N/A';
-            }
-
-            $kodeProdi = $prodi->kode_prodi ?? substr($prodi->nama_prodi, 0, 2);
-            $namaKelas = $kelas->nama_kelas ?? 'A';
-
+            $kodeProdi = $enrollment->enrollmentKelas->programStudi->kode_prodi ?? 'N/A';
+            $angkatan = substr(optional($enrollment->enrollmentKelas->angkatan)->tahun_angkatan ?? '0', -1);
+            $namaKelas = $enrollment->enrollmentKelas->kelas->nama_kelas ?? 'N/A';
             return strtoupper($kodeProdi) . '-' . $angkatan . strtoupper($namaKelas);
         } catch (\Exception $e) {
-            Log::error('Error getting nama kelas lengkap: ' . $e->getMessage());
             return 'N/A';
         }
     }
 
-    /**
-     * Simpan data ke file JSON
-     */
     private function saveToJsonFile($data, $idKelompokProdi)
     {
         try {
@@ -233,320 +580,24 @@ class GenerateController extends Controller
                 Storage::makeDirectory('jadwal');
             }
 
-            $fileExists = Storage::exists($filePath);
-            $actionTaken = $fileExists ? 'replaced' : 'created';
+            Storage::put($filePath, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 
-            $oldFileInfo = null;
-            if ($fileExists) {
-                $oldFileInfo = [
-                    'size' => Storage::size($filePath),
-                    'last_modified' => Storage::lastModified($filePath),
-                    'last_modified_readable' => date('Y-m-d H:i:s', Storage::lastModified($filePath))
-                ];
-
-                Log::info("File JSON sudah ada, akan diganti", [
-                    'file_path' => $filePath,
-                    'old_file_size' => $oldFileInfo['size'],
-                    'old_file_modified' => $oldFileInfo['last_modified_readable'],
-                    'kelompok_prodi_id' => $idKelompokProdi
-                ]);
-            }
-
-            $jsonContent = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
-            if ($jsonContent === false) {
-                throw new \Exception('Gagal convert data ke JSON: ' . json_last_error_msg());
-            }
-
-            $saved = Storage::put($filePath, $jsonContent);
-
-            if (!$saved) {
-                throw new \Exception('Gagal menyimpan file ke storage');
-            }
-
-            if (!Storage::exists($filePath)) {
-                throw new \Exception('File tidak ditemukan setelah penyimpanan');
-            }
-
-            $fileSize = Storage::size($filePath);
-            $lastModified = Storage::lastModified($filePath);
-
-            Log::info("File JSON berhasil {$actionTaken}", [
-                'action' => $actionTaken,
-                'file_path' => $filePath,
-                'file_size' => $fileSize,
-                'kelompok_prodi_id' => $idKelompokProdi,
-                'old_file_info' => $oldFileInfo
-            ]);
-
-            return [
-                'saved' => true,
-                'action' => $actionTaken,
-                'file_name' => $fileName,
-                'file_path' => $filePath,
-                'file_size' => $fileSize,
-                'full_path' => storage_path('app/' . $filePath),
-                'download_url' => route('download.jadwal', ['filename' => $fileName]),
-                'created_at' => now()->toDateTimeString(),
-                'last_modified' => date('Y-m-d H:i:s', $lastModified),
-                'old_file_info' => $oldFileInfo,
-                'message' => $fileExists ?
-                    'File jadwal berhasil diperbarui (file lama telah diganti)' :
-                    'File jadwal baru berhasil dibuat'
-            ];
-
+            return ['saved' => true, 'file_name' => $fileName, 'file_path' => storage_path("app/{$filePath}"), 'message' => 'File berhasil disimpan/diperbarui'];
         } catch (\Exception $e) {
-            Log::error('Error saat menyimpan file JSON: ' . $e->getMessage(), [
-                'kelompok_prodi_id' => $idKelompokProdi,
-                'error_trace' => $e->getTraceAsString()
-            ]);
-
-            return [
-                'saved' => false,
-                'error' => $e->getMessage(),
-                'attempted_path' => $filePath ?? 'N/A'
-            ];
+            Log::error('Error saat menyimpan file JSON: ' . $e->getMessage());
+            return ['saved' => false, 'error' => $e->getMessage()];
         }
     }
 
-    /**
-     * Method untuk download file JSON
-     */
-    public function downloadJadwal($filename)
+    public function downloadJadwal($idKelompokProdi)
     {
-        try {
-            $filePath = "jadwal/{$filename}";
+        $fileName = "jadwal_kelompok_{$idKelompokProdi}.json";
+        $filePath = "jadwal/{$fileName}";
 
-            if (!Storage::exists($filePath)) {
-                return response()->json(['error' => 'File tidak ditemukan'], 404);
-            }
-
-            return Storage::download($filePath, $filename, [
-                'Content-Type' => 'application/json',
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Error download file: ' . $e->getMessage());
-            return response()->json(['error' => 'Gagal download file'], 500);
-        }
-    }
-
-    /**
-     * Validasi foreign key sebelum insert
-     */
-    private function validateForeignKeys($enrollmentId, $jamAwalId, $jamAkhirId, $ruangId)
-    {
-        if (!EnrollmentMkMhsDsnRng::find($enrollmentId)) {
-            return false;
+        if (!Storage::exists($filePath)) {
+            return response()->json(['error' => 'File tidak ditemukan'], 404);
         }
 
-        if (!JamAwal::find($jamAwalId)) {
-            return false;
-        }
-
-        if (!JamAwal::find($jamAkhirId)) {
-            return false;
-        }
-
-        if (!Ruang::find($ruangId)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Rollback marking slot jika terjadi error
-     */
-    private function rollbackSlotMarking($hari, $idRuang, $slotJam, &$scheduleMatrix, &$dosenSchedule, &$kelasSchedule, $idDosen, $idKelas)
-    {
-        foreach ($slotJam as $jam) {
-            $scheduleMatrix[$hari][$idRuang][$jam->id] = false;
-        }
-
-        if (isset($dosenSchedule[$idDosen][$hari])) {
-            foreach ($slotJam as $jam) {
-                $key = array_search($jam->id, $dosenSchedule[$idDosen][$hari]);
-                if ($key !== false) {
-                    unset($dosenSchedule[$idDosen][$hari][$key]);
-                }
-            }
-        }
-
-        if (isset($kelasSchedule[$idKelas][$hari])) {
-            foreach ($slotJam as $jam) {
-                $key = array_search($jam->id, $kelasSchedule[$idKelas][$hari]);
-                if ($key !== false) {
-                    unset($kelasSchedule[$idKelas][$hari][$key]);
-                }
-            }
-        }
-    }
-
-    /**
-     * Inisialisasi matrix untuk tracking jadwal
-     */
-    private function initializeScheduleMatrix($days, $jamAwalList, $ruangList)
-    {
-        $matrix = [];
-        foreach ($days as $day) {
-            $matrix[$day] = [];
-            foreach ($ruangList as $ruang) {
-                $matrix[$day][$ruang->id] = [];
-                foreach ($jamAwalList as $jam) {
-                    $matrix[$day][$ruang->id][$jam->id] = false;
-                }
-            }
-        }
-        return $matrix;
-    }
-
-    /**
-     * Tempatkan enrollment ke jadwal
-     */
-    private function placeEnrollment($enrollment, $days, $ruangList, $jamAwalList, &$scheduleMatrix, &$dosenSchedule, &$kelasSchedule)
-    {
-        if (!$enrollment || !$enrollment->mataKuliah || !$enrollment->id_dosen || !$enrollment->id_enrollment_kelas) {
-            return [
-                'success' => false,
-                'reason' => 'Data enrollment tidak lengkap'
-            ];
-        }
-
-        $durasi = $enrollment->mataKuliah->jam ?? 1;
-        $idDosen = $enrollment->id_dosen;
-        $idKelas = $enrollment->id_enrollment_kelas;
-
-        if ($durasi <= 0 || $durasi > count($jamAwalList)) {
-            return [
-                'success' => false,
-                'reason' => "Durasi tidak valid: {$durasi}"
-            ];
-        }
-
-        foreach ($days as $hari) {
-            foreach ($ruangList as $ruang) {
-                if (!$ruang || !$ruang->id) {
-                    continue;
-                }
-
-                for ($i = 0; $i <= count($jamAwalList) - $durasi; $i++) {
-                    $slotJam = $jamAwalList->slice($i, $durasi);
-                    $jamAwal = $slotJam->first();
-                    $jamAkhir = $slotJam->last();
-
-                    if (!$jamAwal || !$jamAkhir || !$jamAwal->id || !$jamAkhir->id) {
-                        continue;
-                    }
-
-                    if ($this->isSlotAvailable($hari, $ruang->id, $slotJam, $scheduleMatrix, $dosenSchedule, $kelasSchedule, $idDosen, $idKelas)) {
-
-                        if (!$this->validateForeignKeys($enrollment->id, $jamAwal->id, $jamAkhir->id, $ruang->id)) {
-                            continue;
-                        }
-
-                        try {
-                            $this->markSlotAsUsed($hari, $ruang->id, $slotJam, $scheduleMatrix, $dosenSchedule, $kelasSchedule, $idDosen, $idKelas);
-
-                            $jadwal = Jadwal::create([
-                                'id_enrollment_mk_mhs_dsn_rng' => $enrollment->id,
-                                'hari' => $hari,
-                                'id_jam_awal' => $jamAwal->id,
-                                'id_jam_akhir' => $jamAkhir->id,
-                                'id_ruang' => $ruang->id,
-                            ]);
-
-                            return [
-                                'success' => true,
-                                'jadwal' => [
-                                    'id' => $jadwal->id,
-                                    'hari' => $hari,
-                                    'jam_awal' => $jamAwal->keterangan ?? 'N/A',
-                                    'jam_akhir' => $jamAkhir->keterangan ?? 'N/A',
-                                    'ruang' => $ruang->nama_ruang ?? 'N/A',
-                                    'durasi' => $durasi
-                                ]
-                            ];
-
-                        } catch (\Exception $e) {
-                            $this->rollbackSlotMarking($hari, $ruang->id, $slotJam, $scheduleMatrix, $dosenSchedule, $kelasSchedule, $idDosen, $idKelas);
-                            Log::error('Gagal membuat jadwal: ' . $e->getMessage(), [
-                                'enrollment_id' => $enrollment->id,
-                                'hari' => $hari,
-                                'jam_awal' => $jamAwal->id,
-                                'jam_akhir' => $jamAkhir->id,
-                                'ruang' => $ruang->id
-                            ]);
-                            continue;
-                        }
-                    }
-                }
-            }
-        }
-
-        return [
-            'success' => false,
-            'reason' => 'Tidak ada slot tersedia untuk semua kombinasi hari, ruang, dan waktu'
-        ];
-    }
-
-    /**
-     * Cek apakah slot tersedia
-     */
-    private function isSlotAvailable($hari, $idRuang, $slotJam, $scheduleMatrix, $dosenSchedule, $kelasSchedule, $idDosen, $idKelas)
-    {
-        foreach ($slotJam as $jam) {
-            if ($scheduleMatrix[$hari][$idRuang][$jam->id]) {
-                return false;
-            }
-        }
-
-        if (isset($dosenSchedule[$idDosen][$hari])) {
-            foreach ($slotJam as $jam) {
-                if (in_array($jam->id, $dosenSchedule[$idDosen][$hari])) {
-                    return false;
-                }
-            }
-        }
-
-        if (isset($kelasSchedule[$idKelas][$hari])) {
-            foreach ($slotJam as $jam) {
-                if (in_array($jam->id, $kelasSchedule[$idKelas][$hari])) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Tandai slot sebagai terpakai
-     */
-    private function markSlotAsUsed($hari, $idRuang, $slotJam, &$scheduleMatrix, &$dosenSchedule, &$kelasSchedule, $idDosen, $idKelas)
-    {
-        foreach ($slotJam as $jam) {
-            $scheduleMatrix[$hari][$idRuang][$jam->id] = true;
-        }
-
-        if (!isset($dosenSchedule[$idDosen])) {
-            $dosenSchedule[$idDosen] = [];
-        }
-        if (!isset($dosenSchedule[$idDosen][$hari])) {
-            $dosenSchedule[$idDosen][$hari] = [];
-        }
-        foreach ($slotJam as $jam) {
-            $dosenSchedule[$idDosen][$hari][] = $jam->id;
-        }
-
-        if (!isset($kelasSchedule[$idKelas])) {
-            $kelasSchedule[$idKelas] = [];
-        }
-        if (!isset($kelasSchedule[$idKelas][$hari])) {
-            $kelasSchedule[$idKelas][$hari] = [];
-        }
-        foreach ($slotJam as $jam) {
-            $kelasSchedule[$idKelas][$hari][] = $jam->id;
-        }
+        return Storage::download($filePath);
     }
 }

@@ -31,5 +31,12 @@ class EnrollmentMkMhsDsnRng extends Model
     {
         return $this->hasMany(Jadwal::class, 'id_enrollment_mk_mhs_dsn_rng');
     }
+
+    public function kelas()
+    {
+        return $this->belongsTo(EnrollmentKelas::class, 'id_enrollment_kelas');
+    }
+
     
+
 }
